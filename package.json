@@ -3,11 +3,19 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "engines": {
+    "node": ">=20.19"
+  },
   "scripts": {
+    "postinstall": "node scripts/generate-assets.js",
+    "assets:generate": "node scripts/generate-assets.js",
+    "assets:regenerate": "node scripts/generate-assets.js --force",
+    "assets:check": "node scripts/generate-assets.js --check",
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "preview": "vite preview",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "typecheck": "tsc -b --noEmit"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.104.1",
