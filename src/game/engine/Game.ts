@@ -46,12 +46,9 @@ export class Game {
     this.app.stage.addChild(this.world);
 
     // Ocean Tiling Background
-    this.ocean = new TilingSprite({
-      texture: Texture.from('/assets/kenney_pirate-pack/PNG/Retina/Tiles/tile_73.png'),
-      width: window.innerWidth,
-      height: window.innerHeight,
-    });
-    this.backgroundLayer.addChild(this.ocean);
+    const oceanTexture = Texture.from('/assets/kenney_pirate-pack/PNG/Retina/Tiles/tile_73.png');
+    this.ocean = new TilingSprite(oceanTexture, this.app.screen.width, this.app.screen.height);
+    this.app.stage.addChildAt(this.ocean, 0);
 
     // Random Islands / Rocks
     for (let i = 0; i < 15; i++) {
