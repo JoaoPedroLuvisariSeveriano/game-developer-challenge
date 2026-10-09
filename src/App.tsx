@@ -3,6 +3,7 @@ import { MainMenu } from './components/menus/MainMenu';
 import { OptionsMenu } from './components/menus/OptionsMenu';
 import { GameOver } from './components/menus/GameOver';
 import { PauseMenu } from './components/menus/PauseMenu';
+import { CaptainsLog } from './components/menus/CaptainsLog';
 import { HUD } from './components/game/HUD';
 import { useMatchStore } from './state/matchStore';
 
@@ -19,6 +20,7 @@ export default function App() {
       
       {status === 'menu' && <MainMenu />}
       {status === 'options' && <OptionsMenu />}
+      {(status === 'ranking' || status === 'history') && <CaptainsLog defaultTab={status} />}
       {status === 'paused' && <PauseMenu />}
       {status === 'gameover' && <GameOver />}
     </main>

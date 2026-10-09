@@ -1,41 +1,64 @@
 import React, { useState } from 'react';
-import { useMatchStore } from '../../state/matchStore';
 import { useOptionsStore } from '../../state/optionsStore';
+import { WoodenModal } from '../ui/WoodenModal';
+import { AtlasButton } from '../ui/AtlasButton';
 
 export const OptionsMenu: React.FC = () => {
-  const setStatus = useMatchStore((s) => s.setStatus);
   const { options, saveOptions } = useOptionsStore();
   const [form, setForm] = useState(options);
   const [error, setError] = useState('');
+  const [saved, setSaved] = useState(false);
 
   const handleSave = () => {
     const res = saveOptions(form);
     if (!res.ok) {
       setError(Object.values(res.errors)[0] || 'Invalid options');
+      setSaved(false);
     } else {
       setError('');
-      setStatus('menu');
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
     }
   };
 
+  const alterTime = (delta: number) => {
+    setForm(f => ({ ...f, sessionTimeSeconds: Math.max(60, Math.min(180, f.sessionTimeSeconds + delta)) }));
+  };
+
+  const alterSpawn = (delta: number) => {
+    setForm(f => ({ ...f, enemySpawnIntervalSeconds: Math.max(0.5, Math.min(10, f.enemySpawnIntervalSeconds + delta)) }));
+  };
+
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-900 text-white z-50">
-      <h1 className="text-4xl font-bold mb-8 text-blue-300">Options</h1>
-      {error && <p className="text-red-400 mb-4 font-semibold">{error}</p>}
-      <div className="flex flex-col gap-6 w-80 bg-gray-800 p-6 rounded-lg shadow-lg">
-        <label className="flex flex-col font-semibold">
-          Session Time (s):
-          <input type="number" value={form.sessionTimeSeconds} onChange={e => setForm({...form, sessionTimeSeconds: Number(e.target.value)})} className="text-white bg-gray-700 p-2 mt-2 rounded border border-gray-600 focus:outline-none focus:border-blue-500" />
-        </label>
-        <label className="flex flex-col font-semibold">
-          Enemy Spawn Interval (s):
-          <input type="number" step="0.5" value={form.enemySpawnIntervalSeconds} onChange={e => setForm({...form, enemySpawnIntervalSeconds: Number(e.target.value)})} className="text-white bg-gray-700 p-2 mt-2 rounded border border-gray-600 focus:outline-none focus:border-blue-500" />
-        </label>
-        <div className="flex gap-4 mt-4">
-          <button onClick={handleSave} className="flex-1 py-3 bg-green-600 hover:bg-green-500 focus:outline-none focus:ring-4 focus:ring-blue-300 rounded font-bold transition">Save</button>
-          <button onClick={() => setStatus('menu')} className="flex-1 py-3 bg-gray-600 hover:bg-gray-500 focus:outline-none focus:ring-4 focus:ring-blue-300 rounded font-bold transition">Cancel</button>
+    <WoodenModal title="OPTIONS">
+      <div className="flex flex-col items-center justify-center gap-8 w-full h-full font-sans text-xl">
+        {error && <p className="text-red-400 font-bold bg-black/50 px-4 py-2 rounded border border-red-900">{error}</p>}
+        {saved && <p className="text-green-400 font-bold bg-black/50 px-4 py-2 rounded border border-green-900">Options Saved Successfully!</p>}
+        
+        <div className="flex flex-col items-center gap-4 bg-black/40 p-6 rounded-lg border border-[#5d4037] w-full max-w-md shadow-inner">
+          <label className="font-bold text-lagoon-400 uppercase tracking-wider text-2xl">Session Time</label>
+          <div className="flex items-center gap-6 mt-2">
+            <button onClick={() => alterTime(-10)} className="w-14 h-14 bg-gray-800 border-4 border-gray-600 rounded-full text-4xl font-display text-white hover:bg-gray-700 active:translate-y-1 transition-transform flex items-center justify-center pb-2 shadow-lg">-</button>
+            <span className="text-5xl font-display text-doubloon w-32 text-center drop-shadow-md">{form.sessionTimeSeconds}s</span>
+            <button onClick={() => alterTime(10)} className="w-14 h-14 bg-gray-800 border-4 border-gray-600 rounded-full text-4xl font-display text-white hover:bg-gray-700 active:translate-y-1 transition-transform flex items-center justify-center pb-2 shadow-lg">+</button>
+          </div>
+        </div>
+
+        <div className="flex flex-col items-center gap-4 bg-black/40 p-6 rounded-lg border border-[#5d4037] w-full max-w-md shadow-inner">
+          <label className="font-bold text-lagoon-400 uppercase tracking-wider text-2xl">Enemy Spawn</label>
+          <div className="flex items-center gap-6 mt-2">
+            <button onClick={() => alterSpawn(-0.5)} className="w-14 h-14 bg-gray-800 border-4 border-gray-600 rounded-full text-4xl font-display text-white hover:bg-gray-700 active:translate-y-1 transition-transform flex items-center justify-center pb-2 shadow-lg">-</button>
+            <span className="text-5xl font-display text-doubloon w-32 text-center drop-shadow-md">{form.enemySpawnIntervalSeconds}s</span>
+            <button onClick={() => alterSpawn(0.5)} className="w-14 h-14 bg-gray-800 border-4 border-gray-600 rounded-full text-4xl font-display text-white hover:bg-gray-700 active:translate-y-1 transition-transform flex items-center justify-center pb-2 shadow-lg">+</button>
+          </div>
+        </div>
+
+        <div className="mt-4">
+          <AtlasButton onClick={handleSave} baseName="button_primary">
+            Save Options
+          </AtlasButton>
         </div>
       </div>
-    </div>
+    </WoodenModal>
   );
 };
