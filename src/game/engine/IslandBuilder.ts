@@ -35,14 +35,22 @@ export class IslandBuilder {
       return new Sprite(tex);
     };
 
-    for (let row = 0; row < 3; row++) {
-      for (let col = 0; col < 3; col++) {
+    for (let row = 0; row < grid.length; row++) {
+      if (!grid[row]) continue;
+      for (let col = 0; col < grid[row].length; col++) {
         const tileId = grid[row][col];
+        if (!tileId || isNaN(tileId) || tileId === 0) continue;
+
         const tileIdStr = tileId < 10 ? `0${tileId}` : `${tileId}`;
         const tile = createDecor(tileIdStr);
-        if (tile) {
-          tile.anchor.set(0); 
-          tile.position.set(col * tileSize, row * tileSize);
+        if (!tile) continue; // Safe fallback
+
+        tile.anchor.set(0); 
+        
+        const xPos = col * tileSize;
+        const yPos = row * tileSize;
+        if (!isNaN(xPos) && !isNaN(yPos)) {
+          tile.position.set(xPos, yPos);
           container.addChild(tile);
         }
       }
