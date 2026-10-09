@@ -22,10 +22,13 @@ export const PixiCanvas: React.FC = () => {
         // Do not pass a canvas, let Pixi create its own
         await game.app.init({
           resizeTo: window,
-          backgroundColor: 0x1099bb,
+          backgroundColor: 0x87CEEB, // Sky blue as requested
           resolution: window.devicePixelRatio || 1,
           autoDensity: true,
         });
+        
+        game.app.canvas.className = "block w-full h-full absolute inset-0 z-10";
+        
         if (containerRef.current) {
           containerRef.current.appendChild(game.app.canvas);
         } else {
@@ -53,7 +56,7 @@ export const PixiCanvas: React.FC = () => {
   }, []);
 
   return (
-    <div ref={containerRef} className="absolute inset-0 w-full h-full overflow-hidden bg-black z-0">
+    <div ref={containerRef} className="absolute inset-0 w-full h-full overflow-hidden bg-[#87CEEB] z-0">
       {loading && (
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-900 text-white z-50">
           <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
