@@ -15,26 +15,24 @@ export const PixiCanvas: React.FC = () => {
     
     const bootGame = async () => {
       try {
-        if (!containerRef.current) return;
+        if (!containerRef.current || !gameRef.current) return;
         
-        // 1. Liga o motor e cola na tela PRIMEIRO.
-        await game.startEngine(containerRef.current);
+        // 1. PURGA DA CACHE VETERANA: Limpa texturas do contexto WebGL morto
+        try { Assets.reset(); } catch (e) { console.warn('Cache clear skip', e); }
         
-        // 2. Carrega as texturas reais
-        try {
-          await Assets.init();
-          await AssetLoader.loadAll();
-        } catch (e) {
-          console.warn("Assets failed to load, falling back to Texture.WHITE", e);
-        }
+        // 2. BOOT DO NOVO MOTOR: Cria novo WebGL Context e anexa ao DOM
+        await gameRef.current.startEngine(containerRef.current);
         
-        // 3. Tira a tela de loading e inicia o jogo
+        // 3. REIDRATAÇÃO: Força o download/decode das texturas para a GPU atual
+        await AssetLoader.loadAll();
+        
+        // 4. LIBERTAÇÃO DA UI E LÓGICA
         if (isMounted) {
-          setIsLoading(false); // FORÇA A TELA A SUMIR
-          game.initGameLogic(); // INICIA O JOGO
+          setIsLoading(false);
+          gameRef.current.initGameLogic();
         }
-      } catch (fatalError) {
-        console.error("FATAL ENGINE CRASH:", fatalError);
+      } catch (e) {
+        console.error('Boot Crash:', e);
       }
     };
     

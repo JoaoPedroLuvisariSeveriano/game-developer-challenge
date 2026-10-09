@@ -36,8 +36,7 @@ export class Game {
     this.timeRemaining = config.sessionTimeSeconds;
     this.score = 0;
 
-    this.app.stage.addChildAt(this.backgroundLayer, 0);
-    this.app.stage.addChild(this.world);
+
 
     // Ocean Tiling Background
     console.log('--- MARCO 9: A ler textura do oceano ---');
@@ -87,6 +86,10 @@ export class Game {
     // Handle focus loss for auto-pause
     window.addEventListener('blur', this.onBlur);
     window.addEventListener('keydown', this.onKeyDown);
+    
+    // Final Anchoring
+    this.app.stage.addChild(this.backgroundLayer);
+    this.app.stage.addChild(this.world);
   }
 
   private onBlur = () => {
