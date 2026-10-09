@@ -4,15 +4,12 @@ export class IslandBuilder {
   static build(): { container: Container, radius: number } {
     const container = new Container();
     
-    // Base land tiles (using 13, 14, 29, 30 for a cohesive look if possible, or random)
-    const baseTiles = [13, 14, 29, 30]; 
-    
-    // We position them in a 2x2 grid. Kenney tiles are usually 64x64
+    // Base land tiles (using grass/sand: tile_18, tile_19, tile_34, tile_35)
     const positions = [
-      { x: -32, y: -32, tile: 13 },
-      { x: 32, y: -32, tile: 14 },
-      { x: -32, y: 32, tile: 29 },
-      { x: 32, y: 32, tile: 30 }
+      { x: -32, y: -32, tile: 18 },
+      { x: 32, y: -32, tile: 19 },
+      { x: -32, y: 32, tile: 34 },
+      { x: 32, y: 32, tile: 35 }
     ];
 
     for (const pos of positions) {
@@ -22,8 +19,8 @@ export class IslandBuilder {
       container.addChild(tile);
     }
 
-    // Add some random decorations (trees/rocks proxy)
-    const decorTiles = [61, 62, 77, 78];
+    // Add some random decorations (using high numbers which are usually trees/rocks, e.g., 85, 86, 88)
+    const decorTiles = [85, 86, 88];
     const numDecors = Math.floor(Math.random() * 2) + 1;
     for (let i = 0; i < numDecors; i++) {
       const decorId = decorTiles[Math.floor(Math.random() * decorTiles.length)];

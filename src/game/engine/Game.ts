@@ -17,7 +17,7 @@ export class Game {
   public pool!: ProjectilePool;
   public enemyManager!: EnemyManager;
   public feel!: GameFeel;
-  public islands: { sprite: Sprite, x: number, y: number, radius: number }[] = [];
+  public islands: { sprite: Sprite, x: number, y: number, radius: number, expiresAt?: number }[] = [];
   
   public score = 0;
   public timeRemaining = 0;
@@ -142,6 +142,16 @@ export class Game {
       this.ocean.tilePosition.y += 0.2 * dt;
     }
 
+    // Cleanup expired islands (shipwrecks)
+    const now = Date.now();
+    for (let i = this.islands.length - 1; i >= 0; i--) {
+      const island = this.islands[i];
+      if (island.expiresAt && now >= island.expiresAt) {
+        island.sprite.destroy();
+        this.islands.splice(i, 1);
+      }
+    }
+
     this.feel.update(dt);
     this.player.update(dt);
     this.pool.update(dt);
@@ -187,7 +197,7 @@ export class Game {
               this.feel.shake(15, 150);
               this.pool.spawnEffect(e.x, e.y, '/assets/kenney_pirate-pack/PNG/Retina/Effects/explosion3.png');
               e.wreck();
-              this.islands.push({ sprite: e.container as any, x: e.x, y: e.y, radius: e.radius });
+              this.islands.push({ sprite: e.container as any, x: e.x, y: e.y, radius: e.radius, expiresAt: Date.now() + 10000 });
             }
             break;
           }

@@ -23,34 +23,39 @@ export class Shooter extends Enemy {
     const dx = playerX - this.x;
     const dy = playerY - this.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
+    const angleToPlayer = Math.atan2(dy, dx);
     
-    // Broadside angle: point side of ship towards player.
-    // atan2(dy,dx) is the angle to the player. 
-    // Usually ship faces "up" (rotation 0). To point the left side to player, 
-    // rotation = atan2(dy, dx).
-    this.container.rotation = Math.atan2(dy, dx);
-
-    // Keep distance
-    if (dist > this.safeDistance + 50) {
-      // move towards player
-      this.x += (dx / dist) * this.speed * dt;
-      this.y += (dy / dist) * this.speed * dt;
-    } else if (dist < this.safeDistance - 50) {
-      // retreat
-      this.x -= (dx / dist) * this.speed * dt;
-      this.y -= (dy / dist) * this.speed * dt;
+    // We want to orbit the player at safeDistance.
+    // So target angle is angleToPlayer + 90 degrees (orbiting)
+    // plus a small correction to get closer/farther if not at safeDistance.
+    let moveAngle = angleToPlayer + Math.PI / 2; // tangent
+    
+    if (dist > this.safeDistance + 20) {
+      // angle slightly towards player
+      moveAngle -= 0.5;
+    } else if (dist < this.safeDistance - 20) {
+      // angle slightly away
+      moveAngle += 0.5;
     }
 
+    this.x += Math.cos(moveAngle) * this.speed * dt;
+    this.y += Math.sin(moveAngle) * this.speed * dt;
+    
+    // Ship faces its movement direction
+    this.container.rotation = moveAngle + Math.PI / 2;
     this.container.x = this.x;
     this.container.y = this.y;
 
     this.fireCooldown -= dt;
     if (this.fireCooldown <= 0 && dist < 400) {
-      // Fire from the side facing the player (left side, which is rotation - PI/2 relative to ship's up)
-      // Since ship rotation points its left side at player, the player is exactly to the "left".
-      // We'll just shoot a projectile towards the player angle.
-      const angleToPlayer = Math.atan2(dy, dx) + Math.PI / 2; // Projectile spawn uses rotation-PI/2 for its velocity
-      this.pool.spawn(this.x, this.y, angleToPlayer, 7, 'enemy', 0xff0000);
+      // Fire triple broadside towards the player
+      // angleToPlayer is the angle towards player. 
+      // The projectile spawn expects an angle where it fires straight out from rotation-PI/2.
+      // So we just give angleToPlayer + PI/2 to pool.spawn to make it shoot towards angleToPlayer
+      const baseAngle = angleToPlayer + Math.PI / 2;
+      this.pool.spawn(this.x, this.y, baseAngle - 0.1, 7, 'enemy', 0xff0000);
+      this.pool.spawn(this.x, this.y, baseAngle, 7, 'enemy', 0xff0000);
+      this.pool.spawn(this.x, this.y, baseAngle + 0.1, 7, 'enemy', 0xff0000);
       this.fireCooldown = 120; // 2 seconds
     }
   }
