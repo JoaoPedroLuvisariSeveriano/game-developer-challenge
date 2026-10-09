@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { WoodenModal } from '../ui/WoodenModal';
 import { useRankingQuery, useHistoryQuery } from '../../api/hooks';
+import { snapshotOptions } from '../../state/optionsStore';
+import { usePlayerStore } from '../../state/playerStore';
 
 interface Props {
   defaultTab?: 'ranking' | 'history';
@@ -10,9 +12,11 @@ export const CaptainsLog: React.FC<Props> = ({ defaultTab = 'ranking' }) => {
   const [tab, setTab] = useState<'ranking' | 'history'>(defaultTab);
   const [page, setPage] = useState(1);
   const size = 5;
+  
+  const { playerId } = usePlayerStore();
 
-  const ranking = useRankingQuery(page, size);
-  const history = useHistoryQuery(page, size);
+  const ranking = useRankingQuery({ page, pageSize: size, config: snapshotOptions() });
+  const history = useHistoryQuery({ page, pageSize: size, playerId });
 
   const query = tab === 'ranking' ? ranking : history;
   const items = query.data?.items || [];

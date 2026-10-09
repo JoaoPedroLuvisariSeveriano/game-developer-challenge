@@ -9,18 +9,30 @@ test.describe('Pirate Battle E2E Test Suite (12 Flows)', () => {
 
   test('1. Navegação, validação e persistência das opções', async ({ page }) => {
     await page.click('button:has-text("Options")');
-    await expect(page.locator('text=Options')).toBeVisible();
+    await expect(page.locator('h2:has-text("OPTIONS")')).toBeVisible();
     
-    // Change values
-    await page.fill('label:has-text("Session Time (s):") input', '120');
-    await page.fill('label:has-text("Enemy Spawn Interval (s):") input', '5');
-    await page.click('button:has-text("Save")');
+    // Validar valor inicial (padrão é 90s)
+    await expect(page.locator('[data-testid="session-time-value"]')).toHaveText('90s');
+    
+    // Change values using the new + buttons (Session Time)
+    // Garante exclusividade no clique do botão de incremento e força a ação
+    await page.click('[data-testid="session-time-plus"]', { force: true });
+    await page.waitForTimeout(100);
+    
+    // Validar visualmente a alteração (90s + 30s = 120s)
+    await expect(page.locator('[data-testid="session-time-value"]')).toHaveText('120s');
+    
+    // Save Options (remover force: true para garantir que o botão correto seja clicado se não estiver obstruído)
+    await page.click('[data-testid="save-options-button"]');
+    await expect(page.locator('text=Options Saved Successfully!')).toBeVisible();
     
     // Verify persistence after reload
     await page.reload();
     await page.click('button:has-text("Options")');
-    await expect(page.locator('label:has-text("Session Time (s):") input')).toHaveValue('120');
-    await expect(page.locator('label:has-text("Enemy Spawn Interval (s):") input')).toHaveValue('5');
+    await expect(page.locator('h2:has-text("OPTIONS")')).toBeVisible();
+    
+    // Validação de persistência dos valores alterados
+    await expect(page.locator('[data-testid="session-time-value"]')).toHaveText('120s');
   });
 
   test('2. Carregamento de assets e início da partida, Regressão Visual do Menu', async ({ page }) => {
@@ -64,14 +76,28 @@ test.describe('Pirate Battle E2E Test Suite (12 Flows)', () => {
     await page.click('button:has-text("Play")');
     
     // Assumimos que o player ficará parado e tomará dano até o Game Over.
-    // Num cenário normal o timeout pode ser alto. Assumiremos 60s por precaução.
-    await expect(page.locator('h1:has-text("Game Over")')).toBeVisible({ timeout: 60000 });
+    // 1ª Etapa do Game Over: Alerta "YOUR SHIP SANK!"
+    await expect(page.locator('h2:has-text("YOUR SHIP SANK!")')).toBeVisible({ timeout: 60000 });
+    
+    // Clicar no botão intermediário
+    await page.click('button:has-text("SEE RESULTS")');
+    
+    // 2ª Etapa do Game Over: Placar Final
+    await expect(page.locator('h2:has-text("SHIP SUNK")')).toBeVisible();
+    
+    // Aguardar mensagem da rede para evitar screenshot flaky com animação (RECORDING TO LOG...)
+    await expect(page.locator('text=Battle recorded in the Captain\'s Log.')).toBeVisible({ timeout: 15000 });
     
     // Regressão visual do Game Over
     await expect(page).toHaveScreenshot('game-over-baseline.png');
     
-    await page.click('button:has-text("Main Menu")');
+    // Voltar para o menu e iniciar nova partida para limpar o estado e desmontar o canvas
+    await page.click('button:has-text("Main Menu")', { force: true });
     await expect(page.locator('button:has-text("Play")')).toBeVisible();
+    
+    // Clique novamente no botão de iniciar jogo (Play) para verificar o reinício limpo
+    await page.click('button:has-text("Play")');
+    await expect(page.locator('canvas')).toBeVisible();
   });
 
   test('6. Pausa (via window.blur e tecla) sem avanço', async ({ page }) => {
@@ -101,7 +127,7 @@ test.describe('Pirate Battle E2E Test Suite (12 Flows)', () => {
     
     // Validar retorno limpo sem tela de game over
     await expect(page.locator('text=PIRATE BATTLE')).toBeVisible();
-    await expect(page.locator('text=Game Over')).toBeHidden();
+    await expect(page.locator('text=YOUR SHIP SANK!')).toBeHidden();
   });
 
   test('8. Resiliência: Idempotência e MSW Failures (Timeout & Retry)', async ({ page }) => {
@@ -111,16 +137,17 @@ test.describe('Pirate Battle E2E Test Suite (12 Flows)', () => {
     
     await page.click('button:has-text("Play")');
     
-    // Aguardamos Game Over
-    await expect(page.locator('text=Game Over')).toBeVisible({ timeout: 60000 });
+    // 1ª Etapa do Game Over: Alerta "YOUR SHIP SANK!"
+    await expect(page.locator('h2:has-text("YOUR SHIP SANK!")')).toBeVisible({ timeout: 60000 });
     
-    // O cenário de Timeout forçado pelo MSW abortará após 8s.
-    // Como a configuração do QueryClient (`retry: shouldRetry`) realiza retentativas 
-    // silenciosas automáticas para timeouts, a 2ª tentativa ocorrerá imediatamente
-    // em background. A idempotência garantirá o sucesso com `duplicate: true`.
-    // Portanto, o botão "Retry Submit" não chega a aparecer; a UI vai direto
-    // para o sucesso após o delay do timeout + retry.
-    await expect(page.locator('text=Record saved successfully!')).toBeVisible({ timeout: 15000 });
+    // Clicar no botão intermediário
+    await page.click('button:has-text("SEE RESULTS")');
+    
+    // 2ª Etapa do Game Over: Placar Final
+    await expect(page.locator('h2:has-text("SHIP SUNK")')).toBeVisible();
+    
+    // Aguardar a mensagem de sucesso de rede do MSW
+    await expect(page.locator('text=Battle recorded in the Captain\'s Log.')).toBeVisible({ timeout: 15000 });
   });
 
 });

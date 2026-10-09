@@ -23,7 +23,7 @@ export const WoodenModal: React.FC<Props> = ({ title, children }) => {
         </h2>
 
         {/* Content Area */}
-        <div className="relative z-10 flex-1 flex flex-col min-h-0 text-foam">
+        <div className="relative z-10 flex-1 flex flex-col min-h-0 text-foam overflow-y-auto">
           {children}
         </div>
 

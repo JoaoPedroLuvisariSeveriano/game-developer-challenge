@@ -1,5 +1,5 @@
 import React from 'react';
-import uiSheet from '../../../../public/assets/spritesheet/ui_sheet.json';
+import uiSheet from '../../assets/spritesheet/ui_sheet.json';
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   name: string;

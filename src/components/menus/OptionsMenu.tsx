@@ -31,16 +31,16 @@ export const OptionsMenu: React.FC = () => {
 
   return (
     <WoodenModal title="OPTIONS">
-      <div className="flex flex-col items-center justify-center gap-8 w-full h-full font-sans text-xl">
+      <div className="flex flex-col items-center justify-center gap-4 w-full h-full font-sans text-xl">
         {error && <p className="text-red-400 font-bold bg-black/50 px-4 py-2 rounded border border-red-900">{error}</p>}
         {saved && <p className="text-green-400 font-bold bg-black/50 px-4 py-2 rounded border border-green-900">Options Saved Successfully!</p>}
         
         <div className="flex flex-col items-center gap-4 bg-black/40 p-6 rounded-lg border border-[#5d4037] w-full max-w-md shadow-inner">
           <label className="font-bold text-lagoon-400 uppercase tracking-wider text-2xl">Session Time</label>
           <div className="flex items-center gap-6 mt-2">
-            <button onClick={() => alterTime(-10)} className="w-14 h-14 bg-gray-800 border-4 border-gray-600 rounded-full text-4xl font-display text-white hover:bg-gray-700 active:translate-y-1 transition-transform flex items-center justify-center pb-2 shadow-lg">-</button>
-            <span className="text-5xl font-display text-doubloon w-32 text-center drop-shadow-md">{form.sessionTimeSeconds}s</span>
-            <button onClick={() => alterTime(10)} className="w-14 h-14 bg-gray-800 border-4 border-gray-600 rounded-full text-4xl font-display text-white hover:bg-gray-700 active:translate-y-1 transition-transform flex items-center justify-center pb-2 shadow-lg">+</button>
+            <button onClick={() => alterTime(-30)} className="w-14 h-14 bg-gray-800 border-4 border-gray-600 rounded-full text-4xl font-display text-white hover:bg-gray-700 active:translate-y-1 transition-transform flex items-center justify-center pb-2 shadow-lg">-</button>
+            <span data-testid="session-time-value" className="text-5xl font-display text-doubloon w-32 text-center drop-shadow-md">{form.sessionTimeSeconds}s</span>
+            <button onClick={() => alterTime(30)} data-testid="session-time-plus" className="w-14 h-14 bg-gray-800 border-4 border-gray-600 rounded-full text-4xl font-display text-white hover:bg-gray-700 active:translate-y-1 transition-transform flex items-center justify-center pb-2 shadow-lg">+</button>
           </div>
         </div>
 
@@ -54,7 +54,7 @@ export const OptionsMenu: React.FC = () => {
         </div>
 
         <div className="mt-4">
-          <AtlasButton onClick={handleSave} baseName="button_primary">
+          <AtlasButton onClick={handleSave} baseName="button_primary" data-testid="save-options-button">
             Save Options
           </AtlasButton>
         </div>
