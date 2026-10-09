@@ -1,9 +1,9 @@
-import { Container, Sprite } from 'pixi.js';
+import { Container, Graphics } from 'pixi.js';
 import type { Game } from './Game';
 
 export class Player {
   public container: Container;
-  public sprite: Sprite;
+  public graphics: Graphics;
   
   public x = 0;
   public y = 0;
@@ -15,15 +15,18 @@ export class Player {
   constructor(_game: Game) {
     this.container = new Container();
     
-    // We use a hull from the manifest, e.g., 'hull_large_1'
-    this.sprite = Sprite.from('hull_large_1');
-    this.sprite.anchor.set(0.5);
+    // Fallback graphics to ensure visibility
+    this.graphics = new Graphics();
+    this.graphics.rect(-20, -20, 40, 40);
+    this.graphics.fill(0xff0000); // Red color
     
-    // Scale up the placeholder 1x1 image so we can see it
-    this.sprite.scale.set(64); 
-    this.sprite.tint = 0x00ff00; // Tint it green to differentiate it
+    // To identify the front of the ship
+    this.graphics.moveTo(0, -20);
+    this.graphics.lineTo(20, 0);
+    this.graphics.lineTo(-20, 0);
+    this.graphics.fill(0xffff00);
 
-    this.container.addChild(this.sprite);
+    this.container.addChild(this.graphics);
     
     // Center initially
     this.container.x = window.innerWidth / 2;
@@ -53,6 +56,10 @@ export class Player {
     if (this.keys['ArrowUp'] || this.keys['KeyW']) {
       nextX += Math.cos(this.rotation - Math.PI / 2) * speed;
       nextY += Math.sin(this.rotation - Math.PI / 2) * speed;
+    }
+    if (this.keys['ArrowDown'] || this.keys['KeyS']) {
+      nextX -= Math.cos(this.rotation - Math.PI / 2) * speed;
+      nextY -= Math.sin(this.rotation - Math.PI / 2) * speed;
     }
     if (this.keys['ArrowLeft'] || this.keys['KeyA']) {
       this.rotation -= rotationSpeed;
