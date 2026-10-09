@@ -1,8 +1,8 @@
-import { Container, Graphics } from 'pixi.js';
+import { Container, Sprite } from 'pixi.js';
 
 export abstract class Enemy {
   public container: Container;
-  public graphics: Graphics;
+  public sprite: Sprite;
   public active = false;
   
   public x = 0;
@@ -10,10 +10,16 @@ export abstract class Enemy {
   public hp = 1;
   public radius = 20;
 
-  constructor() {
+  constructor(textureName: string) {
     this.container = new Container();
-    this.graphics = new Graphics();
-    this.container.addChild(this.graphics);
+    this.sprite = Sprite.from(textureName);
+    this.sprite.anchor.set(0.5);
+    
+    // Maybe some cannon or sail depending on enemy type, 
+    // but the subclasses will handle specific parts if needed.
+    // For simplicity, we just use a base texture.
+    
+    this.container.addChild(this.sprite);
     this.container.visible = false;
   }
 

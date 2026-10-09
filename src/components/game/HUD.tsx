@@ -15,17 +15,16 @@ export const HUD: React.FC = () => {
         
         {/* Top Left: Health Bar */}
         <div className="flex items-center mt-2 ml-2">
-          <AtlasSprite name="icon_heart" className="w-12 h-12 z-20 -mr-6 drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]" />
-          <div className="relative flex items-center justify-center min-w-[200px] h-8">
-            <AtlasSprite name="bar_background" className="absolute inset-0 w-full h-full z-0 opacity-80" />
+          <img src="/assets/png/retina/ui/hud/icon_heart.png" alt="Heart" className="w-12 h-12 z-20 -mr-6 drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]" />
+          <div className="relative flex items-center justify-center w-[220px] h-[36px] bg-[#1a110f] rounded-lg border-2 border-[#5d4037] overflow-hidden shadow-inner">
             
-            <div className="absolute z-10 left-0 h-full overflow-hidden transition-all duration-300" style={{ width: `${Math.max(0, (hp / 10) * 100)}%` }}>
-               <AtlasSprite name="bar_fill_green" className="h-full w-[200px]" />
+            <div className="absolute z-10 left-0 h-full transition-all duration-300" style={{ width: `${Math.max(0, (hp / 10) * 100)}%` }}>
+               <img src="/assets/png/retina/ui/hud/health_fill_green.png" alt="HP Fill" className="h-full w-full object-cover object-left" />
             </div>
             
-            <AtlasSprite name="bar_frame" className="absolute inset-0 w-full h-full z-20" />
+            <img src="/assets/png/retina/ui/hud/health_frame.png" alt="HP Frame" className="absolute inset-0 w-full h-full z-20 pointer-events-none mix-blend-overlay" />
             
-            <span className="absolute z-30 font-display text-white text-xl tracking-widest drop-shadow-[0_2px_4px_rgba(0,0,0,1)] pt-1">
+            <span className="relative z-30 font-display text-white text-xl tracking-widest drop-shadow-[0_2px_4px_rgba(0,0,0,1)] pt-1" style={{ WebkitTextStroke: '1px black' }}>
               {hp} / 10
             </span>
           </div>
@@ -33,13 +32,13 @@ export const HUD: React.FC = () => {
 
         {/* Top Right: Status */}
         <div className="flex flex-col gap-3 mr-2">
-          <div className="flex items-center bg-black/60 border-2 border-[#5d4037] rounded-lg px-4 py-2 shadow-lg backdrop-blur-sm">
-            <AtlasSprite name="icon_score" className="w-8 h-8 mr-3 drop-shadow-md" />
-            <span className="font-display text-doubloon text-3xl tracking-wider w-20 text-right drop-shadow-md">{score}</span>
+          <div className="relative flex items-center bg-black/60 border-2 border-[#d4af37] rounded-lg px-4 py-2 shadow-[0_0_15px_rgba(0,0,0,0.8)] backdrop-blur-sm">
+            <img src="/assets/png/retina/ui/hud/icon_score.png" alt="Score" className="absolute -left-5 top-1/2 -translate-y-1/2 w-10 h-10 drop-shadow-md" />
+            <span className="font-display text-[#d4af37] text-3xl tracking-wider w-24 text-right drop-shadow-md pl-4">{score}</span>
           </div>
-          <div className="flex items-center bg-black/60 border-2 border-[#5d4037] rounded-lg px-4 py-2 shadow-lg backdrop-blur-sm">
-            <AtlasSprite name="icon_time" className="w-8 h-8 mr-3 drop-shadow-md" />
-            <span className="font-display text-foam text-3xl tracking-wider w-20 text-right drop-shadow-md">{minutes}:{seconds}</span>
+          <div className="relative flex items-center bg-black/60 border-2 border-[#d4af37] rounded-lg px-4 py-2 shadow-[0_0_15px_rgba(0,0,0,0.8)] backdrop-blur-sm">
+            <img src="/assets/png/retina/ui/hud/icon_time.png" alt="Time" className="absolute -left-5 top-1/2 -translate-y-1/2 w-10 h-10 drop-shadow-md" />
+            <span className="font-display text-foam text-3xl tracking-wider w-24 text-right drop-shadow-md pl-4">{minutes}:{seconds}</span>
           </div>
         </div>
 

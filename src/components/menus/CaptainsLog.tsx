@@ -48,7 +48,7 @@ export const CaptainsLog: React.FC<Props> = ({ defaultTab = 'ranking' }) => {
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 bg-[#2d1b15]/80 border-4 border-[#1a0f0c] rounded-lg overflow-hidden flex flex-col shadow-inner">
+        <div className="flex-1 bg-transparent border-0 rounded-lg overflow-hidden flex flex-col">
           
           {query.isLoading ? (
             <div className="flex-1 flex items-center justify-center text-3xl text-lagoon-400 font-display animate-pulse">LOADING...</div>
@@ -58,28 +58,33 @@ export const CaptainsLog: React.FC<Props> = ({ defaultTab = 'ranking' }) => {
             <div className="flex-1 flex items-center justify-center text-2xl text-gray-400 font-sans italic">No records found.</div>
           ) : (
             <div className="overflow-x-auto w-full">
-              <table className="w-full text-left border-collapse">
+              <table className="w-full text-left border-collapse bg-transparent">
                 <thead>
-                  <tr className="bg-black/80 text-doubloon text-lg uppercase tracking-wider font-display">
+                  <tr className="text-doubloon text-xl uppercase tracking-widest font-display bg-transparent border-b-2 border-doubloon/50">
                     <th className="p-4 w-24">Rank</th>
                     <th className="p-4">{tab === 'ranking' ? 'Captain' : 'Date'}</th>
                     <th className="p-4">Points</th>
                     <th className="p-4">Played</th>
+                    <th className="p-4 text-center">Status</th>
                   </tr>
                 </thead>
                 <tbody className="font-sans">
                   {items.map((item: any, idx: number) => {
                     const rank = tab === 'ranking' ? (page - 1) * size + idx + 1 : '-';
                     const isTop3 = tab === 'ranking' && (rank as number) <= 3;
+                    const isVictory = item.endReason === 'time_up';
+                    const statusColor = isVictory ? 'text-lagoon-400' : 'text-red-400';
+                    const statusText = isVictory ? 'VICTORY' : 'DEFEAT';
                     return (
-                      <tr key={item.matchId} className="border-b border-black/30 even:bg-black/50 odd:bg-black/20 hover:bg-white/5 transition-colors text-xl font-semibold">
+                      <tr key={item.matchId} className="border-b border-white/10 even:bg-white/5 odd:bg-transparent hover:bg-white/10 transition-colors text-xl font-semibold">
                         <td className="p-4 flex items-center gap-2">
                           {isTop3 && <span className="text-doubloon text-2xl" title="Top 3">★</span>}
                           <span className={isTop3 ? 'text-doubloon font-black' : 'text-gray-300'}>#{rank}</span>
                         </td>
                         <td className="p-4 text-foam">{tab === 'ranking' ? item.playerName : new Date(item.playedAt).toLocaleDateString()}</td>
-                        <td className="p-4 text-lagoon-400 font-display tracking-wider">{item.score}</td>
+                        <td className="p-4 text-doubloon font-display tracking-wider drop-shadow-sm">{item.score}</td>
                         <td className="p-4 text-gray-400">{item.durationMs ? Math.round(item.durationMs / 1000) : '-'}s</td>
+                        <td className={`p-4 text-center font-display tracking-widest ${statusColor}`}>{statusText}</td>
                       </tr>
                     );
                   })}

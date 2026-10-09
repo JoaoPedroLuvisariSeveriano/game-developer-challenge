@@ -44,8 +44,14 @@ export const GameOver: React.FC = () => {
   if (step === 1) {
     return (
       <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-50 backdrop-blur-sm p-4">
-        <div className="relative bg-[#3e2723] rounded-sm shadow-[0_0_40px_rgba(0,0,0,1)] border-[6px] md:border-[8px] border-[#2d1b15] flex flex-col items-center p-8 md:p-12 text-center max-w-md w-full">
-          <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, #000 2px, #000 4px)' }}></div>
+        <div 
+          className="relative flex flex-col items-center p-8 md:p-12 text-center max-w-md w-full"
+          style={{
+            borderImage: "url('/assets/png/retina/ui/menu/panel_menu.png') 80 fill",
+            borderStyle: "solid",
+            borderWidth: "40px"
+          }}
+        >
           
           <h2 className="relative z-10 text-4xl md:text-5xl font-display text-red-500 mb-6 drop-shadow-[0_2px_2px_rgba(0,0,0,1)] tracking-widest uppercase">
             YOUR SHIP SANK!

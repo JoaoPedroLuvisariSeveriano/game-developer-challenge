@@ -1,4 +1,4 @@
-import { Application, Container, Ticker } from 'pixi.js';
+import { Application, Container, Ticker, TilingSprite, Sprite } from 'pixi.js';
 import { Player } from './Player';
 import { ProjectilePool } from './ProjectilePool';
 import { EnemyManager } from './EnemyManager';
@@ -10,6 +10,8 @@ import { useMatchStore } from '../../state/matchStore';
 export class Game {
   public app: Application;
   public world: Container;
+  public backgroundLayer: Container;
+  public ocean!: TilingSprite;
   public player!: Player;
   public pool!: ProjectilePool;
   public enemyManager!: EnemyManager;
@@ -23,6 +25,7 @@ export class Game {
   constructor() {
     this.app = new Application();
     this.world = new Container();
+    this.backgroundLayer = new Container();
   }
 
   async init(canvas: HTMLCanvasElement) {
@@ -39,7 +42,29 @@ export class Game {
       autoDensity: true,
     });
 
+    this.app.stage.addChild(this.backgroundLayer);
     this.app.stage.addChild(this.world);
+
+    // Ocean Tiling Background
+    this.ocean = new TilingSprite({
+      texture: Sprite.from('tile_73').texture,
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
+    this.backgroundLayer.addChild(this.ocean);
+
+    // Random Islands / Rocks
+    for (let i = 0; i < 15; i++) {
+      // randomly pick an island/rock tile
+      const tId = Math.floor(Math.random() * 5) + 80; // tiles 80-84 as islands?
+      const island = Sprite.from(`tile_${tId}`);
+      island.anchor.set(0.5);
+      island.position.set(Math.random() * window.innerWidth, Math.random() * window.innerHeight);
+      island.scale.set(1.5 + Math.random() * 2);
+      // subtle rotation
+      island.rotation = Math.random() * Math.PI * 2;
+      this.backgroundLayer.addChild(island);
+    }
 
     this.feel = new GameFeel(this);
 
@@ -107,6 +132,11 @@ export class Game {
       return;
     }
 
+    if (this.ocean) {
+      this.ocean.tilePosition.x -= 0.5 * dt;
+      this.ocean.tilePosition.y += 0.2 * dt;
+    }
+
     this.feel.update(dt);
     this.player.update(dt);
     this.pool.update(dt);
@@ -131,23 +161,29 @@ export class Game {
       if (p.owner === 'player') {
         for (const e of this.enemyManager.enemies) {
           if (e.active && checkCollision(p.x, p.y, 4, e.x, e.y, e.radius)) {
+            this.pool.spawnEffect(p.x, p.y, 'explosion_1');
             p.deactivate();
             e.takeDamage(1);
             this.feel.flashTint(e.container);
             if (e.hp <= 0) {
               this.score += 1;
               this.feel.shake(15, 150);
+              this.pool.spawnEffect(e.x, e.y, 'explosion_3');
             }
             break;
           }
         }
       } else if (p.owner === 'enemy') {
         if (checkCollision(p.x, p.y, 4, this.player.x, this.player.y, 20)) {
+          this.pool.spawnEffect(p.x, p.y, 'explosion_2');
           p.deactivate();
           this.player.takeDamage(1);
           this.feel.flashTint(this.player.container);
           this.feel.shake(10, 100);
-          if (this.player.hp <= 0) this.endGame('player_destroyed');
+          if (this.player.hp <= 0) {
+            this.pool.spawnEffect(this.player.x, this.player.y, 'explosion_3');
+            this.endGame('player_destroyed');
+          }
         }
       }
     }
@@ -155,11 +191,15 @@ export class Game {
     for (const e of this.enemyManager.enemies) {
       if (e.active && e instanceof Chaser) {
         if (checkCollision(e.x, e.y, e.radius, this.player.x, this.player.y, 20)) {
+          this.pool.spawnEffect(e.x, e.y, 'explosion_3');
           e.destroy();
           this.player.takeDamage(2);
           this.feel.flashTint(this.player.container);
           this.feel.shake(20, 250);
-          if (this.player.hp <= 0) this.endGame('player_destroyed');
+          if (this.player.hp <= 0) {
+            this.pool.spawnEffect(this.player.x, this.player.y, 'explosion_3');
+            this.endGame('player_destroyed');
+          }
         }
       }
     }

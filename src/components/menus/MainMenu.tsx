@@ -38,7 +38,14 @@ export const MainMenu: React.FC = () => {
       </div>
 
       {/* Right Column: Controls Panel */}
-      <div className="hidden md:block z-10 bg-black/70 border-4 border-doubloon/80 rounded-xl p-8 text-foam font-sans shadow-2xl backdrop-blur-sm max-w-sm w-full">
+      <div 
+        className="hidden md:block z-10 p-8 text-foam font-sans shadow-2xl backdrop-blur-sm max-w-sm w-full"
+        style={{
+          borderImage: "url('/assets/png/retina/ui/menu/panel_menu.png') 80 fill",
+          borderStyle: "solid",
+          borderWidth: "40px"
+        }}
+      >
         <h2 className="text-3xl font-display text-doubloon text-center mb-6 tracking-wider">Controls</h2>
         <table className="w-full text-lg border-separate border-spacing-y-3">
           <tbody>

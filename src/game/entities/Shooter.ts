@@ -8,10 +8,9 @@ export class Shooter extends Enemy {
   private safeDistance = 200;
 
   constructor(pool: ProjectilePool) {
-    super();
+    super('ship_5');
     this.pool = pool;
-    this.graphics.rect(-15, -15, 30, 30);
-    this.graphics.fill(0x00ffff); // Cyan
+    this.sprite.tint = 0xaaaaff; // lightly tint
   }
 
   update(dt: number, playerX: number, playerY: number) {

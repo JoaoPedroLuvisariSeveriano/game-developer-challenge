@@ -4,9 +4,8 @@ export class Chaser extends Enemy {
   private speed = 2.5;
 
   constructor() {
-    super();
-    this.graphics.rect(-15, -15, 30, 30);
-    this.graphics.fill(0xff00ff); // Magenta
+    super('ship_3'); // dark ship maybe
+    this.sprite.tint = 0xffaaaa; // lightly tint to differentiate if needed, or don't
   }
 
   update(dt: number, playerX: number, playerY: number) {

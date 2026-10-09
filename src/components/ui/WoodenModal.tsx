@@ -12,10 +12,14 @@ export const WoodenModal: React.FC<Props> = ({ title, children }) => {
 
   return (
     <div className="absolute inset-0 flex items-center justify-center bg-black/80 backdrop-blur-sm z-50 p-4 md:p-8">
-      <div className="relative w-full max-w-4xl max-h-full bg-[#3e2723] rounded shadow-[0_0_40px_rgba(0,0,0,1)] border-[6px] md:border-[12px] border-[#2d1b15] flex flex-col p-6 md:p-10 overflow-hidden">
-        
-        {/* Subtle wood-like overlay */}
-        <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, #000 2px, #000 4px)' }}></div>
+      <div 
+        className="relative w-full max-w-4xl max-h-full flex flex-col p-6 md:p-10 overflow-hidden"
+        style={{
+          borderImage: "url('/assets/png/retina/ui/menu/panel_menu.png') 80 fill",
+          borderStyle: "solid",
+          borderWidth: "40px"
+        }}
+      >
 
         {/* Dynamic Title */}
         <h2 className="relative z-10 text-4xl md:text-6xl font-display text-doubloon text-center mb-8 drop-shadow-[0_4px_2px_rgba(0,0,0,0.8)] tracking-widest uppercase shrink-0">

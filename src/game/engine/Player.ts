@@ -1,4 +1,4 @@
-import { Container, Graphics } from 'pixi.js';
+import { Container, Graphics, Sprite } from 'pixi.js';
 import type { Game } from './Game';
 import type { ProjectilePool } from './ProjectilePool';
 
@@ -11,6 +11,7 @@ export class Player {
   public y = 0;
   public rotation = 0;
   public hp = 10;
+  private game: Game;
   
   private fireCooldownFront = 0;
   private fireCooldownSide = 0;
@@ -19,21 +20,46 @@ export class Player {
   private keys: Record<string, boolean> = {};
 
   constructor(_game: Game, pool: ProjectilePool) {
+    this.game = _game;
     this.container = new Container();
     this.pool = pool;
     
-    // Fallback graphics to ensure visibility
-    this.graphics = new Graphics();
-    this.graphics.rect(-20, -20, 40, 40);
-    this.graphics.fill(0xff0000); // Red color
+    this.graphics = new Graphics(); // Keep just for typing if needed, but we won't use it
     
-    // To identify the front of the ship
-    this.graphics.moveTo(0, -20);
-    this.graphics.lineTo(20, 0);
-    this.graphics.lineTo(-20, 0);
-    this.graphics.fill(0xffff00);
+    // Hull
+    const hull = Sprite.from('hull_large_1');
+    hull.anchor.set(0.5);
+    this.container.addChild(hull);
 
-    this.container.addChild(this.graphics);
+    // Cannons
+    const createCannon = (x: number, y: number, angle: number) => {
+      const cannon = Sprite.from('cannon');
+      cannon.anchor.set(0.5);
+      cannon.position.set(x, y);
+      cannon.rotation = angle;
+      this.container.addChild(cannon);
+    };
+    
+    // Front cannon
+    createCannon(0, -30, 0);
+    // Left cannons
+    createCannon(-15, -10, -Math.PI / 2);
+    createCannon(-15, 10, -Math.PI / 2);
+    // Right cannons
+    createCannon(15, -10, Math.PI / 2);
+    createCannon(15, 10, Math.PI / 2);
+
+    // Sail
+    const sail = Sprite.from('sail_large_14'); // Try to find a good sail (14 might be red cross)
+    sail.anchor.set(0.5);
+    sail.position.set(0, 0);
+    this.container.addChild(sail);
+
+    // Flag
+    const flag = Sprite.from('flag_2');
+    flag.anchor.set(0.5, 1);
+    flag.position.set(0, 30);
+    this.container.addChild(flag);
     
     // Center initially
     this.container.x = window.innerWidth / 2;
@@ -67,19 +93,29 @@ export class Player {
     let nextX = this.x;
     let nextY = this.y;
 
+    let isMoving = false;
     if (this.keys['ArrowUp'] || this.keys['KeyW']) {
       nextX += Math.cos(this.rotation - Math.PI / 2) * speed;
       nextY += Math.sin(this.rotation - Math.PI / 2) * speed;
+      isMoving = true;
     }
     if (this.keys['ArrowDown'] || this.keys['KeyS']) {
       nextX -= Math.cos(this.rotation - Math.PI / 2) * speed;
       nextY -= Math.sin(this.rotation - Math.PI / 2) * speed;
+      isMoving = true;
     }
     if (this.keys['ArrowLeft'] || this.keys['KeyA']) {
       this.rotation -= rotationSpeed;
     }
     if (this.keys['ArrowRight'] || this.keys['KeyD']) {
       this.rotation += rotationSpeed;
+    }
+
+    if (isMoving && Math.random() > 0.5) {
+      // Spawn a simple wake effect behind the ship
+      const wx = this.x - Math.cos(this.rotation - Math.PI / 2) * 30;
+      const wy = this.y - Math.sin(this.rotation - Math.PI / 2) * 30;
+      this.game.pool.spawnEffect(wx, wy, 'explosion_3');
     }
 
     // Shooting

@@ -1,7 +1,7 @@
-import { Graphics } from 'pixi.js';
+import { Sprite, Container } from 'pixi.js';
 
 export class Projectile {
-  public graphics: Graphics;
+  public sprite: Sprite;
   public active = false;
   
   public x = 0;
@@ -13,10 +13,10 @@ export class Projectile {
   public life = 0;
 
   constructor() {
-    this.graphics = new Graphics();
-    this.graphics.circle(0, 0, 4);
-    this.graphics.fill(0xffa500); // Orange by default
-    this.graphics.visible = false;
+    this.sprite = Sprite.from('cannon_ball');
+    this.sprite.anchor.set(0.5);
+    this.sprite.scale.set(0.5); // Adjust size as needed
+    this.sprite.visible = false;
   }
 
   spawn(x: number, y: number, rotation: number, speed: number, owner: 'player' | 'enemy', color = 0xffa500) {
@@ -28,18 +28,17 @@ export class Projectile {
     this.life = 100; // frames or distance
     this.active = true;
     
-    this.graphics.clear();
-    this.graphics.circle(0, 0, 4);
-    this.graphics.fill(color);
+    // Tint the cannon ball slightly if we want, or keep original
+    // this.sprite.tint = color;
     
-    this.graphics.x = this.x;
-    this.graphics.y = this.y;
-    this.graphics.visible = true;
+    this.sprite.x = this.x;
+    this.sprite.y = this.y;
+    this.sprite.visible = true;
   }
 
   deactivate() {
     this.active = false;
-    this.graphics.visible = false;
+    this.sprite.visible = false;
   }
 
   update(dt: number) {
@@ -49,11 +48,12 @@ export class Projectile {
     this.y += this.vy * dt;
     this.life -= dt;
     
-    this.graphics.x = this.x;
-    this.graphics.y = this.y;
+    this.sprite.x = this.x;
+    this.sprite.y = this.y;
 
     if (this.life <= 0) {
       this.deactivate();
     }
   }
 }
+
