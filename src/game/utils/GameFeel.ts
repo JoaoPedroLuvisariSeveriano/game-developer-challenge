@@ -51,13 +51,13 @@ export class GameFeel {
       this.shakeTimer -= dt * (1000 / 60);
       const offsetX = (Math.random() * 2 - 1) * this.shakeMagnitude;
       const offsetY = (Math.random() * 2 - 1) * this.shakeMagnitude;
-      this.game.world.x = this.baseWorldX + offsetX;
-      this.game.world.y = this.baseWorldY + offsetY;
-
-      if (this.shakeTimer <= 0) {
-        this.game.world.x = this.baseWorldX;
-        this.game.world.y = this.baseWorldY;
-      }
+      
+      // Instead of caching base world position, just add to the game world's position dynamically
+      // Game.ts will reset the position to the center of the screen every frame, and feel will add the offset
+      this.game.world.x += offsetX;
+      this.game.world.y += offsetY;
+      this.game.backgroundLayer.x += offsetX;
+      this.game.backgroundLayer.y += offsetY;
     }
   }
 }
