@@ -333,7 +333,7 @@ export class Game {
     }
     if (this.app && this.app.renderer) {
       try {
-        this.app.destroy(true, { children: true });
+        this.app.destroy({ removeView: true }, { children: true });
       } catch (e) {
         console.error('Destroy bypassed:', e);
       }
