@@ -180,6 +180,6 @@ export class Game {
     if (this.player) {
       this.player.destroy();
     }
-    this.app.destroy(true, true);
+    this.app.destroy(true, { children: true, texture: true });
   }
 }

@@ -46,15 +46,15 @@ export const GameOver: React.FC = () => {
         {submitMatch.isError && (
           <div className="flex flex-col items-center">
             <p className="text-red-400 mb-2 font-semibold">Failed to submit record (Network Error).</p>
-            <button onClick={handleSubmit} className="px-4 py-2 bg-red-600 hover:bg-red-500 rounded font-bold transition">Retry Submit</button>
+            <button onClick={handleSubmit} className="px-4 py-2 bg-red-600 hover:bg-red-500 focus:outline-none focus:ring-4 focus:ring-blue-300 rounded font-bold transition">Retry Submit</button>
           </div>
         )}
         {submitMatch.isSuccess && <p className="text-green-400 font-bold">Record saved successfully!</p>}
       </div>
 
       <div className="flex gap-4">
-        <button onClick={() => setStatus('playing')} className="px-8 py-4 bg-blue-600 hover:bg-blue-500 rounded font-bold text-xl transition">Play Again</button>
-        <button onClick={() => setStatus('menu')} className="px-8 py-4 bg-gray-700 hover:bg-gray-600 rounded font-bold text-xl transition">Main Menu</button>
+        <button onClick={() => setStatus('playing')} className="px-8 py-4 bg-blue-600 hover:bg-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-300 rounded font-bold text-xl transition">Play Again</button>
+        <button onClick={() => setStatus('menu')} className="px-8 py-4 bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-4 focus:ring-blue-300 rounded font-bold text-xl transition">Main Menu</button>
       </div>
     </div>
   );

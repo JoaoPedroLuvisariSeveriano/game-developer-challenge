@@ -39,8 +39,9 @@ export const PixiCanvas: React.FC = () => {
   return (
     <div className="w-full h-screen overflow-hidden bg-black relative">
       {loading && (
-        <div className="absolute inset-0 flex items-center justify-center text-white text-2xl font-bold z-10">
-          Loading Assets...
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-900 text-white z-50">
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+          <div className="text-2xl font-bold tracking-widest text-blue-300">LOADING ASSETS...</div>
         </div>
       )}
       <canvas ref={canvasRef} className="block w-full h-full" />

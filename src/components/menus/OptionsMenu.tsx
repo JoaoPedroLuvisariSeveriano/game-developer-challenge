@@ -32,8 +32,8 @@ export const OptionsMenu: React.FC = () => {
           <input type="number" step="0.5" value={form.enemySpawnIntervalSeconds} onChange={e => setForm({...form, enemySpawnIntervalSeconds: Number(e.target.value)})} className="text-white bg-gray-700 p-2 mt-2 rounded border border-gray-600 focus:outline-none focus:border-blue-500" />
         </label>
         <div className="flex gap-4 mt-4">
-          <button onClick={handleSave} className="flex-1 py-3 bg-green-600 hover:bg-green-500 rounded font-bold transition">Save</button>
-          <button onClick={() => setStatus('menu')} className="flex-1 py-3 bg-gray-600 hover:bg-gray-500 rounded font-bold transition">Cancel</button>
+          <button onClick={handleSave} className="flex-1 py-3 bg-green-600 hover:bg-green-500 focus:outline-none focus:ring-4 focus:ring-blue-300 rounded font-bold transition">Save</button>
+          <button onClick={() => setStatus('menu')} className="flex-1 py-3 bg-gray-600 hover:bg-gray-500 focus:outline-none focus:ring-4 focus:ring-blue-300 rounded font-bold transition">Cancel</button>
         </div>
       </div>
     </div>

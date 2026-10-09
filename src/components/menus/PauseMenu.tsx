@@ -10,13 +10,13 @@ export const PauseMenu: React.FC = () => {
       <div className="flex gap-4">
         <button 
           onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Escape' }))} 
-          className="px-8 py-4 bg-green-600 hover:bg-green-500 rounded font-bold text-xl transition"
+          className="px-8 py-4 bg-green-600 hover:bg-green-500 focus:outline-none focus:ring-4 focus:ring-blue-300 rounded font-bold text-xl transition"
         >
           Resume
         </button>
         <button 
           onClick={() => setStatus('menu')} 
-          className="px-8 py-4 bg-red-600 hover:bg-red-500 rounded font-bold text-xl transition"
+          className="px-8 py-4 bg-red-600 hover:bg-red-500 focus:outline-none focus:ring-4 focus:ring-blue-300 rounded font-bold text-xl transition"
         >
           Quit to Menu
         </button>
