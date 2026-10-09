@@ -47,7 +47,11 @@ export class Game {
 
     // Ocean Tiling Background
     const oceanTexture = Texture.from('/assets/kenney_pirate-pack/PNG/Retina/Tiles/tile_73.png');
-    this.ocean = new TilingSprite(oceanTexture, this.app.screen.width, this.app.screen.height);
+    this.ocean = new TilingSprite({
+      texture: oceanTexture,
+      width: this.app.screen.width,
+      height: this.app.screen.height,
+    });
     this.app.stage.addChildAt(this.ocean, 0);
 
     // Random Islands / Rocks
