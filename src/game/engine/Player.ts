@@ -1,19 +1,26 @@
 import { Container, Graphics } from 'pixi.js';
 import type { Game } from './Game';
+import type { ProjectilePool } from './ProjectilePool';
 
 export class Player {
   public container: Container;
   public graphics: Graphics;
+  private pool: ProjectilePool;
   
   public x = 0;
   public y = 0;
   public rotation = 0;
+  public hp = 10;
+  
+  private fireCooldownFront = 0;
+  private fireCooldownSide = 0;
 
   // Input state
   private keys: Record<string, boolean> = {};
 
-  constructor(_game: Game) {
+  constructor(_game: Game, pool: ProjectilePool) {
     this.container = new Container();
+    this.pool = pool;
     
     // Fallback graphics to ensure visibility
     this.graphics = new Graphics();
@@ -46,6 +53,13 @@ export class Player {
     this.keys[e.code] = false;
   };
 
+  takeDamage(amount: number) {
+    this.hp -= amount;
+    if (this.hp <= 0) {
+      console.log('Game Over');
+    }
+  }
+
   update(dt: number) {
     const speed = 5 * dt;
     const rotationSpeed = 0.05 * dt;
@@ -66,6 +80,38 @@ export class Player {
     }
     if (this.keys['ArrowRight'] || this.keys['KeyD']) {
       this.rotation += rotationSpeed;
+    }
+
+    // Shooting
+    if (this.fireCooldownFront > 0) this.fireCooldownFront -= dt;
+    if (this.fireCooldownSide > 0) this.fireCooldownSide -= dt;
+
+    if (this.keys['Space'] && this.fireCooldownFront <= 0) {
+      // Frontal shot
+      this.pool.spawn(this.x, this.y, this.rotation, 10, 'player', 0x00ff00);
+      this.fireCooldownFront = 20;
+    }
+
+    if (this.keys['KeyQ'] && this.fireCooldownSide <= 0) {
+      // Left side shots
+      for (let i = -1; i <= 1; i++) {
+        const offset = i * 15;
+        const px = this.x + Math.cos(this.rotation) * offset;
+        const py = this.y + Math.sin(this.rotation) * offset;
+        this.pool.spawn(px, py, this.rotation - Math.PI / 2, 10, 'player', 0x00ff00);
+      }
+      this.fireCooldownSide = 40;
+    }
+
+    if (this.keys['KeyE'] && this.fireCooldownSide <= 0) {
+      // Right side shots
+      for (let i = -1; i <= 1; i++) {
+        const offset = i * 15;
+        const px = this.x + Math.cos(this.rotation) * offset;
+        const py = this.y + Math.sin(this.rotation) * offset;
+        this.pool.spawn(px, py, this.rotation + Math.PI / 2, 10, 'player', 0x00ff00);
+      }
+      this.fireCooldownSide = 40;
     }
 
     // Map bounds (simulated limits)
