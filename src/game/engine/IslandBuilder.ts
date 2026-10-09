@@ -3,44 +3,74 @@ import { Container, Sprite } from 'pixi.js';
 export class IslandBuilder {
   static build(): { container: Container, radius: number } {
     const container = new Container();
+    const isTropical = Math.random() > 0.5;
     
-    // Base land tiles (using grass/sand: tile_18, tile_19, tile_34, tile_35)
-    const positions = [
-      { x: -32, y: -32, tile: 18 },
-      { x: 32, y: -32, tile: 19 },
-      { x: -32, y: 32, tile: 34 },
-      { x: 32, y: 32, tile: 35 }
-    ];
+    let grid: number[][];
 
-    for (const pos of positions) {
-      const tile = Sprite.from(`/assets/kenney_pirate-pack/PNG/Retina/Tiles/tile_${pos.tile}.png`);
-      tile.anchor.set(0.5);
-      tile.position.set(pos.x, pos.y);
-      container.addChild(tile);
+    if (!isTropical) {
+      // Sand Island Map 3x3
+      grid = [
+        [1, 2, 3],
+        [17, Math.random() > 0.5 ? 18 : 20, 19],
+        [33, 34, 35]
+      ];
+    } else {
+      // Tropical Island Map 3x3
+      grid = [
+        [6, Math.random() > 0.5 ? 23 : 24, 9],
+        [Math.random() > 0.5 ? 23 : 39, Math.random() > 0.5 ? 24 : 40, Math.random() > 0.5 ? 24 : 40],
+        [36, Math.random() > 0.5 ? 39 : 40, 37]
+      ];
+    }
+    
+    const tileSize = 64;
+    
+    for (let row = 0; row < 3; row++) {
+      for (let col = 0; col < 3; col++) {
+        const tileId = grid[row][col];
+        const tileIdStr = tileId < 10 ? `0${tileId}` : `${tileId}`;
+        const tile = Sprite.from(`/assets/kenney_pirate-pack/PNG/Retina/Tiles/tile_${tileIdStr}.png`);
+        tile.anchor.set(0.5);
+        tile.position.set((col - 1) * tileSize, (row - 1) * tileSize);
+        container.addChild(tile);
+      }
     }
 
-    // Add some random decorations (using high numbers which are usually trees/rocks, e.g., 85, 86, 88)
-    const decorTiles = [85, 86, 88];
-    const numDecors = Math.floor(Math.random() * 2) + 1;
-    for (let i = 0; i < numDecors; i++) {
-      const decorId = decorTiles[Math.floor(Math.random() * decorTiles.length)];
+    // Add Decorations
+    const treeTiles = [70, 71, 72];
+    const rockTiles = [49, 50, 51];
+    const wreckTiles = [81, 82, 83];
+    
+    // Place 1-3 trees
+    const numTrees = Math.floor(Math.random() * 3) + 1;
+    for (let i = 0; i < numTrees; i++) {
+      const decorId = treeTiles[Math.floor(Math.random() * treeTiles.length)];
       const decor = Sprite.from(`/assets/kenney_pirate-pack/PNG/Retina/Tiles/tile_${decorId}.png`);
       decor.anchor.set(0.5);
-      decor.scale.set(0.8); // slight scale down for decor
-      decor.position.set((Math.random() - 0.5) * 40, (Math.random() - 0.5) * 40);
+      decor.position.set((Math.random() - 0.5) * 80, (Math.random() - 0.5) * 80);
       container.addChild(decor);
     }
 
-    // Add some wood wreckage
-    if (Math.random() > 0.5) {
-      const wood = Sprite.from('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/wood (1).png');
-      wood.anchor.set(0.5);
-      wood.position.set((Math.random() - 0.5) * 40, (Math.random() - 0.5) * 40);
-      wood.rotation = Math.random() * Math.PI;
-      container.addChild(wood);
+    // Place 1-2 rocks
+    const numRocks = Math.floor(Math.random() * 2) + 1;
+    for (let i = 0; i < numRocks; i++) {
+      const decorId = rockTiles[Math.floor(Math.random() * rockTiles.length)];
+      const decor = Sprite.from(`/assets/kenney_pirate-pack/PNG/Retina/Tiles/tile_${decorId}.png`);
+      decor.anchor.set(0.5);
+      decor.position.set((Math.random() - 0.5) * 80, (Math.random() - 0.5) * 80);
+      container.addChild(decor);
     }
 
-    const radius = 55; // Appropriate collision radius for the assembled container
+    // Place a wreckage sometimes
+    if (Math.random() > 0.5) {
+      const decorId = wreckTiles[Math.floor(Math.random() * wreckTiles.length)];
+      const decor = Sprite.from(`/assets/kenney_pirate-pack/PNG/Retina/Tiles/tile_${decorId}.png`);
+      decor.anchor.set(0.5);
+      decor.position.set((Math.random() - 0.5) * 80, (Math.random() - 0.5) * 80);
+      container.addChild(decor);
+    }
+
+    const radius = 90; // Appropriate collision radius for a 3x3 grid
 
     return { container, radius };
   }
