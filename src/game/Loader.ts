@@ -47,7 +47,9 @@ export class AssetLoader {
   ];
 
   static async loadAll() {
-    await Assets.load(this.kenneyTextures);
+    await Assets.load(this.kenneyTextures, (progress) => {
+      console.log(`[Loader] Assets loading progress: ${(progress * 100).toFixed(0)}%`);
+    });
   }
 
   static async unloadAll() {

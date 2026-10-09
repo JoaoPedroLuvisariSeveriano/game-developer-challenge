@@ -12,9 +12,13 @@ export const PixiCanvas: React.FC = () => {
     
     const initGame = async () => {
       try {
-        await AssetLoader.loadAll();
+        try {
+          await AssetLoader.loadAll();
+        } catch (e) {
+          console.error('[CRITICAL] Some assets failed to load:', e);
+        }
+        
         if (!isMounted) return;
-        setLoading(false);
 
         if (!containerRef.current) return;
 
@@ -44,7 +48,9 @@ export const PixiCanvas: React.FC = () => {
         
         gameRef.current = game;
       } catch (err) {
-        console.error('[CRITICAL] Failed to initialize PixiJS or load assets:', err);
+        console.error('[CRITICAL] Failed to initialize PixiJS:', err);
+      } finally {
+        if (isMounted) setLoading(false);
       }
     };
 
