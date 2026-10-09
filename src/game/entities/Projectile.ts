@@ -13,7 +13,7 @@ export class Projectile {
   public life = 0;
 
   constructor() {
-    this.sprite = Sprite.from('cannon_ball');
+    this.sprite = Sprite.from('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/cannonBall.png');
     this.sprite.anchor.set(0.5);
     this.sprite.scale.set(0.5); // Adjust size as needed
     this.sprite.visible = false;

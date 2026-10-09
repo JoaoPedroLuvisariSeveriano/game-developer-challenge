@@ -19,7 +19,7 @@ export class ProjectilePool {
     const p = this.projectiles.find(proj => !proj.active);
     if (p) {
       p.spawn(x, y, rotation, speed, owner, color);
-      this.spawnEffect(x, y, 'fire_1');
+      this.spawnEffect(x, y, '/assets/kenney_pirate-pack/PNG/Retina/Effects/fire1.png');
     }
     // If pool is exhausted, we just don't shoot (or we could dynamically expand)
   }

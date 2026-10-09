@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import uiSheet from '../../assets/spritesheet/ui_sheet.json';
+
 
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   baseName?: string;
@@ -18,7 +18,7 @@ export const AtlasButton: React.FC<Props> = ({
   const spriteName = `${baseName}_${suffix}`;
   
   const bgStyle = {
-    backgroundImage: `url(/assets/png/retina/ui/menu/${spriteName}.png)`,
+    backgroundImage: `url('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/wood (2).png')`,
     backgroundSize: '100% 100%',
     width: '240px',
     height: '64px',

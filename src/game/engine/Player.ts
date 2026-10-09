@@ -27,14 +27,16 @@ export class Player {
     this.graphics = new Graphics(); // Keep just for typing if needed, but we won't use it
     
     // Hull
-    const hull = Sprite.from('hull_large_1');
+    const hull = Sprite.from('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/hullLarge (1).png');
     hull.anchor.set(0.5);
+    hull.scale.set(0.5);
     this.container.addChild(hull);
 
     // Cannons
     const createCannon = (x: number, y: number, angle: number) => {
-      const cannon = Sprite.from('cannon');
+      const cannon = Sprite.from('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/cannon.png');
       cannon.anchor.set(0.5);
+      cannon.scale.set(0.5);
       cannon.position.set(x, y);
       cannon.rotation = angle;
       this.container.addChild(cannon);
@@ -50,14 +52,16 @@ export class Player {
     createCannon(15, 10, Math.PI / 2);
 
     // Sail
-    const sail = Sprite.from('sail_large_14'); // Try to find a good sail (14 might be red cross)
+    const sail = Sprite.from('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/sailLarge (14).png');
     sail.anchor.set(0.5);
+    sail.scale.set(0.5);
     sail.position.set(0, 0);
     this.container.addChild(sail);
 
     // Flag
-    const flag = Sprite.from('flag_2');
+    const flag = Sprite.from('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/flag (2).png');
     flag.anchor.set(0.5, 1);
+    flag.scale.set(0.5);
     flag.position.set(0, 30);
     this.container.addChild(flag);
     
@@ -115,7 +119,7 @@ export class Player {
       // Spawn a simple wake effect behind the ship
       const wx = this.x - Math.cos(this.rotation - Math.PI / 2) * 30;
       const wy = this.y - Math.sin(this.rotation - Math.PI / 2) * 30;
-      this.game.pool.spawnEffect(wx, wy, 'explosion_3');
+      this.game.pool.spawnEffect(wx, wy, '/assets/kenney_pirate-pack/PNG/Retina/Effects/explosion3.png');
     }
 
     // Shooting

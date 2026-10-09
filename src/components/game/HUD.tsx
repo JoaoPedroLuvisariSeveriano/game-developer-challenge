@@ -15,16 +15,20 @@ export const HUD: React.FC = () => {
         
         {/* Top Left: Health Bar */}
         <div className="flex items-center mt-2 ml-2">
-          <img src="/assets/png/retina/ui/hud/icon_heart.png" alt="Heart" className="w-12 h-12 z-20 -mr-6 drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]" />
-          <div className="relative flex items-center justify-center w-[220px] h-[36px] bg-[#1a110f] rounded-lg border-2 border-[#5d4037] overflow-hidden shadow-inner">
+          {/* Heart Icon (Emoji or SVG) */}
+          <div className="w-12 h-12 z-20 -mr-4 flex items-center justify-center bg-[#8b0000] rounded-full border-2 border-[#ffcccb] shadow-[0_0_10px_rgba(255,0,0,0.8)] text-white text-2xl font-bold">
+            ❤
+          </div>
+          <div className="relative flex items-center justify-start w-[220px] h-[32px] bg-black/80 rounded-r-full border-2 border-[#5d4037] overflow-hidden shadow-[inset_0_4px_4px_rgba(0,0,0,0.8)]">
             
-            <div className="absolute z-10 left-0 h-full transition-all duration-300" style={{ width: `${Math.max(0, (hp / 10) * 100)}%` }}>
-               <img src="/assets/png/retina/ui/hud/health_fill_green.png" alt="HP Fill" className="h-full w-full object-cover object-left" />
-            </div>
+            {/* Health Fill */}
+            <div 
+              className="absolute z-10 left-0 h-full transition-all duration-300 bg-gradient-to-r from-red-600 to-green-500 rounded-r-full"
+              style={{ width: `${Math.max(0, (hp / 10) * 100)}%`, boxShadow: '0 0 10px rgba(0,255,0,0.5)' }}
+            />
             
-            <img src="/assets/png/retina/ui/hud/health_frame.png" alt="HP Frame" className="absolute inset-0 w-full h-full z-20 pointer-events-none mix-blend-overlay" />
-            
-            <span className="relative z-30 font-display text-white text-xl tracking-widest drop-shadow-[0_2px_4px_rgba(0,0,0,1)] pt-1" style={{ WebkitTextStroke: '1px black' }}>
+            {/* Health Text */}
+            <span className="relative z-30 font-display text-white text-lg tracking-widest pl-8 drop-shadow-[0_2px_2px_rgba(0,0,0,1)]">
               {hp} / 10
             </span>
           </div>
@@ -32,13 +36,24 @@ export const HUD: React.FC = () => {
 
         {/* Top Right: Status */}
         <div className="flex flex-col gap-3 mr-2">
-          <div className="relative flex items-center bg-black/60 border-2 border-[#d4af37] rounded-lg px-4 py-2 shadow-[0_0_15px_rgba(0,0,0,0.8)] backdrop-blur-sm">
-            <img src="/assets/png/retina/ui/hud/icon_score.png" alt="Score" className="absolute -left-5 top-1/2 -translate-y-1/2 w-10 h-10 drop-shadow-md" />
-            <span className="font-display text-[#d4af37] text-3xl tracking-wider w-24 text-right drop-shadow-md pl-4">{score}</span>
+          <div 
+            className="relative flex items-center bg-black/60 rounded-l-full px-6 py-2 shadow-[0_0_15px_rgba(0,0,0,0.8)] backdrop-blur-sm"
+            style={{ borderImage: "url('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/wood (3).png') 10 stretch", borderStyle: "solid", borderWidth: "4px" }}
+          >
+            <div className="absolute -left-6 top-1/2 -translate-y-1/2 w-10 h-10 bg-[#d4af37] rounded-full flex items-center justify-center border-2 border-white shadow-[0_0_10px_rgba(212,175,55,0.8)] text-xl font-bold text-black">
+              ★
+            </div>
+            <span className="font-display text-[#d4af37] text-2xl tracking-wider w-24 text-right drop-shadow-md pl-4">{score}</span>
           </div>
-          <div className="relative flex items-center bg-black/60 border-2 border-[#d4af37] rounded-lg px-4 py-2 shadow-[0_0_15px_rgba(0,0,0,0.8)] backdrop-blur-sm">
-            <img src="/assets/png/retina/ui/hud/icon_time.png" alt="Time" className="absolute -left-5 top-1/2 -translate-y-1/2 w-10 h-10 drop-shadow-md" />
-            <span className="font-display text-foam text-3xl tracking-wider w-24 text-right drop-shadow-md pl-4">{minutes}:{seconds}</span>
+          
+          <div 
+            className="relative flex items-center bg-black/60 rounded-l-full px-6 py-2 shadow-[0_0_15px_rgba(0,0,0,0.8)] backdrop-blur-sm"
+            style={{ borderImage: "url('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/wood (3).png') 10 stretch", borderStyle: "solid", borderWidth: "4px" }}
+          >
+            <div className="absolute -left-6 top-1/2 -translate-y-1/2 w-10 h-10 bg-[#00a8ff] rounded-full flex items-center justify-center border-2 border-white shadow-[0_0_10px_rgba(0,168,255,0.8)] text-xl font-bold text-black">
+              ⏱
+            </div>
+            <span className="font-display text-foam text-2xl tracking-wider w-24 text-right drop-shadow-md pl-4">{minutes}:{seconds}</span>
           </div>
         </div>
 

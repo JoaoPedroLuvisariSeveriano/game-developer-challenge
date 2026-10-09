@@ -1,4 +1,4 @@
-import { Application, Container, Ticker, TilingSprite, Sprite } from 'pixi.js';
+import { Application, Container, Ticker, TilingSprite, Sprite, Texture } from 'pixi.js';
 import { Player } from './Player';
 import { ProjectilePool } from './ProjectilePool';
 import { EnemyManager } from './EnemyManager';
@@ -42,12 +42,12 @@ export class Game {
       autoDensity: true,
     });
 
-    this.app.stage.addChild(this.backgroundLayer);
+    this.app.stage.addChildAt(this.backgroundLayer, 0);
     this.app.stage.addChild(this.world);
 
     // Ocean Tiling Background
     this.ocean = new TilingSprite({
-      texture: Sprite.from('tile_73').texture,
+      texture: Texture.from('/assets/kenney_pirate-pack/PNG/Retina/Tiles/tile_73.png'),
       width: window.innerWidth,
       height: window.innerHeight,
     });
@@ -57,7 +57,7 @@ export class Game {
     for (let i = 0; i < 15; i++) {
       // randomly pick an island/rock tile
       const tId = Math.floor(Math.random() * 5) + 80; // tiles 80-84 as islands?
-      const island = Sprite.from(`tile_${tId}`);
+      const island = Sprite.from(`/assets/kenney_pirate-pack/PNG/Retina/Tiles/tile_${tId}.png`);
       island.anchor.set(0.5);
       island.position.set(Math.random() * window.innerWidth, Math.random() * window.innerHeight);
       island.scale.set(1.5 + Math.random() * 2);
@@ -161,27 +161,27 @@ export class Game {
       if (p.owner === 'player') {
         for (const e of this.enemyManager.enemies) {
           if (e.active && checkCollision(p.x, p.y, 4, e.x, e.y, e.radius)) {
-            this.pool.spawnEffect(p.x, p.y, 'explosion_1');
+            this.pool.spawnEffect(p.x, p.y, '/assets/kenney_pirate-pack/PNG/Retina/Effects/explosion1.png');
             p.deactivate();
             e.takeDamage(1);
             this.feel.flashTint(e.container);
             if (e.hp <= 0) {
               this.score += 1;
               this.feel.shake(15, 150);
-              this.pool.spawnEffect(e.x, e.y, 'explosion_3');
+              this.pool.spawnEffect(e.x, e.y, '/assets/kenney_pirate-pack/PNG/Retina/Effects/explosion3.png');
             }
             break;
           }
         }
       } else if (p.owner === 'enemy') {
         if (checkCollision(p.x, p.y, 4, this.player.x, this.player.y, 20)) {
-          this.pool.spawnEffect(p.x, p.y, 'explosion_2');
+          this.pool.spawnEffect(p.x, p.y, '/assets/kenney_pirate-pack/PNG/Retina/Effects/explosion2.png');
           p.deactivate();
           this.player.takeDamage(1);
           this.feel.flashTint(this.player.container);
           this.feel.shake(10, 100);
           if (this.player.hp <= 0) {
-            this.pool.spawnEffect(this.player.x, this.player.y, 'explosion_3');
+            this.pool.spawnEffect(this.player.x, this.player.y, '/assets/kenney_pirate-pack/PNG/Retina/Effects/explosion3.png');
             this.endGame('player_destroyed');
           }
         }
@@ -191,13 +191,13 @@ export class Game {
     for (const e of this.enemyManager.enemies) {
       if (e.active && e instanceof Chaser) {
         if (checkCollision(e.x, e.y, e.radius, this.player.x, this.player.y, 20)) {
-          this.pool.spawnEffect(e.x, e.y, 'explosion_3');
+          this.pool.spawnEffect(e.x, e.y, '/assets/kenney_pirate-pack/PNG/Retina/Effects/explosion3.png');
           e.destroy();
           this.player.takeDamage(2);
           this.feel.flashTint(this.player.container);
           this.feel.shake(20, 250);
           if (this.player.hp <= 0) {
-            this.pool.spawnEffect(this.player.x, this.player.y, 'explosion_3');
+            this.pool.spawnEffect(this.player.x, this.player.y, '/assets/kenney_pirate-pack/PNG/Retina/Effects/explosion3.png');
             this.endGame('player_destroyed');
           }
         }

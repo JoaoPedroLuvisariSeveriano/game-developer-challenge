@@ -15,7 +15,7 @@ export const WoodenModal: React.FC<Props> = ({ title, children }) => {
       <div 
         className="relative w-full max-w-4xl max-h-full flex flex-col p-6 md:p-10 overflow-hidden"
         style={{
-          borderImage: "url('/assets/png/retina/ui/menu/panel_menu.png') 80 fill",
+          borderImage: "url('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/wood (1).png') 20 fill",
           borderStyle: "solid",
           borderWidth: "40px"
         }}

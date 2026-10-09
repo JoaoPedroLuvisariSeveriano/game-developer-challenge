@@ -8,9 +8,10 @@ export class Shooter extends Enemy {
   private safeDistance = 200;
 
   constructor(pool: ProjectilePool) {
-    super('ship_5');
+    super('/assets/kenney_pirate-pack/PNG/Retina/Ships/ship (5).png');
     this.pool = pool;
     this.sprite.tint = 0xaaaaff; // lightly tint
+    this.sprite.scale.set(0.5);
   }
 
   update(dt: number, playerX: number, playerY: number) {
