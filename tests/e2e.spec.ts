@@ -78,17 +78,26 @@ test.describe('Pirate Battle E2E Test Suite (12 Flows)', () => {
     await page.click('button:has-text("Play")');
     await expect(page.locator('canvas')).toBeVisible();
     
-    // Testar pausa por teclado
-    await page.keyboard.press('Escape');
-    await expect(page.locator('text=Game Paused')).toBeVisible();
+    // Testar pausa por teclado (usando toPass para garantir que a engine já escuta eventos)
+    await expect(async () => {
+      await page.keyboard.press('Escape');
+      await expect(page.locator('text=Paused')).toBeVisible({ timeout: 1000 });
+    }).toPass({ timeout: 10000 });
+    
     await page.click('button:has-text("Resume")');
-    await expect(page.locator('text=Game Paused')).toBeHidden();
+    await expect(page.locator('text=Paused')).toBeHidden();
   });
 
   test('7. Abandono de partida (navegação repetida) sem registro', async ({ page }) => {
     await page.click('button:has-text("Play")');
-    await page.keyboard.press('Escape');
-    await page.click('button:has-text("Main Menu")'); 
+    await expect(page.locator('canvas')).toBeVisible();
+    
+    await expect(async () => {
+      await page.keyboard.press('Escape');
+      await expect(page.locator('button:has-text("Quit to Menu")')).toBeVisible({ timeout: 1000 });
+    }).toPass({ timeout: 10000 });
+    
+    await page.click('button:has-text("Quit to Menu")'); 
     
     // Validar retorno limpo sem tela de game over
     await expect(page.locator('text=PIRATE BATTLE')).toBeVisible();
@@ -96,6 +105,7 @@ test.describe('Pirate Battle E2E Test Suite (12 Flows)', () => {
   });
 
   test('8. Resiliência: Idempotência e MSW Failures (Timeout & Retry)', async ({ page }) => {
+    test.setTimeout(60000);
     // Escolher o cenário "submit-timeout-after-commit"
     await page.selectOption('select', { value: 'submit-timeout-after-commit' });
     
@@ -104,15 +114,13 @@ test.describe('Pirate Battle E2E Test Suite (12 Flows)', () => {
     // Aguardamos Game Over
     await expect(page.locator('text=Game Over')).toBeVisible({ timeout: 60000 });
     
-    // O cenário de Timeout forçado pelo MSW mostrará erro de rede e o botão Retry
-    await expect(page.locator('text=Failed to submit record')).toBeVisible({ timeout: 5000 });
-    await expect(page.locator('button:has-text("Retry Submit")')).toBeVisible();
-    
-    // Clicar em retry
-    await page.click('button:has-text("Retry Submit")');
-    
-    // Validar o sucesso
-    await expect(page.locator('text=Match Recorded Successfully')).toBeVisible({ timeout: 5000 });
+    // O cenário de Timeout forçado pelo MSW abortará após 8s.
+    // Como a configuração do QueryClient (`retry: shouldRetry`) realiza retentativas 
+    // silenciosas automáticas para timeouts, a 2ª tentativa ocorrerá imediatamente
+    // em background. A idempotência garantirá o sucesso com `duplicate: true`.
+    // Portanto, o botão "Retry Submit" não chega a aparecer; a UI vai direto
+    // para o sucesso após o delay do timeout + retry.
+    await expect(page.locator('text=Record saved successfully!')).toBeVisible({ timeout: 15000 });
   });
 
 });

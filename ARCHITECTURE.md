@@ -1,23 +1,58 @@
-# Pirate Battle - Architecture & Design Decisions
+# Pirate Battle - Architecture & Technical Decisions
 
-## 1. Asset Scaffolding Strategy
-To unblock the development phase while original graphical and audio assets were restricted/missing, a Node.js script (`scripts/generate-assets.js`) was utilized to scaffold placeholder assets automatically. This ensured that the Vite server and PixiJS loaders did not crash on 404 errors. 
-- PixiJS `Sprite.from` instances were gracefully wrapped or supplemented with `PIXI.Graphics` fallbacks (e.g., drawing explicit bounds/colors) so the entities remained fully visible and interactive for collision and gameplay debugging.
+This document details the core architectural decisions, patterns, and technical trade-offs made during the development of the Pirate Battle game. The focus is on achieving a stable 60 FPS gameplay experience, clean state management, and robust network resilience.
 
-## 2. Object Pooling & 60 FPS Target
-Garbage Collection (GC) pressure is a primary cause of frame drops in JavaScript game engines. 
-- **ProjectilePool & EnemyManager**: We pre-allocate arrays of entities (200 projectiles, dozens of enemies) upfront during the `init()` phase.
-- Instead of calling `new Projectile()` or `destroy()`, we toggle an `active` boolean. Inactive objects are hidden and detached from physics checks.
-- **DeltaTime (dt)**: All physics (movement, rotation, cooldowns, and `GameFeel` screen shake) strictly multiply by `ticker.deltaTime` to ensure smooth gameplay scaling regardless of the monitor's refresh rate (e.g., 60Hz or 144Hz).
+## 1. React / PixiJS Bridge & UI Synchronization
 
-## 3. React ↔ PixiJS Decoupling
-PixiJS handles the game loop inside an HTML `<canvas>`, rendering at 60+ FPS. React handles the UI, but React is not meant to re-render 60 times a second.
-- **Zustand Throttling**: The `useMatchStore` acts as a data bus. 
-- The PixiJS `Ticker` pushes data to Zustand (`setMatchData(hp, score, timeRemaining)`), but inside the Zustand action, a guard clause only updates the React state if the **integer** values have changed. This eliminates continuous sub-frame React updates.
-- HUD components use `pointer-events-none` and `position: absolute` so they overlay cleanly without stealing keyboard focus from the Canvas.
+Integrating a declarative UI library (React) with an imperative, loop-based rendering engine (PixiJS) requires careful separation of concerns to avoid severe performance degradation.
 
-## 4. Idempotency & Network Resilience (MSW + TanStack Query)
-Network reliability is simulated via Mock Service Worker (MSW), which can intercept and fail requests.
-- **Client-Side ID Generation**: A unique `matchId` (UUID) is generated at the start of every game.
-- **TanStack Query Mutation**: On Game Over, we call the `POST /api/history` endpoint. If MSW simulates a Timeout or HTTP 500 error, TanStack Query catches it and provides the `isError` state.
-- **Idempotency**: The UI offers a "Retry Submit" button. Because the `matchId` remains identical across retries, the server recognizes it. Our MSW handler intercepts this duplicate `matchId` and responds with an HTTP 200 OK (idempotent success) instead of HTTP 201 Created, protecting the leaderboard from duplicated records.
+### The Problem
+If the React tree re-renders at the engine's frame rate (60 FPS), the Garbage Collector and Virtual DOM diffing algorithms will choke the main thread, causing frame drops and stuttering in the PixiJS canvas.
+
+### The Solution (Zustand & Idempotent Updates)
+We utilized **Zustand** (`src/state/matchStore.ts`) to act as the bridge between the PixiJS simulation and the React HUD.
+- The `Game.ts` ticker runs at 60 FPS, updating the physical simulation (movement, collision, damage).
+- Every frame, the game calls `setMatchData(hp, score, timeRemaining)` on the Zustand store.
+- **Crucial Optimization:** Inside the Zustand action, we explicitly check if the *integer representation* of the data has changed. If the `hp`, `score`, or `Math.ceil(timeRemaining)` are identical to the previous state, we return the existing state object. This bails out React's rendering lifecycle entirely.
+- The React HUD components only re-render once per second (when the clock ticks down) or when damage is taken/score is earned, rather than 60 times a second.
+
+## 2. Object Pooling & Memory Management
+
+Garbage Collection (GC) pauses are the primary cause of jank in HTML5 games. Creating and destroying objects (like projectiles or enemies) on the fly forces the JS engine to constantly allocate and deallocate memory.
+
+### The Projectile Pool (`ProjectilePool.ts`)
+We implemented a strict **Object Pool** pattern for all projectiles.
+- Upon game initialization, a fixed array of 200 `Projectile` instances is created and kept in memory.
+- When the player or an enemy fires, we do not call `new Projectile()`. Instead, we query the pool for an inactive projectile, initialize its position and velocity, and set it to active.
+- When a projectile hits a target or leaves the arena, it is simply deactivated (hidden and ignored in the physics loop) rather than destroyed.
+- **Result:** Zero memory allocation during the core gameplay loop, preventing GC spikes and ensuring a buttery smooth 60 FPS.
+
+## 3. Game Cycle & Strict Mode Cleanup
+
+React 18's Strict Mode mounts, unmounts, and remounts components in development to detect lifecycle bugs. If the PixiJS application is not correctly dismantled, textures and WebGL contexts leak, quickly crashing the browser.
+
+We handle this in `PixiCanvas.tsx` by returning a cleanup function in the `useEffect` hook. The cleanup function calls `game.destroy()`, which systematically:
+1. Removes all keyboard and window event listeners.
+2. Destroys all entities (Player, Enemies).
+3. Calls `app.destroy(true, { children: true, texture: true })` to deeply purge the PIXI instance and free the WebGL context and GPU memory.
+
+## 4. Network Resilience & Idempotency (MSW)
+
+The requirement for the game was to handle hostile network conditions (timeouts, 503s, 500s) gracefully when submitting the match result to the backend.
+
+### The Idempotency Key
+We generate a unique `matchId` (UUID) at the start of each match. This ID acts as an **Idempotency Key**.
+When the match ends, we submit a payload containing the `matchId` and a fixed `playedAt` timestamp.
+
+### MSW Fault Scenarios & Silent Retries
+Our mock backend (`handlers.ts`) is designed to simulate timeouts and outages.
+- **Scenario:** The client submits the record. The server persists it, but the connection hangs (timeout).
+- **Client Handling:** `axios` aborts the request after 8 seconds. Our `TanStack Query` configuration (`shouldRetry` in `queryClient.ts`) intercepts the network error and performs an exponential backoff **silent retry**.
+- **Server Idempotency:** When the retry hits the server, MSW checks if the `matchId` already exists. It finds the record from the first attempt, compares the payload hash (`sameSubmission`), and returns `HTTP 200 OK` with a `{ duplicate: true }` flag.
+- **Result:** The user is completely shielded from the network failure. The record is saved, the game recovers, and no duplicate records pollute the Ranking or Match History.
+
+## 5. Balancing & Configurations
+
+All game design parameters (Entity speeds, HP, cooldowns, arena bounds) are centralized in a Zustand store (`optionsStore.ts`). 
+- When the `Game` initializes, it captures a **snapshot** of the current options.
+- This ensures that if the user tweaks the options in the menu, it only applies to the *next* match, preserving the integrity of the ongoing session.

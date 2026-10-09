@@ -11,8 +11,9 @@ export const GameOver: React.FC = () => {
   const config = snapshotOptions();
   
   const [submitted, setSubmitted] = useState(false);
+  const [playedAt] = useState(() => new Date().toISOString());
 
-  const durationMs = (config.sessionTimeSeconds - timeRemaining) * 1000;
+  const durationMs = Math.round((config.sessionTimeSeconds - timeRemaining) * 1000);
 
   useEffect(() => {
     if (!submitted) {
@@ -25,7 +26,7 @@ export const GameOver: React.FC = () => {
       matchId,
       playerId,
       nickname,
-      playedAt: new Date().toISOString(),
+      playedAt,
       score,
       durationMs,
       endReason: endReason || 'player_destroyed',
