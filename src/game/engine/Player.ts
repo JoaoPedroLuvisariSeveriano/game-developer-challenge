@@ -4,7 +4,6 @@ import type { Game } from './Game';
 export class Player {
   public container: Container;
   public sprite: Sprite;
-  private game: Game;
   
   public x = 0;
   public y = 0;
@@ -14,7 +13,6 @@ export class Player {
   private keys: Record<string, boolean> = {};
 
   constructor(game: Game) {
-    this.game = game;
     this.container = new Container();
     
     // We use a hull from the manifest, e.g., 'hull_large_1'
