@@ -1,4 +1,4 @@
-import { Container, Sprite } from 'pixi.js';
+import { Container, Sprite, Texture } from 'pixi.js';
 
 export abstract class Enemy {
   public container: Container;
@@ -8,16 +8,20 @@ export abstract class Enemy {
   public x = 0;
   public y = 0;
   public hp = 1;
+  public maxHp = 1;
   public radius = 20;
+  protected normalTexture!: string;
+  protected tornTexture!: string;
+  protected wreckTexture!: string;
 
-  constructor(textureName: string) {
+  constructor(textureName: string, tornName?: string, wreckName?: string) {
+    this.normalTexture = textureName;
+    this.tornTexture = tornName || textureName;
+    this.wreckTexture = wreckName || textureName;
+    
     this.container = new Container();
     this.sprite = Sprite.from(textureName);
     this.sprite.anchor.set(0.5);
-    
-    // Maybe some cannon or sail depending on enemy type, 
-    // but the subclasses will handle specific parts if needed.
-    // For simplicity, we just use a base texture.
     
     this.container.addChild(this.sprite);
     this.container.visible = false;
@@ -27,7 +31,9 @@ export abstract class Enemy {
     this.x = x;
     this.y = y;
     this.hp = hp;
+    this.maxHp = hp;
     this.active = true;
+    this.sprite.texture = Texture.from(this.normalTexture);
     this.container.x = x;
     this.container.y = y;
     this.container.visible = true;
@@ -35,9 +41,16 @@ export abstract class Enemy {
 
   takeDamage(amount: number) {
     this.hp -= amount;
-    if (this.hp <= 0) {
-      this.destroy();
+    if (this.hp <= this.maxHp / 2 && this.hp > 0) {
+      this.sprite.texture = Texture.from(this.tornTexture);
     }
+  }
+
+  wreck() {
+    this.active = false;
+    this.sprite.texture = Texture.from(this.wreckTexture);
+    // Tint slightly greyish to look dead
+    this.sprite.tint = 0x888888;
   }
 
   destroy() {

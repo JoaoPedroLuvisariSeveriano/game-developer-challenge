@@ -18,17 +18,16 @@ export class AssetLoader {
       '/assets/kenney_pirate-pack/PNG/Retina/Effects/explosion2.png',
       '/assets/kenney_pirate-pack/PNG/Retina/Effects/explosion3.png',
       '/assets/kenney_pirate-pack/PNG/Retina/Effects/fire1.png',
-      '/assets/kenney_pirate-pack/PNG/Retina/Ship parts/cannonBall.png',
+      '/assets/kenney_pirate-pack/PNG/Retina/Ships/ship (6).png',
+      '/assets/kenney_pirate-pack/PNG/Retina/Ships/ship (12).png',
+      '/assets/kenney_pirate-pack/PNG/Retina/Ships/ship (24).png',
       '/assets/kenney_pirate-pack/PNG/Retina/Ships/ship (3).png',
+      '/assets/kenney_pirate-pack/PNG/Retina/Ships/ship (9).png',
+      '/assets/kenney_pirate-pack/PNG/Retina/Ships/ship (21).png',
       '/assets/kenney_pirate-pack/PNG/Retina/Ships/ship (5).png',
-      '/assets/kenney_pirate-pack/PNG/Retina/Ship parts/hullLarge (1).png',
-      '/assets/kenney_pirate-pack/PNG/Retina/Ship parts/cannon.png',
-      '/assets/kenney_pirate-pack/PNG/Retina/Ship parts/sailLarge (14).png',
-      '/assets/kenney_pirate-pack/PNG/Retina/Ship parts/sailSmall (1).png',
-      '/assets/kenney_pirate-pack/PNG/Retina/Ship parts/pole.png',
-      '/assets/kenney_pirate-pack/PNG/Retina/Ship parts/nest.png',
-      '/assets/kenney_pirate-pack/PNG/Retina/Ship parts/crew (1).png',
-      '/assets/kenney_pirate-pack/PNG/Retina/Ship parts/flag (1).png'
+      '/assets/kenney_pirate-pack/PNG/Retina/Ships/ship (11).png',
+      '/assets/kenney_pirate-pack/PNG/Retina/Ships/ship (23).png',
+      '/assets/kenney_pirate-pack/PNG/Retina/Ship parts/cannonBall.png'
     ];
 
     await Assets.load(kenneyTextures);

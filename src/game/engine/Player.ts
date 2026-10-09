@@ -1,4 +1,4 @@
-import { Container, Graphics, Sprite } from 'pixi.js';
+import { Container, Graphics, Sprite, Texture } from 'pixi.js';
 import type { Game } from './Game';
 import type { ProjectilePool } from './ProjectilePool';
 
@@ -11,6 +11,8 @@ export class Player {
   public y = 0;
   public rotation = 0;
   public hp = 10;
+  public maxHp = 10;
+  public sprite!: Sprite;
   private game: Game;
   
   private fireCooldownFront = 0;
@@ -26,77 +28,12 @@ export class Player {
     
     this.graphics = new Graphics(); // Keep just for typing if needed, but we won't use it
     
-    // Hull
-    const hull = Sprite.from('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/hullLarge (1).png');
-    hull.anchor.set(0.5);
-    hull.scale.set(0.5);
-    this.container.addChild(hull);
-
-    // Cannons
-    const createCannon = (x: number, y: number, angle: number) => {
-      const cannon = Sprite.from('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/cannon.png');
-      cannon.anchor.set(0.5);
-      cannon.scale.set(0.5);
-      cannon.position.set(x, y);
-      cannon.rotation = angle;
-      this.container.addChild(cannon);
-    };
-    
-    // Front cannon
-    createCannon(0, -30, 0);
-    // Left cannons
-    createCannon(-15, -10, -Math.PI / 2);
-    createCannon(-15, 10, -Math.PI / 2);
-    // Right cannons
-    createCannon(15, -10, Math.PI / 2);
-    createCannon(15, 10, Math.PI / 2);
-
-    // Front Pole & Small Sail
-    const frontPole = Sprite.from('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/pole.png');
-    frontPole.anchor.set(0.5);
-    frontPole.scale.set(0.5);
-    frontPole.position.set(0, -35);
-    this.container.addChild(frontPole);
-
-    const smallSail = Sprite.from('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/sailSmall (1).png');
-    smallSail.anchor.set(0.5);
-    smallSail.scale.set(0.5);
-    smallSail.position.set(0, -35);
-    this.container.addChild(smallSail);
-
-    // Main Pole & Nest
-    const mainPole = Sprite.from('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/pole.png');
-    mainPole.anchor.set(0.5);
-    mainPole.scale.set(0.5);
-    mainPole.position.set(0, 5);
-    this.container.addChild(mainPole);
-
-    const nest = Sprite.from('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/nest.png');
-    nest.anchor.set(0.5);
-    nest.scale.set(0.5);
-    nest.position.set(0, 5);
-    this.container.addChild(nest);
-
-    // Main Sail
-    const sail = Sprite.from('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/sailLarge (14).png');
-    sail.anchor.set(0.5);
-    sail.scale.set(0.5);
-    sail.position.set(0, 0);
-    this.container.addChild(sail);
-
-    // Crew member on deck
-    const crew = Sprite.from('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/crew (1).png');
-    crew.anchor.set(0.5);
-    crew.scale.set(0.4);
-    crew.position.set(0, 22);
-    this.container.addChild(crew);
-
-    // Flag at the back
-    const flag = Sprite.from('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/flag (1).png');
-    flag.anchor.set(0.5, 1);
-    flag.scale.set(0.5);
-    flag.position.set(0, 45);
-    this.container.addChild(flag);
+    // Main Ship Sprite
+    this.sprite = Sprite.from('/assets/kenney_pirate-pack/PNG/Retina/Ships/ship (6).png');
+    this.sprite.anchor.set(0.5);
+    // Keep proportions correct, just scale down slightly if needed
+    this.sprite.scale.set(0.8);
+    this.container.addChild(this.sprite);
     
     // Center initially
     this.container.x = window.innerWidth / 2;
@@ -118,7 +55,14 @@ export class Player {
 
   takeDamage(amount: number) {
     this.hp -= amount;
+    
+    // Torn sails at <= 50%
+    if (this.hp <= this.maxHp / 2 && this.hp > 0) {
+      this.sprite.texture = Texture.from('/assets/kenney_pirate-pack/PNG/Retina/Ships/ship (12).png');
+    }
+
     if (this.hp <= 0) {
+      this.sprite.texture = Texture.from('/assets/kenney_pirate-pack/PNG/Retina/Ships/ship (24).png');
       console.log('Game Over');
     }
   }

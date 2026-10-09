@@ -6,6 +6,7 @@ import { GameFeel } from '../utils/GameFeel';
 import { Chaser } from '../entities/Chaser';
 import { snapshotOptions } from '../../state/optionsStore';
 import { useMatchStore } from '../../state/matchStore';
+import { IslandBuilder } from './IslandBuilder';
 
 export class Game {
   public app: Application;
@@ -56,21 +57,18 @@ export class Game {
     this.app.stage.addChildAt(this.ocean, 0);
 
     // Random Islands / Rocks
-    const islandTiles = [13, 14, 29, 30, 45, 46, 61, 62, 77, 78]; // Common large land tiles
-    for (let i = 0; i < 10; i++) {
-      const tId = islandTiles[Math.floor(Math.random() * islandTiles.length)];
-      const island = Sprite.from(`/assets/kenney_pirate-pack/PNG/Retina/Tiles/tile_${tId}.png`);
-      island.anchor.set(0.5);
+    // Create 5 islands
+    for (let i = 0; i < 5; i++) {
+      const { container: island, radius } = IslandBuilder.build();
       const x = Math.random() * window.innerWidth;
       const y = Math.random() * window.innerHeight;
       island.position.set(x, y);
-      const scale = 1.5 + Math.random() * 1.5;
+      const scale = 1.2 + Math.random() * 0.5;
       island.scale.set(scale);
       island.rotation = Math.random() * Math.PI * 2;
       this.backgroundLayer.addChild(island);
 
-      // approximate physical radius for collision
-      this.islands.push({ sprite: island, x, y, radius: 24 * scale });
+      this.islands.push({ sprite: island as any, x, y, radius: radius * scale });
     }
 
     this.feel = new GameFeel(this);
@@ -188,6 +186,8 @@ export class Game {
               this.score += 1;
               this.feel.shake(15, 150);
               this.pool.spawnEffect(e.x, e.y, '/assets/kenney_pirate-pack/PNG/Retina/Effects/explosion3.png');
+              e.wreck();
+              this.islands.push({ sprite: e.container as any, x: e.x, y: e.y, radius: e.radius });
             }
             break;
           }

@@ -4,9 +4,12 @@ export class Chaser extends Enemy {
   private speed = 2.5;
 
   constructor() {
-    super('/assets/kenney_pirate-pack/PNG/Retina/Ships/ship (3).png'); // dark ship maybe
-    this.sprite.tint = 0xffaaaa; // lightly tint to differentiate if needed, or don't
-    this.sprite.scale.set(0.5);
+    super(
+      '/assets/kenney_pirate-pack/PNG/Retina/Ships/ship (3).png',
+      '/assets/kenney_pirate-pack/PNG/Retina/Ships/ship (9).png',
+      '/assets/kenney_pirate-pack/PNG/Retina/Ships/ship (21).png'
+    );
+    this.sprite.scale.set(0.6);
   }
 
   update(dt: number, playerX: number, playerY: number) {
