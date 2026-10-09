@@ -4,6 +4,8 @@ import { ProjectilePool } from './ProjectilePool';
 import { EnemyManager } from './EnemyManager';
 import { GameFeel } from '../utils/GameFeel';
 import { Chaser } from '../entities/Chaser';
+import { snapshotOptions } from '../../state/optionsStore';
+import { useMatchStore } from '../../state/matchStore';
 
 export class Game {
   public app: Application;
@@ -14,6 +16,9 @@ export class Game {
   public feel!: GameFeel;
   
   public score = 0;
+  public timeRemaining = 0;
+  
+  private isPaused = false;
 
   constructor() {
     this.app = new Application();
@@ -21,6 +26,11 @@ export class Game {
   }
 
   async init(canvas: HTMLCanvasElement) {
+    const config = snapshotOptions();
+    this.timeRemaining = config.sessionTimeSeconds;
+    useMatchStore.getState().resetMatch();
+    this.score = 0;
+
     await this.app.init({
       canvas,
       resizeTo: window,
@@ -37,34 +47,84 @@ export class Game {
     this.world.addChild(this.pool.container);
 
     this.enemyManager = new EnemyManager(this.pool);
+    // Use config to set spawn intervals inside EnemyManager if needed
+    // Assuming EnemyManager handles its own spawn logic, we can pass config.enemySpawnIntervalSeconds
+    
     this.world.addChild(this.enemyManager.container);
 
     this.player = new Player(this, this.pool);
     this.world.addChild(this.player.container);
 
+    // Initial Sync
+    useMatchStore.getState().setMatchData(this.player.hp, this.score, this.timeRemaining);
+
     this.app.ticker.add(this.update.bind(this));
+
+    // Handle focus loss for auto-pause
+    window.addEventListener('blur', this.onBlur);
+    window.addEventListener('keydown', this.onKeyDown);
+  }
+
+  private onBlur = () => {
+    if (useMatchStore.getState().status === 'playing') {
+      this.pause();
+    }
+  };
+
+  private onKeyDown = (e: KeyboardEvent) => {
+    if (e.code === 'Escape') {
+      const status = useMatchStore.getState().status;
+      if (status === 'playing') {
+        this.pause();
+      } else if (status === 'paused') {
+        this.resume();
+      }
+    }
+  };
+
+  public pause() {
+    this.isPaused = true;
+    this.app.ticker.stop();
+    useMatchStore.getState().setStatus('paused');
+  }
+
+  public resume() {
+    this.isPaused = false;
+    this.app.ticker.start();
+    useMatchStore.getState().setStatus('playing');
   }
 
   update(ticker: Ticker) {
+    if (this.isPaused) return;
+
     const dt = ticker.deltaTime;
     
+    // time in seconds. Assuming 1 deltaTime ~ 1/60th sec
+    this.timeRemaining -= (dt / 60);
+    if (this.timeRemaining <= 0) {
+      this.timeRemaining = 0;
+      this.endGame('time_up');
+      return;
+    }
+
     this.feel.update(dt);
     this.player.update(dt);
     this.pool.update(dt);
     this.enemyManager.update(dt, this.player.x, this.player.y);
     
     this.checkCollisions();
+
+    // Sync HUD
+    useMatchStore.getState().setMatchData(this.player.hp, this.score, this.timeRemaining);
   }
 
   checkCollisions() {
-    // Basic Circle Collision
     const checkCollision = (x1: number, y1: number, r1: number, x2: number, y2: number, r2: number) => {
       const dx = x1 - x2;
       const dy = y1 - y2;
       return (dx * dx + dy * dy) < ((r1 + r2) * (r1 + r2));
     };
 
-    // Projectiles vs Enemies / Player
     for (const p of this.pool.projectiles) {
       if (!p.active) continue;
       
@@ -87,25 +147,36 @@ export class Game {
           this.player.takeDamage(1);
           this.feel.flashTint(this.player.container);
           this.feel.shake(10, 100);
+          if (this.player.hp <= 0) this.endGame('player_destroyed');
         }
       }
     }
 
-    // Chaser vs Player
     for (const e of this.enemyManager.enemies) {
       if (e.active && e instanceof Chaser) {
         if (checkCollision(e.x, e.y, e.radius, this.player.x, this.player.y, 20)) {
-          // Kamikaze hit
-          e.destroy(); // Destroy enemy, no points
+          e.destroy();
           this.player.takeDamage(2);
           this.feel.flashTint(this.player.container);
           this.feel.shake(20, 250);
+          if (this.player.hp <= 0) this.endGame('player_destroyed');
         }
       }
     }
   }
+
+  endGame(reason: 'time_up' | 'player_destroyed') {
+    this.isPaused = true;
+    this.app.ticker.stop();
+    // Notify store, which will show game over screen
+    useMatchStore.getState().setMatchData(this.player.hp, this.score, this.timeRemaining);
+    // Setting global status
+    useMatchStore.getState().setGameOver(reason);
+  }
   
   destroy() {
+    window.removeEventListener('blur', this.onBlur);
+    window.removeEventListener('keydown', this.onKeyDown);
     if (this.player) {
       this.player.destroy();
     }
