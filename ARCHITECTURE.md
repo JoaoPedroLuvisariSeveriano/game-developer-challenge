@@ -56,3 +56,17 @@ Our mock backend (`handlers.ts`) is designed to simulate timeouts and outages.
 All game design parameters (Entity speeds, HP, cooldowns, arena bounds) are centralized in a Zustand store (`optionsStore.ts`). 
 - When the `Game` initializes, it captures a **snapshot** of the current options.
 - This ensures that if the user tweaks the options in the menu, it only applies to the *next* match, preserving the integrity of the ongoing session.
+
+## 6. Simulation Cycle & Collisions
+
+To keep the game logic deterministic and decoupled from the rendering frame rate, the simulation cycle is strictly ordered within the main game loop (`Ticker`):
+
+1. **Input Collection:** Keyboard states and touch events are collected and translated into intention vectors.
+2. **Movement Integration:** Velocity vectors are applied to entity positions (Player, Enemies, Projectiles) using delta time to ensure consistent movement regardless of frame drops.
+3. **Collision Detection (AABB):** 
+   - We use Axis-Aligned Bounding Box (AABB) intersection checks for fast collision resolution.
+   - **Player vs. Islands:** Movement is blocked and corrected.
+   - **Projectiles vs. Islands:** Projectiles are destroyed/deactivated upon impact.
+   - **Projectiles vs. Ships:** Damage is applied to the target, and the projectile is deactivated.
+   - **Player vs. Chasers:** Physical impact damage is applied to the player, and the Chaser explodes.
+4. **State Resolution:** Dead entities are removed or deactivated, cooldowns are decremented, and the Zustand HUD state is synchronized only if integer values have changed.

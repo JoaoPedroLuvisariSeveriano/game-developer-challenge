@@ -209,6 +209,47 @@ Documente em `ARCHITECTURE.md` a integração React/PixiJS, o ciclo da simulaç�
 
 Inclua os relatórios de testes e profiling. A solução deve executar a partir de um checkout limpo, sem depender de serviços privados.
 
+## Game Controls
+
+The game supports both Desktop (Keyboard) and Mobile (Touch) controls. Touch controls will automatically appear on smaller screens.
+
+| Action | Keyboard | Touch / Mobile |
+| :--- | :--- | :--- |
+| **Move Forward** | `W` or `ArrowUp` | D-Pad Up |
+| **Rotate Left** | `A` or `ArrowLeft` | D-Pad Left |
+| **Rotate Right** | `D` or `ArrowRight` | D-Pad Right |
+| **Frontal Attack** | `Space` | `FIRE` Button |
+| **Left Attack** | `Q` | `L` Button |
+| **Right Attack** | `E` | `R` Button |
+| **Pause Game** | `Escape` | Menu Pause Button |
+
+## Setup & Execution Commands
+
+1. **Install Dependencies:**
+   ```bash
+   npm install
+   ```
+2. **Available Scripts:**
+   - `npm run dev`: Starts the local development server with Vite.
+   - `npm run build`: Compiles TypeScript and builds the production bundle.
+   - `npm run preview`: Locally previews the production build.
+   - `npm run lint`: Runs ESLint for code quality.
+   - `npm run typecheck`: Runs the TypeScript compiler strictly.
+   - `npm run test:e2e`: Runs the Playwright E2E test suite.
+   - `npm run test:e2e -- --ui`: Runs Playwright in UI mode.
+
+## Gameplay Configuration (Options)
+
+To adjust gameplay rules, navigate to Options from the Main Menu. Note: Options are persisted locally and apply to the next newly started match.
+
+## Network Failure Simulation (MSW)
+
+We use Mock Service Worker (MSW) to simulate backend API scenarios.
+1. Open the Main Menu or Options screen.
+2. Locate the floating MSW Network Scenario dropdown at the bottom right.
+3. Select a fault scenario (e.g., Timeout or HTTP 500).
+4. Play a match until Game Over and observe the TanStack Query silent retries or use the "Retry Submit" button.
+
 ## 12. Performance Profiling
 
 **Methodology:**
