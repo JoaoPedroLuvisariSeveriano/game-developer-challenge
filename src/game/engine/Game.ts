@@ -30,19 +30,11 @@ export class Game {
     this.backgroundLayer = new Container();
   }
 
-  async init(canvas: HTMLCanvasElement) {
+  async initGameLogic() {
     const config = snapshotOptions();
     this.timeRemaining = config.sessionTimeSeconds;
     useMatchStore.getState().resetMatch();
     this.score = 0;
-
-    await this.app.init({
-      canvas,
-      resizeTo: window,
-      backgroundColor: 0x1099bb,
-      resolution: window.devicePixelRatio || 1,
-      autoDensity: true,
-    });
 
     this.app.stage.addChildAt(this.backgroundLayer, 0);
     this.app.stage.addChild(this.world);
@@ -305,6 +297,10 @@ export class Game {
     if (this.player) {
       this.player.destroy();
     }
-    this.app.destroy(true, { children: true, texture: true });
+    try {
+      this.app.destroy(true, { children: true, texture: true, baseTexture: true });
+    } catch (e) {
+      console.error('[CRITICAL] Failed to destroy PixiJS app:', e);
+    }
   }
 }
