@@ -48,7 +48,7 @@ export class ProjectilePool {
       eff.scale.y += 0.02 * dt;
       if (eff.alpha <= 0) {
         this.container.removeChild(eff);
-        eff.destroy();
+        eff.destroy({ children: true, texture: false, baseTexture: false });
         this.effects.splice(i, 1);
       }
     }

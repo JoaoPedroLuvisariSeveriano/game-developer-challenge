@@ -15,7 +15,7 @@ export default function App() {
 
   return (
     <main className="w-full h-full overflow-hidden bg-black relative">
-      {isPlaying && <PixiCanvas />}
+      {isPlaying && <PixiCanvas key={useMatchStore(s => s.matchId)} />}
       {isPlaying && <HUD />}
       
       {status === 'menu' && <MainMenu />}

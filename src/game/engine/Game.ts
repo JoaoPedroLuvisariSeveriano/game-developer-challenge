@@ -17,7 +17,7 @@ export class Game {
   public pool!: ProjectilePool;
   public enemyManager!: EnemyManager;
   public feel!: GameFeel;
-  public islands: { sprite: Sprite, x: number, y: number, radius: number, expiresAt?: number }[] = [];
+  public islands: { sprite: Sprite, x: number, y: number, radius: number, expiresAt?: number, isRect?: boolean, width?: number, height?: number }[] = [];
   
   public score = 0;
   public timeRemaining = 0;
@@ -170,13 +170,57 @@ export class Game {
       return (dx * dx + dy * dy) < ((r1 + r2) * (r1 + r2));
     };
 
+    const checkIslandHit = (cx: number, cy: number, cr: number, island: any) => {
+      if (island.isRect) {
+        const halfW = island.width / 2;
+        const halfH = island.height / 2;
+        const testX = Math.max(island.x - halfW, Math.min(cx, island.x + halfW));
+        const testY = Math.max(island.y - halfH, Math.min(cy, island.y + halfH));
+        const distSq = (cx - testX) * (cx - testX) + (cy - testY) * (cy - testY);
+        return distSq < (cr * cr);
+      } else {
+        return checkCollision(cx, cy, cr, island.x, island.y, island.radius);
+      }
+    };
+
+    const resolveIslandHit = (entity: { x: number, y: number }, r: number, island: any) => {
+      if (island.isRect) {
+        const halfW = island.width / 2;
+        const halfH = island.height / 2;
+        const testX = Math.max(island.x - halfW, Math.min(entity.x, island.x + halfW));
+        const testY = Math.max(island.y - halfH, Math.min(entity.y, island.y + halfH));
+        const dx = entity.x - testX;
+        const dy = entity.y - testY;
+        const distSq = dx * dx + dy * dy;
+        if (distSq < r * r) {
+          const dist = Math.sqrt(distSq);
+          if (dist === 0) {
+            entity.y -= r; // arbitrary push out if center exactly matched
+          } else {
+            const overlap = r - dist;
+            entity.x += (dx / dist) * overlap;
+            entity.y += (dy / dist) * overlap;
+          }
+        }
+      } else {
+        const dx = entity.x - island.x;
+        const dy = entity.y - island.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const overlap = (r + island.radius) - dist;
+        if (overlap > 0 && dist > 0) {
+          entity.x += (dx / dist) * overlap;
+          entity.y += (dy / dist) * overlap;
+        }
+      }
+    };
+
     for (const p of this.pool.projectiles) {
       if (!p.active) continue;
       
       // Check Projectile vs Islands
       let hitIsland = false;
       for (const island of this.islands) {
-        if (checkCollision(p.x, p.y, 4, island.x, island.y, island.radius)) {
+        if (checkIslandHit(p.x, p.y, 4, island)) {
           this.pool.spawnEffect(p.x, p.y, '/assets/kenney_pirate-pack/PNG/Retina/Effects/explosion2.png');
           p.deactivate();
           hitIsland = true;
@@ -219,16 +263,7 @@ export class Game {
 
     // Player vs Islands
     for (const island of this.islands) {
-      if (checkCollision(this.player.x, this.player.y, 20, island.x, island.y, island.radius)) {
-        const dx = this.player.x - island.x;
-        const dy = this.player.y - island.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        const overlap = (20 + island.radius) - dist;
-        if (overlap > 0 && dist > 0) {
-          this.player.x += (dx / dist) * overlap;
-          this.player.y += (dy / dist) * overlap;
-        }
-      }
+      resolveIslandHit(this.player, 20, island);
     }
 
     for (const e of this.enemyManager.enemies) {
@@ -236,16 +271,7 @@ export class Game {
 
       // Enemy vs Islands
       for (const island of this.islands) {
-        if (checkCollision(e.x, e.y, e.radius, island.x, island.y, island.radius)) {
-          const dx = e.x - island.x;
-          const dy = e.y - island.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          const overlap = (e.radius + island.radius) - dist;
-          if (overlap > 0 && dist > 0) {
-            e.x += (dx / dist) * overlap;
-            e.y += (dy / dist) * overlap;
-          }
-        }
+        resolveIslandHit(e, e.radius, island);
       }
 
       if (e instanceof Chaser) {

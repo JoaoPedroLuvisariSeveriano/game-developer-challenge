@@ -30,11 +30,15 @@ export class IslandBuilder {
         const tileId = grid[row][col];
         const tileIdStr = tileId < 10 ? `0${tileId}` : `${tileId}`;
         const tile = Sprite.from(`/assets/kenney_pirate-pack/PNG/Retina/Tiles/tile_${tileIdStr}.png`);
-        tile.anchor.set(0.5);
-        tile.position.set((col - 1) * tileSize, (row - 1) * tileSize);
+        // Precision math as requested:
+        tile.anchor.set(0); 
+        tile.position.set(col * tileSize, row * tileSize);
         container.addChild(tile);
       }
     }
+    
+    // Center the island physically so the coordinates represent the middle
+    container.pivot.set(tileSize * 1.5, tileSize * 1.5);
 
     // Add Decorations
     const treeTiles = [70, 71, 72];
@@ -47,7 +51,7 @@ export class IslandBuilder {
       const decorId = treeTiles[Math.floor(Math.random() * treeTiles.length)];
       const decor = Sprite.from(`/assets/kenney_pirate-pack/PNG/Retina/Tiles/tile_${decorId}.png`);
       decor.anchor.set(0.5);
-      decor.position.set((Math.random() - 0.5) * 80, (Math.random() - 0.5) * 80);
+      decor.position.set(96 + (Math.random() - 0.5) * 120, 96 + (Math.random() - 0.5) * 120);
       container.addChild(decor);
     }
 
@@ -57,7 +61,7 @@ export class IslandBuilder {
       const decorId = rockTiles[Math.floor(Math.random() * rockTiles.length)];
       const decor = Sprite.from(`/assets/kenney_pirate-pack/PNG/Retina/Tiles/tile_${decorId}.png`);
       decor.anchor.set(0.5);
-      decor.position.set((Math.random() - 0.5) * 80, (Math.random() - 0.5) * 80);
+      decor.position.set(96 + (Math.random() - 0.5) * 120, 96 + (Math.random() - 0.5) * 120);
       container.addChild(decor);
     }
 
@@ -66,12 +70,12 @@ export class IslandBuilder {
       const decorId = wreckTiles[Math.floor(Math.random() * wreckTiles.length)];
       const decor = Sprite.from(`/assets/kenney_pirate-pack/PNG/Retina/Tiles/tile_${decorId}.png`);
       decor.anchor.set(0.5);
-      decor.position.set((Math.random() - 0.5) * 80, (Math.random() - 0.5) * 80);
+      decor.position.set(96 + (Math.random() - 0.5) * 120, 96 + (Math.random() - 0.5) * 120);
       container.addChild(decor);
     }
 
-    const radius = 90; // Appropriate collision radius for a 3x3 grid
+    const radius = 96; // Exactly half of 192 (for AABB logic to be implemented)
 
-    return { container, radius };
+    return { container, radius, isRect: true, width: 192, height: 192 };
   }
 }

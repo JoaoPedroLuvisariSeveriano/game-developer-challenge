@@ -103,7 +103,10 @@ export const GameOver: React.FC = () => {
         </div>
 
         <div className="flex justify-center w-full mt-2">
-          <AtlasButton onClick={() => setStatus('playing')} baseName="button_primary" className="scale-110">
+          <AtlasButton onClick={() => {
+            useMatchStore.getState().resetMatch();
+            setStatus('playing');
+          }} baseName="button_primary" className="scale-110">
             PLAY AGAIN
           </AtlasButton>
         </div>
