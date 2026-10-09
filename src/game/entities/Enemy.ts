@@ -1,4 +1,4 @@
-import { Container, Sprite, Texture } from 'pixi.js';
+import { Container, Sprite, Texture, Assets } from 'pixi.js';
 
 export abstract class Enemy {
   public container: Container;
@@ -20,7 +20,8 @@ export abstract class Enemy {
     this.wreckTexture = wreckName || textureName;
     
     this.container = new Container();
-    this.sprite = Sprite.from(textureName);
+    const tex = Assets.get(textureName);
+    this.sprite = tex ? new Sprite(tex) : new Sprite(Texture.WHITE);
     this.sprite.anchor.set(0.5);
     
     this.container.addChild(this.sprite);
@@ -33,7 +34,8 @@ export abstract class Enemy {
     this.hp = hp;
     this.maxHp = hp;
     this.active = true;
-    this.sprite.texture = Texture.from(this.normalTexture);
+    const tex = Assets.get(this.normalTexture);
+    if (tex) this.sprite.texture = tex;
     this.container.x = x;
     this.container.y = y;
     this.container.visible = true;
@@ -42,13 +44,15 @@ export abstract class Enemy {
   takeDamage(amount: number) {
     this.hp -= amount;
     if (this.hp <= this.maxHp / 2 && this.hp > 0) {
-      this.sprite.texture = Texture.from(this.tornTexture);
+      const tex = Assets.get(this.tornTexture);
+      if (tex) this.sprite.texture = tex;
     }
   }
 
   wreck() {
     this.active = false;
-    this.sprite.texture = Texture.from(this.wreckTexture);
+    const tex = Assets.get(this.wreckTexture);
+    if (tex) this.sprite.texture = tex;
     // Tint slightly greyish to look dead
     this.sprite.tint = 0x888888;
   }

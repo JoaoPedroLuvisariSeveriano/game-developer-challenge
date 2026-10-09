@@ -1,4 +1,4 @@
-import { Container, Sprite } from 'pixi.js';
+import { Container, Sprite, Texture, Assets } from 'pixi.js';
 import { Projectile } from '../entities/Projectile';
 
 export class ProjectilePool {
@@ -25,7 +25,8 @@ export class ProjectilePool {
   }
 
   spawnEffect(x: number, y: number, textureName: string) {
-    const eff = Sprite.from(textureName);
+    const tex = Assets.get(textureName);
+    const eff = tex ? new Sprite(tex) : new Sprite(Texture.WHITE);
     eff.anchor.set(0.5);
     eff.position.set(x, y);
     eff.scale.set(0.5);

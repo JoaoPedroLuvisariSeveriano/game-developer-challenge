@@ -47,7 +47,9 @@ export class AssetLoader {
   ];
 
   static async loadAll() {
-    await Assets.load(this.kenneyTextures, (progress) => {
+    const validAssets = this.kenneyTextures.filter(asset => typeof asset === 'string' && asset.trim() !== '');
+    
+    await Assets.load(validAssets, (progress) => {
       console.log(`[Loader] Assets loading progress: ${(progress * 100).toFixed(0)}%`);
     });
   }

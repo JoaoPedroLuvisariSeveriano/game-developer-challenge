@@ -1,4 +1,4 @@
-import { Container, Graphics, Sprite, Texture } from 'pixi.js';
+import { Container, Graphics, Sprite, Texture, Assets } from 'pixi.js';
 import type { Game } from './Game';
 import type { ProjectilePool } from './ProjectilePool';
 
@@ -29,7 +29,9 @@ export class Player {
     this.graphics = new Graphics(); // Keep just for typing if needed, but we won't use it
     
     // Main Ship Sprite
-    this.sprite = Sprite.from('/assets/kenney_pirate-pack/PNG/Retina/Ships/ship (6).png');
+    const texPath = '/assets/kenney_pirate-pack/PNG/Retina/Ships/ship (6).png';
+    const tex = Assets.get(texPath);
+    this.sprite = tex ? new Sprite(tex) : new Sprite(Texture.WHITE);
     this.sprite.anchor.set(0.5);
     // Keep proportions correct, just scale down slightly if needed
     this.sprite.scale.set(0.8);

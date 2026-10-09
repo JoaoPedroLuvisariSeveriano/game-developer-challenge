@@ -13,9 +13,12 @@ export const PixiCanvas: React.FC = () => {
     const initGame = async () => {
       try {
         try {
-          await AssetLoader.loadAll();
+          const timeout = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Asset loading timed out, forcing start')), 3000)
+          );
+          await Promise.race([AssetLoader.loadAll(), timeout]);
         } catch (e) {
-          console.error('[CRITICAL] Some assets failed to load:', e);
+          console.warn('[CRITICAL] Some assets failed to load or timed out:', e);
         }
         
         if (!isMounted) return;

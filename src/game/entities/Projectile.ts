@@ -1,4 +1,4 @@
-import { Sprite, Container } from 'pixi.js';
+import { Sprite, Container, Texture, Assets } from 'pixi.js';
 
 export class Projectile {
   public sprite: Sprite;
@@ -13,7 +13,9 @@ export class Projectile {
   public life = 0;
 
   constructor() {
-    this.sprite = Sprite.from('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/cannonBall.png');
+    const texPath = '/assets/kenney_pirate-pack/PNG/Retina/Ship parts/cannonBall.png';
+    const tex = Assets.get(texPath);
+    this.sprite = tex ? new Sprite(tex) : new Sprite(Texture.WHITE);
     this.sprite.anchor.set(0.5);
     this.sprite.scale.set(0.5); // Adjust size as needed
     this.sprite.visible = false;
