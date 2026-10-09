@@ -325,18 +325,18 @@ export class Game {
     container.appendChild(this.app.canvas);
   }
 
-  destroy() {
-    window.removeEventListener('blur', this.onBlur);
-    window.removeEventListener('keydown', this.onKeyDown);
-    if (this.player) {
-      this.player.destroy();
-    }
-    if (this.app && this.app.renderer) {
-      try {
-        this.app.destroy({ removeView: true }, { children: true });
-      } catch (e) {
-        console.error('Destroy bypassed:', e);
+  public destroy() {
+    try {
+      window.removeEventListener('blur', this.onBlur);
+      window.removeEventListener('keydown', this.onKeyDown);
+      if (this.player) {
+        this.player.destroy();
       }
+      if (this.app && this.app.renderer) {
+        this.app.destroy({ removeView: true }, { children: true });
+      }
+    } catch (e) {
+      console.warn('Destroy safely bypassed:', e);
     }
   }
 }

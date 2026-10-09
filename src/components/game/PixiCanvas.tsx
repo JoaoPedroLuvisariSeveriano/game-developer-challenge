@@ -18,7 +18,6 @@ export const PixiCanvas: React.FC = () => {
         if (!containerRef.current) return;
         
         // 1. Liga o motor e cola na tela PRIMEIRO.
-        containerRef.current.innerHTML = ''; // Expurgo de Telas Zumbis
         await game.startEngine(containerRef.current);
         
         // 2. Carrega as texturas reais
@@ -47,8 +46,6 @@ export const PixiCanvas: React.FC = () => {
         gameRef.current.destroy();
         gameRef.current = null;
       }
-      // Purga do Cache de Assets
-      Assets.reset();
     };
   }, []);
 
