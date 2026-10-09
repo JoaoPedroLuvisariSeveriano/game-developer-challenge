@@ -12,7 +12,7 @@ export class Player {
   // Input state
   private keys: Record<string, boolean> = {};
 
-  constructor(game: Game) {
+  constructor(_game: Game) {
     this.container = new Container();
     
     // We use a hull from the manifest, e.g., 'hull_large_1'
