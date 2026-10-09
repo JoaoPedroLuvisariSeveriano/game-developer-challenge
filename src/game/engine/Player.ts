@@ -51,18 +51,51 @@ export class Player {
     createCannon(15, -10, Math.PI / 2);
     createCannon(15, 10, Math.PI / 2);
 
-    // Sail
+    // Front Pole & Small Sail
+    const frontPole = Sprite.from('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/pole.png');
+    frontPole.anchor.set(0.5);
+    frontPole.scale.set(0.5);
+    frontPole.position.set(0, -35);
+    this.container.addChild(frontPole);
+
+    const smallSail = Sprite.from('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/sailSmall (1).png');
+    smallSail.anchor.set(0.5);
+    smallSail.scale.set(0.5);
+    smallSail.position.set(0, -35);
+    this.container.addChild(smallSail);
+
+    // Main Pole & Nest
+    const mainPole = Sprite.from('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/pole.png');
+    mainPole.anchor.set(0.5);
+    mainPole.scale.set(0.5);
+    mainPole.position.set(0, 5);
+    this.container.addChild(mainPole);
+
+    const nest = Sprite.from('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/nest.png');
+    nest.anchor.set(0.5);
+    nest.scale.set(0.5);
+    nest.position.set(0, 5);
+    this.container.addChild(nest);
+
+    // Main Sail
     const sail = Sprite.from('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/sailLarge (14).png');
     sail.anchor.set(0.5);
     sail.scale.set(0.5);
     sail.position.set(0, 0);
     this.container.addChild(sail);
 
-    // Flag
-    const flag = Sprite.from('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/flag (2).png');
+    // Crew member on deck
+    const crew = Sprite.from('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/crew (1).png');
+    crew.anchor.set(0.5);
+    crew.scale.set(0.4);
+    crew.position.set(0, 22);
+    this.container.addChild(crew);
+
+    // Flag at the back
+    const flag = Sprite.from('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/flag (1).png');
     flag.anchor.set(0.5, 1);
     flag.scale.set(0.5);
-    flag.position.set(0, 30);
+    flag.position.set(0, 45);
     this.container.addChild(flag);
     
     // Center initially

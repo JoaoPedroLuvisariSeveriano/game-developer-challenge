@@ -16,6 +16,7 @@ export class Game {
   public pool!: ProjectilePool;
   public enemyManager!: EnemyManager;
   public feel!: GameFeel;
+  public islands: { sprite: Sprite, x: number, y: number, radius: number }[] = [];
   
   public score = 0;
   public timeRemaining = 0;
@@ -55,16 +56,21 @@ export class Game {
     this.app.stage.addChildAt(this.ocean, 0);
 
     // Random Islands / Rocks
-    for (let i = 0; i < 15; i++) {
-      // randomly pick an island/rock tile
-      const tId = Math.floor(Math.random() * 5) + 80; // tiles 80-84 as islands?
+    const islandTiles = [13, 14, 29, 30, 45, 46, 61, 62, 77, 78]; // Common large land tiles
+    for (let i = 0; i < 10; i++) {
+      const tId = islandTiles[Math.floor(Math.random() * islandTiles.length)];
       const island = Sprite.from(`/assets/kenney_pirate-pack/PNG/Retina/Tiles/tile_${tId}.png`);
       island.anchor.set(0.5);
-      island.position.set(Math.random() * window.innerWidth, Math.random() * window.innerHeight);
-      island.scale.set(1.5 + Math.random() * 2);
-      // subtle rotation
+      const x = Math.random() * window.innerWidth;
+      const y = Math.random() * window.innerHeight;
+      island.position.set(x, y);
+      const scale = 1.5 + Math.random() * 1.5;
+      island.scale.set(scale);
       island.rotation = Math.random() * Math.PI * 2;
       this.backgroundLayer.addChild(island);
+
+      // approximate physical radius for collision
+      this.islands.push({ sprite: island, x, y, radius: 24 * scale });
     }
 
     this.feel = new GameFeel(this);
@@ -159,6 +165,18 @@ export class Game {
     for (const p of this.pool.projectiles) {
       if (!p.active) continue;
       
+      // Check Projectile vs Islands
+      let hitIsland = false;
+      for (const island of this.islands) {
+        if (checkCollision(p.x, p.y, 4, island.x, island.y, island.radius)) {
+          this.pool.spawnEffect(p.x, p.y, '/assets/kenney_pirate-pack/PNG/Retina/Effects/explosion2.png');
+          p.deactivate();
+          hitIsland = true;
+          break;
+        }
+      }
+      if (hitIsland) continue;
+      
       if (p.owner === 'player') {
         for (const e of this.enemyManager.enemies) {
           if (e.active && checkCollision(p.x, p.y, 4, e.x, e.y, e.radius)) {
@@ -189,8 +207,38 @@ export class Game {
       }
     }
 
+    // Player vs Islands
+    for (const island of this.islands) {
+      if (checkCollision(this.player.x, this.player.y, 20, island.x, island.y, island.radius)) {
+        const dx = this.player.x - island.x;
+        const dy = this.player.y - island.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const overlap = (20 + island.radius) - dist;
+        if (overlap > 0 && dist > 0) {
+          this.player.x += (dx / dist) * overlap;
+          this.player.y += (dy / dist) * overlap;
+        }
+      }
+    }
+
     for (const e of this.enemyManager.enemies) {
-      if (e.active && e instanceof Chaser) {
+      if (!e.active) continue;
+
+      // Enemy vs Islands
+      for (const island of this.islands) {
+        if (checkCollision(e.x, e.y, e.radius, island.x, island.y, island.radius)) {
+          const dx = e.x - island.x;
+          const dy = e.y - island.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const overlap = (e.radius + island.radius) - dist;
+          if (overlap > 0 && dist > 0) {
+            e.x += (dx / dist) * overlap;
+            e.y += (dy / dist) * overlap;
+          }
+        }
+      }
+
+      if (e instanceof Chaser) {
         if (checkCollision(e.x, e.y, e.radius, this.player.x, this.player.y, 20)) {
           this.pool.spawnEffect(e.x, e.y, '/assets/kenney_pirate-pack/PNG/Retina/Effects/explosion3.png');
           e.destroy();
