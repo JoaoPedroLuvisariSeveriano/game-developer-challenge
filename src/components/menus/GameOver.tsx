@@ -47,7 +47,7 @@ export const GameOver: React.FC = () => {
         <div 
           className="relative flex flex-col items-center p-8 md:p-12 text-center max-w-md w-full"
           style={{
-            borderImage: "url('/assets/png/retina/ui/menu/panel_menu.png') 80 fill",
+            borderImage: "url('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/wood (1).png') 20 fill",
             borderStyle: "solid",
             borderWidth: "40px"
           }}

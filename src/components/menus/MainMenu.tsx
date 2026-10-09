@@ -41,7 +41,7 @@ export const MainMenu: React.FC = () => {
       <div 
         className="hidden md:block z-10 p-8 text-foam font-sans shadow-2xl backdrop-blur-sm max-w-sm w-full"
         style={{
-          borderImage: "url('/assets/png/retina/ui/menu/panel_menu.png') 80 fill",
+          borderImage: "url('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/wood (1).png') 20 fill",
           borderStyle: "solid",
           borderWidth: "40px"
         }}

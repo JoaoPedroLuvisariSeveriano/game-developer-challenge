@@ -1,7 +1,7 @@
 import React from 'react';
 import { useMatchStore } from '../../state/matchStore';
 import { TouchControls } from './TouchControls';
-import { AtlasSprite } from '../ui/AtlasSprite';
+
 
 export const HUD: React.FC = () => {
   const { hp, score, timeRemaining } = useMatchStore();
