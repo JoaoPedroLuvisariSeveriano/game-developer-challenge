@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import type { EndReason } from '../../api/contracts';
-import { createId } from '../../lib/id';
+import type { EndReason } from '@/api/contracts';
+import { createId } from '@/lib/id';
 
 export type GameStatus = 'menu' | 'playing' | 'paused' | 'gameover' | 'options' | 'ranking' | 'history';
 
