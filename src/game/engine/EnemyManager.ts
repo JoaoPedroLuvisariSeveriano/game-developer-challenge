@@ -28,6 +28,7 @@ export class EnemyManager {
     if (inactive.length === 0) return;
     
     const e = inactive[Math.floor(Math.random() * inactive.length)];
+    if (!e) return;
     
     // Spawn out of bounds
     const angle = Math.random() * Math.PI * 2;
