@@ -31,6 +31,7 @@ export class Game {
   }
 
   async initGameLogic() {
+    console.log('--- MARCO 8: Game.initLogic() iniciado ---');
     const config = snapshotOptions();
     this.timeRemaining = config.sessionTimeSeconds;
     useMatchStore.getState().resetMatch();
@@ -40,6 +41,7 @@ export class Game {
     this.app.stage.addChild(this.world);
 
     // Ocean Tiling Background
+    console.log('--- MARCO 9: A ler textura do oceano ---');
     const oceanTexture = Assets.get('/assets/kenney_pirate-pack/PNG/Retina/Tiles/tile_73.png');
     
     this.ocean = new TilingSprite({
@@ -140,6 +142,7 @@ export class Game {
       const now = Date.now();
       for (let i = this.islands.length - 1; i >= 0; i--) {
         const island = this.islands[i];
+        if (!island) continue;
         if (island.expiresAt && now >= island.expiresAt) {
           island.sprite.destroy();
           this.islands.splice(i, 1);
@@ -231,6 +234,7 @@ export class Game {
       // Check Projectile vs Islands
       let hitIsland = false;
       for (const island of this.islands) {
+        if (!island) continue;
         if (checkIslandHit(p.x, p.y, 4, island)) {
           this.pool.spawnEffect(p.x, p.y, '/assets/kenney_pirate-pack/PNG/Retina/Effects/explosion2.png');
           p.deactivate();
@@ -274,6 +278,7 @@ export class Game {
 
     // Player vs Islands
     for (const island of this.islands) {
+      if (!island) continue;
       resolveIslandHit(this.player, 20, island);
     }
 
@@ -282,6 +287,7 @@ export class Game {
 
       // Enemy vs Islands
       for (const island of this.islands) {
+        if (!island) continue;
         resolveIslandHit(e, e.radius, island);
       }
 
@@ -310,16 +316,28 @@ export class Game {
     useMatchStore.getState().setGameOver(reason);
   }
   
+  public async startEngine(container: HTMLDivElement) {
+    await this.app.init({
+      resizeTo: window,
+      backgroundColor: 0x87CEEB,
+      resolution: window.devicePixelRatio || 1,
+      autoDensity: true,
+    });
+    container.appendChild(this.app.canvas);
+  }
+
   destroy() {
     window.removeEventListener('blur', this.onBlur);
     window.removeEventListener('keydown', this.onKeyDown);
     if (this.player) {
       this.player.destroy();
     }
-    try {
-      this.app.destroy(true, { children: true });
-    } catch (e) {
-      console.error('[CRITICAL] Failed to destroy PixiJS app:', e);
+    if (this.app && this.app.renderer) {
+      try {
+        this.app.destroy(true, { children: true });
+      } catch (e) {
+        console.error('Destroy bypassed:', e);
+      }
     }
   }
 }
