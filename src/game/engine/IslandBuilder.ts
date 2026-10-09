@@ -1,4 +1,4 @@
-import { Container, Sprite, Assets } from 'pixi.js';
+import { Container, Sprite, Assets, Texture } from 'pixi.js';
 
 export class IslandBuilder {
   static build(): any {
@@ -27,12 +27,13 @@ export class IslandBuilder {
     
     const createDecor = (id: string | number) => {
       const path = `/assets/kenney_pirate-pack/PNG/Retina/Tiles/tile_${id}.png`;
-      const tex = Assets.get(path);
-      if (!tex) {
-        console.warn('Tile missing:', path);
-        return null;
+      const tex = Assets.get(path) || Texture.WHITE;
+      const sprite = new Sprite(tex);
+      if (tex === Texture.WHITE) {
+        sprite.width = 64;
+        sprite.height = 64;
       }
-      return new Sprite(tex);
+      return sprite;
     };
 
     for (let row = 0; row < grid.length; row++) {

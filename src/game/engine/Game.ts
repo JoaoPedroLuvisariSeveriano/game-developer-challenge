@@ -34,7 +34,6 @@ export class Game {
     console.log('--- MARCO 8: Game.initLogic() iniciado ---');
     const config = snapshotOptions();
     this.timeRemaining = config.sessionTimeSeconds;
-    useMatchStore.getState().resetMatch();
     this.score = 0;
 
     this.app.stage.addChildAt(this.backgroundLayer, 0);

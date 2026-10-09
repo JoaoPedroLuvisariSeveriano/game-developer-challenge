@@ -1,27 +1,37 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Game } from '../../game/engine/Game';
 import { AssetLoader } from '../../game/Loader';
+import { Assets } from 'pixi.js';
 
 export const PixiCanvas: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
-  // Using useRef to hold the game instance
-  const gameRef = useRef<Game>(new Game());
+  const gameRef = useRef<Game | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
+    const game = new Game();
+    gameRef.current = game;
+    
     const bootGame = async () => {
       try {
         if (!containerRef.current) return;
         
         // 1. Liga o motor e cola na tela PRIMEIRO.
-        await gameRef.current.startEngine(containerRef.current);
+        await game.startEngine(containerRef.current);
         
-        // BYPASS TOTAL: Não carregar texturas aqui.
+        // 2. Carrega as texturas reais
+        try {
+          await Assets.init();
+          await AssetLoader.loadAll();
+        } catch (e) {
+          console.warn("Assets failed to load, falling back to Texture.WHITE", e);
+        }
+        
         // 3. Tira a tela de loading e inicia o jogo
         if (isMounted) {
-          setIsLoading(false); // FORÇA A TELA A SUMIR IMEDIATAMENTE
-          gameRef.current.initGameLogic(); // INICIA O JOGO IMEDIATAMENTE
+          setIsLoading(false); // FORÇA A TELA A SUMIR
+          game.initGameLogic(); // INICIA O JOGO
         }
       } catch (fatalError) {
         console.error("FATAL ENGINE CRASH:", fatalError);
@@ -32,7 +42,10 @@ export const PixiCanvas: React.FC = () => {
     
     return () => {
       isMounted = false;
-      gameRef.current.destroy();
+      if (gameRef.current) {
+        gameRef.current.destroy();
+        gameRef.current = null;
+      }
     };
   }, []);
 

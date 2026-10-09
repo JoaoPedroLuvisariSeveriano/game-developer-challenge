@@ -22,6 +22,10 @@ export abstract class Enemy {
     this.container = new Container();
     const tex = Assets.get(textureName);
     this.sprite = tex ? new Sprite(tex) : new Sprite(Texture.WHITE);
+    if (!tex) {
+      this.sprite.width = 64;
+      this.sprite.height = 64;
+    }
     this.sprite.anchor.set(0.5);
     
     this.container.addChild(this.sprite);

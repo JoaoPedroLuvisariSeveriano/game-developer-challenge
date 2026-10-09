@@ -16,6 +16,10 @@ export class Projectile {
     const texPath = '/assets/kenney_pirate-pack/PNG/Retina/Ship parts/cannonBall.png';
     const tex = Assets.get(texPath);
     this.sprite = tex ? new Sprite(tex) : new Sprite(Texture.WHITE);
+    if (!tex) {
+      this.sprite.width = 8;
+      this.sprite.height = 8;
+    }
     this.sprite.anchor.set(0.5);
     this.sprite.scale.set(0.5); // Adjust size as needed
     this.sprite.visible = false;

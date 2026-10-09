@@ -19,7 +19,10 @@ export const MainMenu: React.FC = () => {
         
         <div className="flex flex-col gap-6 mt-4">
           <div className="flex flex-wrap gap-6">
-            <AtlasButton onClick={() => setStatus('playing')} baseName="button_primary">
+            <AtlasButton onClick={() => {
+              useMatchStore.getState().resetMatch();
+              setStatus('playing');
+            }} baseName="button_primary">
               Play
             </AtlasButton>
             <AtlasButton onClick={() => setStatus('options')} baseName="button_primary">
