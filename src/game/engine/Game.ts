@@ -51,18 +51,18 @@ export class Game {
 
     // Random Islands / Rocks
     // Create 5 islands
-    // for (let i = 0; i < 5; i++) {
-    //   const { container: island, radius } = IslandBuilder.build();
-    //   const x = Math.random() * window.innerWidth;
-    //   const y = Math.random() * window.innerHeight;
-    //   island.position.set(x, y);
-    //   const scale = 1.2 + Math.random() * 0.5;
-    //   island.scale.set(scale);
-    //   island.rotation = Math.random() * Math.PI * 2;
-    //   this.backgroundLayer.addChild(island);
-    //
-    //   this.islands.push({ sprite: island as any, x, y, radius: radius * scale });
-    // }
+    for (let i = 0; i < 5; i++) {
+      const { container: island, radius } = IslandBuilder.build();
+      const x = Math.random() * window.innerWidth;
+      const y = Math.random() * window.innerHeight;
+      island.position.set(x, y);
+      const scale = 1.2 + Math.random() * 0.5;
+      island.scale.set(scale);
+      island.rotation = Math.random() * Math.PI * 2;
+      this.backgroundLayer.addChild(island);
+
+      this.islands.push({ sprite: island as any, x, y, radius: radius * scale });
+    }
 
     this.feel = new GameFeel(this);
 
