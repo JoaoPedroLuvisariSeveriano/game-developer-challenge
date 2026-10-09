@@ -80,15 +80,15 @@ test.describe('Pirate Battle E2E Test Suite (12 Flows)', () => {
     
     // Testar pausa por teclado
     await page.keyboard.press('Escape');
-    await expect(page.locator('text=Paused')).toBeVisible();
+    await expect(page.locator('text=Game Paused')).toBeVisible();
     await page.click('button:has-text("Resume")');
-    await expect(page.locator('text=Paused')).toBeHidden();
+    await expect(page.locator('text=Game Paused')).toBeHidden();
   });
 
   test('7. Abandono de partida (navegação repetida) sem registro', async ({ page }) => {
     await page.click('button:has-text("Play")');
     await page.keyboard.press('Escape');
-    await page.click('button:has-text("Quit to Menu")');
+    await page.click('button:has-text("Main Menu")'); 
     
     // Validar retorno limpo sem tela de game over
     await expect(page.locator('text=PIRATE BATTLE')).toBeVisible();
@@ -96,24 +96,23 @@ test.describe('Pirate Battle E2E Test Suite (12 Flows)', () => {
   });
 
   test('8. Resiliência: Idempotência e MSW Failures (Timeout & Retry)', async ({ page }) => {
-    // Escolher o cenário "submit-timeout-after-commit" construído na nossa mock control API
-    // No nosso select, ele utiliza o value ID direto.
+    // Escolher o cenário "submit-timeout-after-commit"
     await page.selectOption('select', { value: 'submit-timeout-after-commit' });
     
     await page.click('button:has-text("Play")');
     
-    // Aguardamos Game Over por morte (ficar parado)
+    // Aguardamos Game Over
     await expect(page.locator('text=Game Over')).toBeVisible({ timeout: 60000 });
     
     // O cenário de Timeout forçado pelo MSW mostrará erro de rede e o botão Retry
-    await expect(page.locator('text=Failed to submit record (Network Error).')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('text=Failed to submit record')).toBeVisible({ timeout: 5000 });
     await expect(page.locator('button:has-text("Retry Submit")')).toBeVisible();
     
-    // Clicar em retry (O backend idempotente devolverá 200 ao invés de 201)
+    // Clicar em retry
     await page.click('button:has-text("Retry Submit")');
     
     // Validar o sucesso
-    await expect(page.locator('text=Record saved successfully!')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('text=Match Recorded Successfully')).toBeVisible({ timeout: 5000 });
   });
 
 });
