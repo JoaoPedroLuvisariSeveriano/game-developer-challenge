@@ -60,11 +60,13 @@ export class Player {
     
     // Torn sails at <= 50%
     if (this.hp <= this.maxHp / 2 && this.hp > 0) {
-      this.sprite.texture = Texture.from('/assets/kenney_pirate-pack/PNG/Retina/Ships/ship (12).png');
+      const tex = Assets.get('/assets/kenney_pirate-pack/PNG/Retina/Ships/ship (12).png');
+      if (tex) this.sprite.texture = tex;
     }
 
     if (this.hp <= 0) {
-      this.sprite.texture = Texture.from('/assets/kenney_pirate-pack/PNG/Retina/Ships/ship (24).png');
+      const tex = Assets.get('/assets/kenney_pirate-pack/PNG/Retina/Ships/ship (24).png');
+      if (tex) this.sprite.texture = tex;
       console.log('Game Over');
     }
   }

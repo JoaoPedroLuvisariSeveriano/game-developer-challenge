@@ -5,9 +5,13 @@ import { AssetLoader } from '../../game/Loader';
 export const PixiCanvas: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const gameRef = useRef<Game | null>(null);
+  const hasInitialized = useRef(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (hasInitialized.current) return;
+    hasInitialized.current = true;
+
     let isMounted = true;
     
     const initGame = async () => {
@@ -61,6 +65,7 @@ export const PixiCanvas: React.FC = () => {
 
     return () => {
       isMounted = false;
+      hasInitialized.current = false;
       if (gameRef.current) {
         // As requested: safely destroy everything, including the canvas DOM element
         gameRef.current.destroy();

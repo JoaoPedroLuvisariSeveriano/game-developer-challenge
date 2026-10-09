@@ -4,16 +4,9 @@
  * Design tokens. Tailwind v4 turns every `--color-*` / `--font-*` variable into utilities
  * (bg-abyss-900, text-foam, font-display ...), so menus can stay token-driven.
  */
-@font-face {
-  font-family: 'PirateFont';
-  src: url('/assets/pirate-font.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
 
 @theme {
-  --font-display: "PirateFont", ui-rounded, "Segoe UI Variable Display", "Trebuchet MS", system-ui, sans-serif;
+  --font-display: Impact, "Arial Black", "Segoe UI Variable Display", "Trebuchet MS", system-ui, sans-serif;
   --font-sans: system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
   --color-abyss-950: oklch(0.17 0.04 245);
