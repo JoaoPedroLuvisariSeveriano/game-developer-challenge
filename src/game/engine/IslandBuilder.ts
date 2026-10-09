@@ -1,7 +1,7 @@
-import { Container, Sprite } from 'pixi.js';
+import { Container, Sprite, Assets } from 'pixi.js';
 
 export class IslandBuilder {
-  static build(): { container: Container, radius: number } {
+  static build(): any {
     const container = new Container();
     const isTropical = Math.random() > 0.5;
     
@@ -25,15 +25,26 @@ export class IslandBuilder {
     
     const tileSize = 64;
     
+    const createDecor = (id: string | number) => {
+      const path = `/assets/kenney_pirate-pack/PNG/Retina/Tiles/tile_${id}.png`;
+      const tex = Assets.get(path);
+      if (!tex) {
+        console.warn('Tile missing:', path);
+        return null;
+      }
+      return new Sprite(tex);
+    };
+
     for (let row = 0; row < 3; row++) {
       for (let col = 0; col < 3; col++) {
         const tileId = grid[row][col];
         const tileIdStr = tileId < 10 ? `0${tileId}` : `${tileId}`;
-        const tile = Sprite.from(`/assets/kenney_pirate-pack/PNG/Retina/Tiles/tile_${tileIdStr}.png`);
-        // Precision math as requested:
-        tile.anchor.set(0); 
-        tile.position.set(col * tileSize, row * tileSize);
-        container.addChild(tile);
+        const tile = createDecor(tileIdStr);
+        if (tile) {
+          tile.anchor.set(0); 
+          tile.position.set(col * tileSize, row * tileSize);
+          container.addChild(tile);
+        }
       }
     }
     
@@ -49,29 +60,35 @@ export class IslandBuilder {
     const numTrees = Math.floor(Math.random() * 3) + 1;
     for (let i = 0; i < numTrees; i++) {
       const decorId = treeTiles[Math.floor(Math.random() * treeTiles.length)];
-      const decor = Sprite.from(`/assets/kenney_pirate-pack/PNG/Retina/Tiles/tile_${decorId}.png`);
-      decor.anchor.set(0.5);
-      decor.position.set(96 + (Math.random() - 0.5) * 120, 96 + (Math.random() - 0.5) * 120);
-      container.addChild(decor);
+      const decor = createDecor(decorId);
+      if (decor) {
+        decor.anchor.set(0.5);
+        decor.position.set(96 + (Math.random() - 0.5) * 120, 96 + (Math.random() - 0.5) * 120);
+        container.addChild(decor);
+      }
     }
 
     // Place 1-2 rocks
     const numRocks = Math.floor(Math.random() * 2) + 1;
     for (let i = 0; i < numRocks; i++) {
       const decorId = rockTiles[Math.floor(Math.random() * rockTiles.length)];
-      const decor = Sprite.from(`/assets/kenney_pirate-pack/PNG/Retina/Tiles/tile_${decorId}.png`);
-      decor.anchor.set(0.5);
-      decor.position.set(96 + (Math.random() - 0.5) * 120, 96 + (Math.random() - 0.5) * 120);
-      container.addChild(decor);
+      const decor = createDecor(decorId);
+      if (decor) {
+        decor.anchor.set(0.5);
+        decor.position.set(96 + (Math.random() - 0.5) * 120, 96 + (Math.random() - 0.5) * 120);
+        container.addChild(decor);
+      }
     }
 
     // Place a wreckage sometimes
     if (Math.random() > 0.5) {
       const decorId = wreckTiles[Math.floor(Math.random() * wreckTiles.length)];
-      const decor = Sprite.from(`/assets/kenney_pirate-pack/PNG/Retina/Tiles/tile_${decorId}.png`);
-      decor.anchor.set(0.5);
-      decor.position.set(96 + (Math.random() - 0.5) * 120, 96 + (Math.random() - 0.5) * 120);
-      container.addChild(decor);
+      const decor = createDecor(decorId);
+      if (decor) {
+        decor.anchor.set(0.5);
+        decor.position.set(96 + (Math.random() - 0.5) * 120, 96 + (Math.random() - 0.5) * 120);
+        container.addChild(decor);
+      }
     }
 
     const radius = 96; // Exactly half of 192 (for AABB logic to be implemented)

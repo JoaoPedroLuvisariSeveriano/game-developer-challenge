@@ -37,6 +37,11 @@ export const PixiCanvas: React.FC = () => {
         
         await game.initGameLogic(); // Separate logic init since app is already inited
         
+        if (!isMounted) {
+          game.destroy();
+          return;
+        }
+        
         gameRef.current = game;
       } catch (err) {
         console.error('[CRITICAL] Failed to initialize PixiJS or load assets:', err);

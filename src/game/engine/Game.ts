@@ -118,56 +118,60 @@ export class Game {
   }
 
   update(ticker: Ticker) {
-    if (this.isPaused) return;
+    try {
+      if (this.isPaused) return;
 
-    const dt = ticker.deltaTime;
-    
-    // time in seconds. Assuming 1 deltaTime ~ 1/60th sec
-    this.timeRemaining -= (dt / 60);
-    if (this.timeRemaining <= 0) {
-      this.timeRemaining = 0;
-      this.endGame('time_up');
-      return;
-    }
-
-    if (this.ocean) {
-      this.ocean.tilePosition.x -= 0.5 * dt;
-      this.ocean.tilePosition.y += 0.2 * dt;
-    }
-
-    // Cleanup expired islands (shipwrecks)
-    const now = Date.now();
-    for (let i = this.islands.length - 1; i >= 0; i--) {
-      const island = this.islands[i];
-      if (island.expiresAt && now >= island.expiresAt) {
-        island.sprite.destroy();
-        this.islands.splice(i, 1);
+      const dt = ticker.deltaTime;
+      
+      // time in seconds. Assuming 1 deltaTime ~ 1/60th sec
+      this.timeRemaining -= (dt / 60);
+      if (this.timeRemaining <= 0) {
+        this.timeRemaining = 0;
+        this.endGame('time_up');
+        return;
       }
+
+      if (this.ocean) {
+        this.ocean.tilePosition.x -= 0.5 * dt;
+        this.ocean.tilePosition.y += 0.2 * dt;
+      }
+
+      // Cleanup expired islands (shipwrecks)
+      const now = Date.now();
+      for (let i = this.islands.length - 1; i >= 0; i--) {
+        const island = this.islands[i];
+        if (island.expiresAt && now >= island.expiresAt) {
+          island.sprite.destroy();
+          this.islands.splice(i, 1);
+        }
+      }
+
+      this.player.update(dt);
+      this.pool.update(dt);
+      this.enemyManager.update(dt, this.player.x, this.player.y);
+
+      if (!this.player || isNaN(this.player.x) || isNaN(this.player.y)) return;
+      
+      // Center camera on player
+      this.world.pivot.x = this.player.x;
+      this.world.pivot.y = this.player.y;
+      this.world.position.set(this.app.screen.width / 2, this.app.screen.height / 2);
+      
+      // Background layer should also move if we want parallax or simply align it
+      this.backgroundLayer.pivot.x = this.player.x;
+      this.backgroundLayer.pivot.y = this.player.y;
+      this.backgroundLayer.position.set(this.app.screen.width / 2, this.app.screen.height / 2);
+      
+      // Apply camera shake/feel AFTER the camera is centered
+      this.feel.update(dt);
+      
+      this.checkCollisions();
+
+      // Sync HUD
+      useMatchStore.getState().setMatchData(this.player.hp, this.score, this.timeRemaining);
+    } catch (e) {
+      console.error("GameLoop Crash:", e);
     }
-
-    this.player.update(dt);
-    this.pool.update(dt);
-    this.enemyManager.update(dt, this.player.x, this.player.y);
-
-    if (!this.player || isNaN(this.player.x) || isNaN(this.player.y)) return;
-    
-    // Center camera on player
-    this.world.pivot.x = this.player.x;
-    this.world.pivot.y = this.player.y;
-    this.world.position.set(this.app.screen.width / 2, this.app.screen.height / 2);
-    
-    // Background layer should also move if we want parallax or simply align it
-    this.backgroundLayer.pivot.x = this.player.x;
-    this.backgroundLayer.pivot.y = this.player.y;
-    this.backgroundLayer.position.set(this.app.screen.width / 2, this.app.screen.height / 2);
-    
-    // Apply camera shake/feel AFTER the camera is centered
-    this.feel.update(dt);
-    
-    this.checkCollisions();
-
-    // Sync HUD
-    useMatchStore.getState().setMatchData(this.player.hp, this.score, this.timeRemaining);
   }
 
   checkCollisions() {
