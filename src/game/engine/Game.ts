@@ -1,4 +1,4 @@
-import { Application, Container, Ticker, TilingSprite, Sprite, Texture } from 'pixi.js';
+import { Application, Container, Ticker, TilingSprite, Sprite, Texture, Assets } from 'pixi.js';
 import { Player } from './Player';
 import { ProjectilePool } from './ProjectilePool';
 import { EnemyManager } from './EnemyManager';
@@ -40,7 +40,8 @@ export class Game {
     this.app.stage.addChild(this.world);
 
     // Ocean Tiling Background
-    const oceanTexture = Texture.from('/assets/kenney_pirate-pack/PNG/Retina/Tiles/tile_73.png');
+    const oceanTexture = Assets.get('/assets/kenney_pirate-pack/PNG/Retina/Tiles/tile_73.png');
+    
     this.ocean = new TilingSprite({
       texture: oceanTexture,
       width: this.app.screen.width,
@@ -298,7 +299,7 @@ export class Game {
       this.player.destroy();
     }
     try {
-      this.app.destroy(true, { children: true, texture: true, baseTexture: true });
+      this.app.destroy(true, { children: true });
     } catch (e) {
       console.error('[CRITICAL] Failed to destroy PixiJS app:', e);
     }

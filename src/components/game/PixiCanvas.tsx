@@ -45,9 +45,6 @@ export const PixiCanvas: React.FC = () => {
         // As requested: safely destroy everything, including the canvas DOM element
         gameRef.current.destroy();
         gameRef.current = null;
-        
-        // Unload textures from PixiJS cache so they can be freshly loaded on next mount
-        AssetLoader.unloadAll().catch(console.error);
       }
     };
   }, []);
