@@ -8,10 +8,9 @@ import './index.css'
 
 async function bootstrap(): Promise<void> {
   try {
-    // The mock API must be live before the first query fires.
-    await startMocking()
+    // MSW disabled to prevent interception of static assets
+    // await startMocking()
   } catch (error) {
-    // Ranking/history are non-critical: the game and menus must still load without them.
     console.warn('[mocks] Could not start the mock API; ranking and history will be unavailable.', error)
   }
 

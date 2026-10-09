@@ -26,8 +26,11 @@ export const PixiCanvas: React.FC = () => {
           resolution: window.devicePixelRatio || 1,
           autoDensity: true,
         });
-        
-        containerRef.current.appendChild(game.app.canvas);
+        if (containerRef.current) {
+          containerRef.current.appendChild(game.app.canvas);
+        } else {
+          console.error('[CRITICAL] Container ref is null after app.init');
+        }
         
         await game.initGameLogic(); // Separate logic init since app is already inited
         
@@ -50,7 +53,7 @@ export const PixiCanvas: React.FC = () => {
   }, []);
 
   return (
-    <div ref={containerRef} className="w-full h-screen overflow-hidden bg-black relative">
+    <div ref={containerRef} className="absolute inset-0 w-full h-full overflow-hidden bg-black z-0">
       {loading && (
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-900 text-white z-50">
           <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
