@@ -9,35 +9,39 @@ export class IslandBuilder {
 
     const graphics = new Graphics();
     
-    // 2. Polígono Suave e Ondulado
-    const drawWavyPolygon = (g: Graphics, baseRadius: number, color: number) => {
-      g.beginFill(color);
-      const steps = 40;
-      const wavePhase1 = Math.random() * Math.PI * 2;
-      const wavePhase2 = Math.random() * Math.PI * 2;
+    // 2. Polígonos Suaves e Sincronizados (Areia e Relva)
+    const steps = 40;
+    const wavePhase1 = Math.random() * Math.PI * 2;
+    const wavePhase2 = Math.random() * Math.PI * 2;
+    
+    const sandPoints: {x: number, y: number}[] = [];
+    const grassPoints: {x: number, y: number}[] = [];
+
+    for (let i = 0; i <= steps; i++) {
+      const angle = (i / steps) * Math.PI * 2;
+      // Imperfeições partilhadas
+      const wave = Math.sin(angle * 3 + wavePhase1) * 12 + Math.cos(angle * 5 + wavePhase2) * 6;
       
-      for (let i = 0; i <= steps; i++) {
-        const angle = (i / steps) * Math.PI * 2;
-        // Ondulação contínua com sin e cos
-        const r = baseRadius + Math.sin(angle * 3 + wavePhase1) * 12 + Math.cos(angle * 5 + wavePhase2) * 6;
-        
-        const px = Math.cos(angle) * r;
-        const py = Math.sin(angle) * r;
-        
-        if (i === 0) {
-          g.moveTo(px, py);
-        } else {
-          g.lineTo(px, py);
-        }
+      const sandR = radius + wave;
+      const grassR = (radius * 0.65) + (wave * 0.65);
+      
+      sandPoints.push({ x: Math.cos(angle) * sandR, y: Math.sin(angle) * sandR });
+      grassPoints.push({ x: Math.cos(angle) * grassR, y: Math.sin(angle) * grassR });
+    }
+
+    const drawPolygon = (g: Graphics, points: {x: number, y: number}[], color: number) => {
+      if (points.length === 0) return;
+      g.beginFill(color);
+      g.moveTo(points[0].x, points[0].y);
+      for (let i = 1; i < points.length; i++) {
+        g.lineTo(points[i].x, points[i].y);
       }
       g.endFill();
     };
 
-    // Areia
-    drawWavyPolygon(graphics, radius, 0xE6C280);
-
-    // Relva (30% menor)
-    drawWavyPolygon(graphics, radius * 0.7, 0x4CAF50);
+    // Desenhar camadas sincronizadas
+    drawPolygon(graphics, sandPoints, 0xE6C280);
+    drawPolygon(graphics, grassPoints, 0x4CAF50);
 
     // Formato Forçosamente Oval
     if (Math.random() > 0.5) {
