@@ -54,14 +54,39 @@ export class Game {
     // Create 5 islands
     for (let i = 0; i < 5; i++) {
       const { container: island, radius } = IslandBuilder.build();
-      const x = Math.random() * this.app.screen.width;
-      const y = Math.random() * this.app.screen.height;
-      island.position.set(x, y);
       const scale = 1.2 + Math.random() * 0.5;
-      island.scale.set(scale);
-      this.backgroundLayer.addChild(island);
-
-      this.islands.push({ sprite: island as any, x, y, radius: radius * scale });
+      const finalRadius = radius * scale;
+      
+      let x = 0;
+      let y = 0;
+      let valid = false;
+      let attempts = 0;
+      
+      while (!valid && attempts < 50) {
+        x = Math.random() * this.app.screen.width;
+        y = Math.random() * this.app.screen.height;
+        valid = true;
+        
+        // Validação Matemática Geométrica
+        for (const existing of this.islands) {
+          const dx = x - existing.x;
+          const dy = y - existing.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          
+          if (dist <= finalRadius + existing.radius + 80) {
+            valid = false;
+            break;
+          }
+        }
+        attempts++;
+      }
+      
+      if (valid) {
+        island.position.set(x, y);
+        island.scale.set(scale);
+        this.backgroundLayer.addChild(island);
+        this.islands.push({ sprite: island as any, x, y, radius: finalRadius });
+      }
     }
 
     this.feel = new GameFeel(this);
