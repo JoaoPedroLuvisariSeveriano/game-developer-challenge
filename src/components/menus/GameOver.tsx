@@ -70,6 +70,13 @@ export const GameOver: React.FC = () => {
     );
   }
 
+  const handlePlayAgain = (e: React.MouseEvent) => {
+    e.preventDefault(); // Impede qualquer comportamento padrão do React
+    
+    // Navegação absoluta: força o browser a destruir a instância atual e recriar a página do zero (Idêntico a F5)
+    window.location.href = window.location.pathname; 
+  };
+
   // Step 2
   return (
     <WoodenModal title={title}>
@@ -103,9 +110,7 @@ export const GameOver: React.FC = () => {
         </div>
 
         <div className="flex justify-center w-full mt-2">
-          <AtlasButton onClick={() => {
-            window.location.reload();
-          }} baseName="button_primary" className="scale-110">
+          <AtlasButton onClick={handlePlayAgain} baseName="button_primary" className="scale-110">
             PLAY AGAIN
           </AtlasButton>
         </div>
