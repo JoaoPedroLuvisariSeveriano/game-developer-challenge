@@ -15,7 +15,7 @@ export default function App() {
   const isPlaying = status === 'playing' || status === 'paused' || status === 'gameover';
 
   return (
-    <main className="w-full h-full overflow-hidden bg-black relative">
+    <main className="w-full h-full overflow-hidden bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 relative">
       {isPlaying && <PixiCanvas key={matchId} />}
       {isPlaying && <HUD />}
       

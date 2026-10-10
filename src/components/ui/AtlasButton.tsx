@@ -6,40 +6,19 @@ interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export const AtlasButton: React.FC<Props> = ({ 
-  baseName = 'button_primary', 
+  baseName, 
   children, 
   className = '', 
   disabled, 
   ...props 
 }) => {
-  const [state, setState] = useState<'normal' | 'hover' | 'pressed'>('normal');
-  
-  
-  const bgStyle = {
-    backgroundImage: `url('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/wood (2).png')`,
-    backgroundSize: '100% 100%',
-    width: '240px',
-    height: '64px',
-    backgroundRepeat: 'no-repeat',
-    transition: 'transform 0.1s',
-    transform: state === 'pressed' ? 'scale(0.95)' : 'scale(1)',
-    filter: state === 'hover' ? 'brightness(1.1)' : 'none',
-  };
-
   return (
     <button
-      className={`relative flex items-center justify-center font-display text-white text-xl uppercase tracking-wider focus:outline-none focus:ring-4 focus:ring-doubloon rounded ${className}`}
-      style={bgStyle}
-      onMouseEnter={() => setState('hover')}
-      onMouseLeave={() => setState('normal')}
-      onMouseDown={() => setState('pressed')}
-      onMouseUp={() => setState('hover')}
-      onFocus={() => setState('hover')}
-      onBlur={() => setState('normal')}
+      className={`px-8 py-3 bg-gradient-to-b from-amber-500 to-amber-700 text-white font-bold tracking-widest rounded-lg border-b-4 border-amber-900 hover:from-amber-400 hover:to-amber-600 hover:border-amber-700 active:border-b-0 active:translate-y-1 transition-all duration-150 uppercase shadow-lg focus:outline-none focus:ring-4 focus:ring-amber-500/50 ${className}`}
       disabled={disabled}
       {...props}
     >
-      <span className="z-10 drop-shadow-md">{children}</span>
+      <span className="z-10 drop-shadow-md font-display">{children}</span>
     </button>
   );
 };

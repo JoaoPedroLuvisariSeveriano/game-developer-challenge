@@ -67,7 +67,7 @@ export const CaptainsLog: React.FC<Props> = ({ defaultTab = 'ranking' }) => {
               </button>
             </div>
           ) : items.length === 0 ? (
-            <div className="flex-1 flex items-center justify-center text-2xl text-gray-400 font-sans italic">
+            <div className="flex-1 flex items-center justify-center text-slate-400 italic text-center p-8 text-2xl font-sans">
               Nenhum registo encontrado nestas águas.
             </div>
           ) : (
@@ -90,11 +90,16 @@ export const CaptainsLog: React.FC<Props> = ({ defaultTab = 'ranking' }) => {
                     const statusColor = isVictory ? 'text-emerald-400' : 'text-red-400';
                     const statusText = isVictory ? 'VITÓRIA' : 'DERROTA';
                     
+                    let starColor = '';
+                    if (rank === 1) starColor = 'text-yellow-400';
+                    else if (rank === 2) starColor = 'text-slate-300';
+                    else if (rank === 3) starColor = 'text-amber-600';
+
                     return (
-                      <tr key={item.matchId} className="border-b border-slate-700/50 even:bg-slate-800/30 hover:bg-slate-700/50 transition-colors text-lg text-gray-100 cursor-default">
+                      <tr key={item.matchId} className="border-b border-slate-700/50 hover:bg-amber-500/10 transition-colors text-lg text-gray-100 cursor-default">
                         <td className="p-4 flex items-center gap-2">
-                          {isTop3 && <span className="text-yellow-400 text-xl" title="Top 3">★</span>}
-                          <span className={isTop3 ? 'text-yellow-400 font-black' : 'text-gray-400 font-semibold'}>{rank !== '-' ? `#${rank}` : '-'}</span>
+                          {isTop3 && <span className={`${starColor} text-xl`} title="Top 3">★</span>}
+                          <span className={isTop3 ? `${starColor} font-black` : 'text-gray-400 font-semibold'}>{rank !== '-' ? `#${rank}` : '-'}</span>
                         </td>
                         <td className="p-4 font-medium">{tab === 'ranking' ? item.nickname : new Date(item.playedAt).toLocaleString()}</td>
                         <td className="p-4 text-center text-yellow-400 font-bold font-mono tracking-wider">{item.score}</td>

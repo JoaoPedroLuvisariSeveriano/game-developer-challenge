@@ -9,11 +9,11 @@ export const MainMenu: React.FC = () => {
   const scenarioId = useSyncExternalStore(mockControl.subscribe, () => mockControl.getState().scenarioId);
 
   return (
-    <div className="absolute inset-0 flex items-center justify-between px-12 md:px-24 bg-gray-900 bg-opacity-80 z-50 overflow-hidden">
+    <div className="absolute inset-0 flex items-center justify-between px-12 md:px-24 z-50 overflow-hidden">
       
       {/* Left Column: Title and Buttons */}
       <div className="flex flex-col items-start gap-8 z-10 w-full md:w-auto">
-        <h1 className="text-6xl md:text-8xl font-black tracking-widest text-doubloon font-display drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]">
+        <h1 className="text-6xl md:text-8xl text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 via-amber-400 to-amber-600 drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] font-black tracking-widest font-display">
           PIRATE BATTLE
         </h1>
         
@@ -42,14 +42,9 @@ export const MainMenu: React.FC = () => {
 
       {/* Right Column: Controls Panel */}
       <div 
-        className="hidden md:block z-10 p-8 text-foam font-sans shadow-2xl backdrop-blur-sm max-w-sm w-full"
-        style={{
-          borderImage: "url('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/wood (1).png') 20 fill",
-          borderStyle: "solid",
-          borderWidth: "40px"
-        }}
+        className="hidden md:block z-10 p-8 text-slate-200 font-sans max-w-sm w-full bg-slate-900/60 backdrop-blur-md border border-amber-500/30 shadow-[0_0_40px_rgba(0,0,0,0.5)] rounded-2xl"
       >
-        <h2 className="text-3xl font-display text-doubloon text-center mb-6 tracking-wider">Controls</h2>
+        <h2 className="text-3xl font-display text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 via-amber-400 to-amber-600 drop-shadow-md text-center mb-6 tracking-wider uppercase font-black">Controls</h2>
         <table className="w-full text-lg border-separate border-spacing-y-3">
           <tbody>
             <tr><td className="font-bold text-gray-300">Move Forward</td><td className="text-right"><kbd className="bg-gray-800 px-2 py-1 rounded border-b-2 border-gray-600">W</kbd> or <kbd className="bg-gray-800 px-2 py-1 rounded border-b-2 border-gray-600">▲</kbd></td></tr>
