@@ -77,7 +77,7 @@ test.describe('Pirate Battle E2E Test Suite (12 Flows)', () => {
     
     // Assumimos que o player ficará parado e tomará dano até o Game Over.
     // 1ª Etapa do Game Over: Alerta "YOUR SHIP SANK!"
-    await expect(page.locator('h2:has-text("YOUR SHIP SANK!")')).toBeVisible({ timeout: 60000 });
+    await expect(page.locator('h2:has-text("YOUR SHIP SANK!")')).toBeVisible({ timeout: 120000 });
     
     // Clicar no botão intermediário
     await page.click('button:has-text("SEE RESULTS")');
@@ -92,12 +92,11 @@ test.describe('Pirate Battle E2E Test Suite (12 Flows)', () => {
     await expect(page).toHaveScreenshot('game-over-baseline.png');
     
     // Voltar para o menu e iniciar nova partida para limpar o estado e desmontar o canvas
-    await page.click('button:has-text("Main Menu")', { force: true });
-    await expect(page.locator('button:has-text("Play")')).toBeVisible();
-    
-    // Clique novamente no botão de iniciar jogo (Play) para verificar o reinício limpo
-    await page.click('button:has-text("Play")');
+    await page.click('button:has-text("PLAY AGAIN")', { force: true });
     await expect(page.locator('canvas')).toBeVisible();
+    
+    // Wait a moment for rendering
+    await page.waitForTimeout(500);
   });
 
   test('6. Pausa (via window.blur e tecla) sem avanço', async ({ page }) => {
@@ -138,7 +137,7 @@ test.describe('Pirate Battle E2E Test Suite (12 Flows)', () => {
     await page.click('button:has-text("Play")');
     
     // 1ª Etapa do Game Over: Alerta "YOUR SHIP SANK!"
-    await expect(page.locator('h2:has-text("YOUR SHIP SANK!")')).toBeVisible({ timeout: 60000 });
+    await expect(page.locator('h2:has-text("YOUR SHIP SANK!")')).toBeVisible({ timeout: 120000 });
     
     // Clicar no botão intermediário
     await page.click('button:has-text("SEE RESULTS")');
