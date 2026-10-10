@@ -16,19 +16,23 @@ export const PixiCanvas: React.FC = () => {
 
     const bootGame = async () => {
       try {
-        // Purga a cache sem quebrar a DOM
+        // 1. LOCK DE RECONCILIAÇÃO: Espera 100ms para o React terminar de destruir a árvore velha
+        await new Promise(r => setTimeout(r, 100));
+
+        // 2. Purga segura ANTES de carregar (garante que a cache velha já não está em uso)
         try { Assets.reset(); } catch(e) {}
+
+        if (!containerRef.current || engine.isDestroyed || !isMounted) return;
 
         await engine.startEngine(containerRef.current as HTMLDivElement);
         await AssetLoader.loadAll();
 
-        // DEFESA CRÍTICA: Se o React destruiu esta instância enquanto os assets carregavam, ABORTE.
-        if (engine.isDestroyed || !isMounted) return;
-
-        engine.initGameLogic();
-        setIsLoading(false);
+        if (isMounted && !engine.isDestroyed) {
+          engine.initGameLogic();
+          setIsLoading(false);
+        }
       } catch (error) {
-        console.error('Boot Error:', error);
+        console.error('Boot Crash:', error);
       }
     };
 
@@ -36,9 +40,7 @@ export const PixiCanvas: React.FC = () => {
 
     return () => {
       isMounted = false;
-      // O PixiJS remove o canvas sozinho via { removeView: true } no destroy
-      engine.destroy(); 
-      try { Assets.reset(); } catch(e) {}
+      engine.destroy();
     };
   }, []);
 

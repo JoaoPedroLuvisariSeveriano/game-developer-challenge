@@ -71,10 +71,10 @@ export const GameOver: React.FC = () => {
   }
 
   const handlePlayAgain = (e: React.MouseEvent) => {
-    e.preventDefault(); // Impede qualquer comportamento padrão do React
+    e.preventDefault();
     
-    // Navegação absoluta: força o browser a destruir a instância atual e recriar a página do zero (Idêntico a F5)
-    window.location.href = window.location.pathname; 
+    useMatchStore.getState().resetMatch();
+    setStatus('playing');
   };
 
   // Step 2
