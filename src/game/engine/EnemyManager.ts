@@ -43,7 +43,7 @@ export class EnemyManager {
 
       valid = true;
       for (const island of islands) {
-        if (!island) continue;
+        if (!island || island.isDead) continue;
         const dx = sx - island.x;
         const dy = sy - island.y;
         if (Math.sqrt(dx * dx + dy * dy) < 20 + island.radius + 50) {
@@ -65,10 +65,8 @@ export class EnemyManager {
 
     for (let i = this.enemies.length - 1; i >= 0; i--) {
       const e = this.enemies[i];
-      if (!e) continue;
-      if (e.active) {
-        e.update(dt, playerX, playerY);
-      }
+      if (!e || !e.active) continue;
+      e.update(dt, playerX, playerY);
     }
   }
 }

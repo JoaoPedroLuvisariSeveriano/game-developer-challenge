@@ -178,22 +178,26 @@ export class Game {
           return;
         }
 
-        // Mark expired islands (shipwrecks)
-        const now = Date.now();
-        for (let i = this.islands.length - 1; i >= 0; i--) {
-          const island = this.islands[i];
-          if (!island) continue;
-          if (island.expiresAt && now >= island.expiresAt) {
-            island.sprite.destroy();
-            island.isDead = true;
+        try {
+          // Mark expired islands (shipwrecks)
+          const now = Date.now();
+          for (let i = this.islands.length - 1; i >= 0; i--) {
+            const island = this.islands[i];
+            if (!island || island.isDead) continue;
+            if (island.expiresAt && now >= island.expiresAt) {
+              if (island.sprite && !(island.sprite as any).destroyed) {
+                island.sprite.destroy();
+              }
+              island.isDead = true;
+            }
           }
-        }
+        } catch (error) { console.error("Erro no Game Loop: Ilhas update", error); }
 
-        this.player.update(dt);
-        this.pool.update(dt);
-        this.enemyManager.update(dt, this.player.x, this.player.y, this.islands);
-        this.feel.update(dt);
-        this.checkCollisions();
+        try { this.player.update(dt); } catch (error) { console.error("Erro no Game Loop: Player", error); }
+        try { this.pool.update(dt); } catch (error) { console.error("Erro no Game Loop: Projéteis", error); }
+        try { this.enemyManager.update(dt, this.player.x, this.player.y, this.islands); } catch (error) { console.error("Erro no Game Loop: Inimigos", error); }
+        try { this.feel.update(dt); } catch (error) { console.error("Erro no Game Loop: GameFeel", error); }
+        try { this.checkCollisions(); } catch (error) { console.error("Erro no Game Loop: Colisões", error); }
         
         // Sweep islands
         this.islands = this.islands.filter(island => !island.isDead);
@@ -262,7 +266,7 @@ export class Game {
       let hitIsland = false;
       for (let j = this.islands.length - 1; j >= 0; j--) {
         const island = this.islands[j];
-        if (!island) continue;
+        if (!island || island.isDead) continue;
         if (checkIslandHit(p.x, p.y, 4, island)) {
           this.pool.spawnEffect(p.x, p.y, '/assets/kenney_pirate-pack/PNG/Retina/Effects/explosion2.png');
           AudioEngine.play('explosion');
@@ -316,7 +320,7 @@ export class Game {
     // Player vs Islands
     for (let i = this.islands.length - 1; i >= 0; i--) {
       const island = this.islands[i];
-      if (!island) continue;
+      if (!island || island.isDead) continue;
       resolveIslandHit(this.player, 20, island);
     }
 
@@ -328,7 +332,7 @@ export class Game {
       // Enemy vs Islands
       for (let j = this.islands.length - 1; j >= 0; j--) {
         const island = this.islands[j];
-        if (!island) continue;
+        if (!island || island.isDead) continue;
         resolveIslandHit(e, e.radius, island);
       }
 

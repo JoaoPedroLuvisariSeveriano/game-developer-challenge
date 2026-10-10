@@ -39,16 +39,14 @@ export class ProjectilePool {
   update(dt: number) {
     for (let i = this.projectiles.length - 1; i >= 0; i--) {
       const p = this.projectiles[i];
-      if (!p) continue;
-      if (p.active) {
-        p.update(dt);
-      }
+      if (!p || !p.active) continue;
+      p.update(dt);
     }
     
     // update effects
     for (let i = this.effects.length - 1; i >= 0; i--) {
       const eff = this.effects[i];
-      if (!eff) continue;
+      if (!eff || (eff as any).isDead || eff.destroyed) continue;
       
       eff.alpha -= 0.05 * dt;
       eff.scale.x += 0.02 * dt;
