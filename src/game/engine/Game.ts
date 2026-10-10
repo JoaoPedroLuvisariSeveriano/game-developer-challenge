@@ -259,8 +259,7 @@ export class Game {
 
     for (let i = this.pool.projectiles.length - 1; i >= 0; i--) {
       const p = this.pool.projectiles[i];
-      if (!p) continue;
-      if (!p.active) continue;
+      if (!p || !p.active || (p as any).isDead) continue;
       
       // Check Projectile vs Islands
       let hitIsland = false;
@@ -280,8 +279,8 @@ export class Game {
       if (p.owner === 'player') {
         for (let k = this.enemyManager.enemies.length - 1; k >= 0; k--) {
           const e = this.enemyManager.enemies[k];
-          if (!e) continue;
-          if (e.active && checkCollision(p.x, p.y, 4, e.x, e.y, e.radius)) {
+          if (!e || !e.active || (e as any).isDead) continue;
+          if (checkCollision(p.x, p.y, 4, e.x, e.y, e.radius)) {
             this.pool.spawnEffect(p.x, p.y, '/assets/kenney_pirate-pack/PNG/Retina/Effects/explosion1.png');
             AudioEngine.play('explosion');
             p.deactivate();
@@ -300,6 +299,7 @@ export class Game {
           }
         }
       } else if (p.owner === 'enemy') {
+        if (!p.active || (p as any).isDead) continue; // Absolute guard
         if (checkCollision(p.x, p.y, 4, this.player.x, this.player.y, 20)) {
           this.pool.spawnEffect(p.x, p.y, '/assets/kenney_pirate-pack/PNG/Retina/Effects/explosion2.png');
           AudioEngine.play('explosion');
@@ -326,8 +326,7 @@ export class Game {
 
     for (let i = this.enemyManager.enemies.length - 1; i >= 0; i--) {
       const e = this.enemyManager.enemies[i];
-      if (!e) continue;
-      if (!e.active) continue;
+      if (!e || !e.active || (e as any).isDead) continue;
 
       // Enemy vs Islands
       for (let j = this.islands.length - 1; j >= 0; j--) {
@@ -337,6 +336,7 @@ export class Game {
       }
 
       if (e instanceof Chaser) {
+        if (!e.active || (e as any).isDead) continue; // Absolute guard
         if (checkCollision(e.x, e.y, e.radius, this.player.x, this.player.y, 20)) {
           this.pool.spawnEffect(e.x, e.y, '/assets/kenney_pirate-pack/PNG/Retina/Effects/explosion3.png');
           AudioEngine.play('explosion');

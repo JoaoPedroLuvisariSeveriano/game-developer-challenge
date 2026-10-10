@@ -33,13 +33,17 @@ export class Projectile {
     this.owner = owner;
     this.life = 100; // frames or distance
     this.active = true;
+    (this as any).isDead = false;
     
     // Tint the cannon ball slightly if we want, or keep original
     // this.sprite.tint = color;
     
     this.sprite.x = this.x;
     this.sprite.y = this.y;
-    this.sprite.visible = true;
+    if (this.sprite) {
+      this.sprite.visible = true;
+      this.sprite.alpha = 1;
+    }
   }
 
   deactivate() {
@@ -49,6 +53,7 @@ export class Projectile {
 
   update(dt: number) {
     if (!this.active) return;
+    dt = dt || 1;
     
     this.x += this.vx * dt;
     this.y += this.vy * dt;

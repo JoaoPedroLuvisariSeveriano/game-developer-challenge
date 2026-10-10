@@ -5,7 +5,7 @@ export class Shooter extends Enemy {
   private speed = 1.5;
   private pool: ProjectilePool;
   private fireCooldown = 0;
-  private safeDistance = 250;
+
 
   constructor(pool: ProjectilePool) {
     super(
@@ -17,12 +17,22 @@ export class Shooter extends Enemy {
     this.sprite.scale.set(0.6);
   }
 
+  override spawn(x: number, y: number, hp: number) {
+    super.spawn(x, y, hp);
+    this.fireCooldown = 0; // Reset cooldown on pool spawn
+  }
+
   update(dt: number, playerX: number, playerY: number) {
     if (!this.active) return;
+    dt = dt || 1;
     
-    const dx = playerX - this.x;
-    const dy = playerY - this.y;
-    const dist = Math.sqrt(dx * dx + dy * dy);
+    let dx = playerX - this.x;
+    let dy = playerY - this.y;
+    if (isNaN(dx)) dx = 0;
+    if (isNaN(dy)) dy = 0;
+    
+    let dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < 1 || isNaN(dist)) dist = 1;
     const angleToPlayer = Math.atan2(dy, dx);
     
     // Relentless pursuit: Seek & Shoot

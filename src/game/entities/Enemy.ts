@@ -38,12 +38,20 @@ export abstract class Enemy {
     this.hp = hp;
     this.maxHp = hp;
     this.active = true;
+    (this as any).isDead = false;
     const tex = Assets.get(this.normalTexture);
     if (tex) this.sprite.texture = tex;
     this.sprite.tint = 0xffffff;
     this.container.x = x;
     this.container.y = y;
-    this.container.visible = true;
+    if (this.sprite) {
+      this.sprite.visible = true;
+      this.sprite.alpha = 1;
+    }
+    if (this.container) {
+      this.container.visible = true;
+      this.container.alpha = 1;
+    }
   }
 
   takeDamage(amount: number) {
