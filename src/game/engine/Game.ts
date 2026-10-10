@@ -251,7 +251,7 @@ export class Game {
       }
     };
 
-    const resolveIslandHit = (entity: { x: number, y: number }, r: number, island: any, ejectionMultiplier: number = 1) => {
+    const resolveIslandHit = (entity: { x: number, y: number }, r: number, island: any, ejectionMultiplier: number = 1.05) => {
       let dx = entity.x - island.x;
       let dy = entity.y - island.y;
       if (dx === 0 && dy === 0) {
@@ -259,13 +259,16 @@ export class Game {
         dy = 1;
       }
       const dist = Math.sqrt(dx * dx + dy * dy);
+      const minDistance = r + island.radius;
       
-      if (dist < r + island.radius) {
+      if (dist < minDistance) {
+        const overlap = minDistance - dist;
         const dirX = dx / dist;
         const dirY = dy / dist;
-        // Escape velocity multiplication
-        entity.x = island.x + (dirX * (r + island.radius) * ejectionMultiplier);
-        entity.y = island.y + (dirY * (r + island.radius) * ejectionMultiplier);
+        // Blindagem de Movimento: Correção vetorial suave (baseada no overlap)
+        // O navio desliza pela orla em vez de ser teleportado com atribuição absoluta.
+        entity.x += dirX * overlap * ejectionMultiplier;
+        entity.y += dirY * overlap * ejectionMultiplier;
       }
     };
 
@@ -340,11 +343,11 @@ export class Game {
       const e = this.enemyManager.enemies[i];
       if (!e || !e.active || (e as any).isDead) continue;
 
-      // Enemy vs Islands (REATIVADO com Escape Velocity)
+      // Enemy vs Islands (Correção Suavizada)
       for (let j = this.islands.length - 1; j >= 0; j--) {
         const island = this.islands[j];
         if (!island || island.isDead) continue;
-        resolveIslandHit(e, e.radius, island, 3); // Multiplicador de ejeção = 3
+        resolveIslandHit(e, e.radius, island, 1.05); // Multiplicador suave para deslizar (smooth slide)
       }
 
       if (e instanceof Chaser) {
