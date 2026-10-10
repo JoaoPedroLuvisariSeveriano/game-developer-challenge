@@ -153,7 +153,7 @@ export class Game {
 
       this.player.update(dt);
       this.pool.update(dt);
-      this.enemyManager.update(dt, this.player.x, this.player.y);
+      this.enemyManager.update(dt, this.player.x, this.player.y, this.islands);
 
       this.feel.update(dt);
       
@@ -187,33 +187,15 @@ export class Game {
     };
 
     const resolveIslandHit = (entity: { x: number, y: number }, r: number, island: any) => {
-      if (island.isRect) {
-        const halfW = island.width / 2;
-        const halfH = island.height / 2;
-        const testX = Math.max(island.x - halfW, Math.min(entity.x, island.x + halfW));
-        const testY = Math.max(island.y - halfH, Math.min(entity.y, island.y + halfH));
-        const dx = entity.x - testX;
-        const dy = entity.y - testY;
-        const distSq = dx * dx + dy * dy;
-        if (distSq < r * r) {
-          const dist = Math.sqrt(distSq);
-          if (dist === 0) {
-            entity.y -= r; // arbitrary push out if center exactly matched
-          } else {
-            const overlap = r - dist;
-            entity.x += (dx / dist) * overlap;
-            entity.y += (dy / dist) * overlap;
-          }
-        }
-      } else {
-        const dx = entity.x - island.x;
-        const dy = entity.y - island.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        const overlap = (r + island.radius) - dist;
-        if (overlap > 0 && dist > 0) {
-          entity.x += (dx / dist) * overlap;
-          entity.y += (dy / dist) * overlap;
-        }
+      const dx = entity.x - island.x;
+      const dy = entity.y - island.y;
+      const dist = Math.sqrt(dx * dx + dy * dy) || 1; // previne div zero
+      
+      if (dist < r + island.radius) {
+        const dirX = dx / dist;
+        const dirY = dy / dist;
+        entity.x = island.x + (dirX * (r + island.radius));
+        entity.y = island.y + (dirY * (r + island.radius));
       }
     };
 

@@ -23,26 +23,43 @@ export class EnemyManager {
     }
   }
 
-  spawnEnemy(playerX: number, playerY: number) {
+  spawnEnemy(playerX: number, playerY: number, islands: any[]) {
     const inactive = this.enemies.filter(e => !e.active);
     if (inactive.length === 0) return;
     
     const e = inactive[Math.floor(Math.random() * inactive.length)];
     if (!e) return;
     
-    // Spawn out of bounds
-    const angle = Math.random() * Math.PI * 2;
-    const distance = 800; // further than visible screen
-    const sx = playerX + Math.cos(angle) * distance;
-    const sy = playerY + Math.sin(angle) * distance;
+    let valid = false;
+    let attempts = 0;
+    let sx = 0, sy = 0;
+
+    while (!valid && attempts < 10) {
+      attempts++;
+      const angle = Math.random() * Math.PI * 2;
+      const distance = 400 + Math.random() * 200; // spawn outside screen roughly
+      sx = playerX + Math.cos(angle) * distance;
+      sy = playerY + Math.sin(angle) * distance;
+
+      valid = true;
+      for (const island of islands) {
+        if (!island) continue;
+        const dx = sx - island.x;
+        const dy = sy - island.y;
+        if (Math.sqrt(dx * dx + dy * dy) < 20 + island.radius + 50) {
+          valid = false;
+          break;
+        }
+      }
+    }
     
-    e.spawn(sx, sy, 3); // 3 HP
+    if (valid) e.spawn(sx, sy, 3); // 3 HP
   }
 
-  update(dt: number, playerX: number, playerY: number) {
+  update(dt: number, playerX: number, playerY: number, islands: any[]) {
     this.spawnTimer -= dt;
     if (this.spawnTimer <= 0) {
-      this.spawnEnemy(playerX, playerY);
+      this.spawnEnemy(playerX, playerY, islands);
       this.spawnTimer = 180; // roughly 3 seconds
     }
 

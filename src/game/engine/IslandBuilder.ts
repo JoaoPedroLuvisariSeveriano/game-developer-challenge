@@ -110,8 +110,8 @@ export class IslandBuilder {
       }
     }
 
-    const radius = 96; // Exactly half of 192 (for AABB logic to be implemented)
+    const radius = 85; // Solid circular collision radius
 
-    return { container, radius, isRect: true, width: 192, height: 192 };
+    return { container, radius, isRect: false, width: 192, height: 192 };
   }
 }
