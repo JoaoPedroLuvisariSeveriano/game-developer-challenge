@@ -25,9 +25,6 @@ export class Game {
   private isPaused = false;
   public isDestroyed = false;
 
-  public readonly WORLD_WIDTH = 3000;
-  public readonly WORLD_HEIGHT = 3000;
-
   constructor() {
     this.app = new Application();
     this.world = new Container();
@@ -57,12 +54,11 @@ export class Game {
     // Create 5 islands
     for (let i = 0; i < 5; i++) {
       const { container: island, radius } = IslandBuilder.build();
-      const x = Math.random() * this.WORLD_WIDTH;
-      const y = Math.random() * this.WORLD_HEIGHT;
+      const x = Math.random() * this.app.screen.width;
+      const y = Math.random() * this.app.screen.height;
       island.position.set(x, y);
       const scale = 1.2 + Math.random() * 0.5;
       island.scale.set(scale);
-      island.rotation = Math.random() * Math.PI * 2;
       this.backgroundLayer.addChild(island);
 
       this.islands.push({ sprite: island as any, x, y, radius: radius * scale });
@@ -159,22 +155,6 @@ export class Game {
       this.pool.update(dt);
       this.enemyManager.update(dt, this.player.x, this.player.y);
 
-      if (this.player) {
-        const safeX = this.player.x || 0;
-        const safeY = this.player.y || 0;
-        
-        if (!isNaN(safeX) && !isNaN(safeY)) {
-          this.world.pivot.x = safeX;
-          this.world.pivot.y = safeY;
-          this.backgroundLayer.pivot.x = safeX;
-          this.backgroundLayer.pivot.y = safeY;
-        }
-        
-        this.world.position.set(this.app.screen.width / 2, this.app.screen.height / 2);
-        this.backgroundLayer.position.set(this.app.screen.width / 2, this.app.screen.height / 2);
-      }
-      
-      // Apply camera shake/feel AFTER the camera is centered
       this.feel.update(dt);
       
       this.checkCollisions();

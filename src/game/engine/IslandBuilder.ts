@@ -46,13 +46,11 @@ export class IslandBuilder {
         
         try {
           const path = `/assets/kenney_pirate-pack/PNG/Retina/Tiles/tile_${tileIdStr}.png`;
-          const tex = Assets.get(path) || Texture.WHITE;
-          const tile = new Sprite(tex);
+          const tex = Assets.get(path);
           
-          if (tex === Texture.WHITE) {
-            tile.width = 64;
-            tile.height = 64; // Fallback forçado
-          }
+          if (!tex) continue;
+          
+          const tile = new Sprite(tex);
           
           tile.anchor.set(0); 
           
