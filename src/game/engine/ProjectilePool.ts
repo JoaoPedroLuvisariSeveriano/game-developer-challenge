@@ -1,5 +1,6 @@
 import { Container, Sprite, Texture, Assets } from 'pixi.js';
 import { Projectile } from '../entities/Projectile';
+import { AudioEngine } from './AudioEngine';
 
 export class ProjectilePool {
   public projectiles: Projectile[] = [];
@@ -20,6 +21,7 @@ export class ProjectilePool {
     if (p) {
       p.spawn(x, y, rotation, speed, owner);
       this.spawnEffect(x, y, '/assets/kenney_pirate-pack/PNG/Retina/Effects/fire1.png');
+      AudioEngine.play('cannon');
     }
     // If pool is exhausted, we just don't shoot (or we could dynamically expand)
   }

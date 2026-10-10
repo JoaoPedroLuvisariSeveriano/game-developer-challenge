@@ -48,7 +48,7 @@ export const CaptainsLog: React.FC<Props> = ({ defaultTab = 'ranking' }) => {
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 bg-slate-800/80 border border-slate-700 rounded-xl overflow-hidden flex flex-col p-2 shadow-xl backdrop-blur-sm">
+        <div className="flex-1 bg-black/60 border border-[#5d4037] rounded-xl overflow-hidden flex flex-col p-2 shadow-xl backdrop-blur-sm">
           
           {query.isFetching ? (
             <div className="flex-1 flex flex-col items-center justify-center space-y-4">
@@ -74,7 +74,7 @@ export const CaptainsLog: React.FC<Props> = ({ defaultTab = 'ranking' }) => {
             <div className="overflow-x-auto w-full h-full">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="text-gray-300 text-sm uppercase tracking-widest font-display bg-slate-900/50 border-b border-slate-700">
+                  <tr className="text-doubloon text-sm uppercase tracking-widest font-display bg-black/40 border-b border-[#5d4037]">
                     <th className="p-4 w-24">Posição</th>
                     <th className="p-4">{tab === 'ranking' ? 'Capitão' : 'Data'}</th>
                     <th className="p-4 text-center">Pontuação</th>
@@ -96,7 +96,7 @@ export const CaptainsLog: React.FC<Props> = ({ defaultTab = 'ranking' }) => {
                     else if (rank === 3) starColor = 'text-amber-600';
 
                     return (
-                      <tr key={item.matchId} className="border-b border-slate-700/50 hover:bg-amber-500/10 transition-colors text-lg text-gray-100 cursor-default">
+                      <tr key={item.matchId} className="border-b border-[#5d4037] hover:bg-[#5d4037]/50 transition-colors text-lg text-foam cursor-default">
                         <td className="p-4 flex items-center gap-2">
                           {isTop3 && <span className={`${starColor} text-xl`} title="Top 3">★</span>}
                           <span className={isTop3 ? `${starColor} font-black` : 'text-gray-400 font-semibold'}>{rank !== '-' ? `#${rank}` : '-'}</span>
@@ -120,19 +120,19 @@ export const CaptainsLog: React.FC<Props> = ({ defaultTab = 'ranking' }) => {
           <button 
             disabled={page <= 1 || query.isFetching} 
             onClick={() => setPage(p => p - 1)}
-            className="px-6 py-2 bg-slate-800 border-2 border-slate-600 rounded-lg flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-700 active:scale-95 transition-all shadow-md text-white font-bold uppercase tracking-widest"
+            className="px-6 py-2 bg-[#5d4037] border-2 border-[#8b5a2b] rounded-lg flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#8b5a2b] active:scale-95 transition-all shadow-md text-foam font-bold uppercase tracking-widest"
           >
             Anterior
           </button>
           
-          <span className="font-display text-xl tracking-widest text-yellow-400 drop-shadow-md">
+          <span className="font-display text-xl tracking-widest text-doubloon drop-shadow-md">
             PÁGINA {page} DE {totalPages}
           </span>
           
           <button 
             disabled={page >= totalPages || query.isFetching} 
             onClick={() => setPage(p => p + 1)}
-            className="px-6 py-2 bg-slate-800 border-2 border-slate-600 rounded-lg flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-700 active:scale-95 transition-all shadow-md text-white font-bold uppercase tracking-widest"
+            className="px-6 py-2 bg-[#5d4037] border-2 border-[#8b5a2b] rounded-lg flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#8b5a2b] active:scale-95 transition-all shadow-md text-foam font-bold uppercase tracking-widest"
           >
             Próxima
           </button>

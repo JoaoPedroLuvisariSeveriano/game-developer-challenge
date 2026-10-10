@@ -7,6 +7,7 @@ import { Chaser } from '../entities/Chaser';
 import { snapshotOptions } from '../../state/optionsStore';
 import { useMatchStore } from '../../state/matchStore';
 import { IslandBuilder } from './IslandBuilder';
+import { AudioEngine } from './AudioEngine';
 
 export class Game {
   public app: Application;
@@ -233,6 +234,7 @@ export class Game {
         if (!island) continue;
         if (checkIslandHit(p.x, p.y, 4, island)) {
           this.pool.spawnEffect(p.x, p.y, '/assets/kenney_pirate-pack/PNG/Retina/Effects/explosion2.png');
+          AudioEngine.play('explosion');
           p.deactivate();
           hitIsland = true;
           break;
@@ -244,8 +246,10 @@ export class Game {
         for (const e of this.enemyManager.enemies) {
           if (e.active && checkCollision(p.x, p.y, 4, e.x, e.y, e.radius)) {
             this.pool.spawnEffect(p.x, p.y, '/assets/kenney_pirate-pack/PNG/Retina/Effects/explosion1.png');
+            AudioEngine.play('explosion');
             p.deactivate();
             e.takeDamage(1);
+            AudioEngine.play('damage');
             this.feel.flashTint(e.container);
             if (e.hp <= 0) {
               this.score += 1;
@@ -260,8 +264,10 @@ export class Game {
       } else if (p.owner === 'enemy') {
         if (checkCollision(p.x, p.y, 4, this.player.x, this.player.y, 20)) {
           this.pool.spawnEffect(p.x, p.y, '/assets/kenney_pirate-pack/PNG/Retina/Effects/explosion2.png');
+          AudioEngine.play('explosion');
           p.deactivate();
           this.player.takeDamage(1);
+          AudioEngine.play('damage');
           this.feel.flashTint(this.player.container);
           this.feel.shake(10, 100);
           if (this.player.hp <= 0) {
@@ -290,8 +296,10 @@ export class Game {
       if (e instanceof Chaser) {
         if (checkCollision(e.x, e.y, e.radius, this.player.x, this.player.y, 20)) {
           this.pool.spawnEffect(e.x, e.y, '/assets/kenney_pirate-pack/PNG/Retina/Effects/explosion3.png');
+          AudioEngine.play('explosion');
           e.destroy();
           this.player.takeDamage(2);
+          AudioEngine.play('damage');
           this.feel.flashTint(this.player.container);
           this.feel.shake(20, 250);
           if (this.player.hp <= 0) {

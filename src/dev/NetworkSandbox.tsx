@@ -84,6 +84,7 @@ function OptionsPanel() {
   const [draft, setDraft] = useState<Record<OptionKey, string>>({
     sessionTimeSeconds: String(saved.sessionTimeSeconds),
     enemySpawnIntervalSeconds: String(saved.enemySpawnIntervalSeconds),
+    soundEnabled: String(saved.soundEnabled),
   })
   const [errors, setErrors] = useState<OptionErrors>({})
   const [status, setStatus] = useState('')
@@ -101,6 +102,7 @@ function OptionsPanel() {
     setDraft({
       sessionTimeSeconds: String(defaults.sessionTimeSeconds),
       enemySpawnIntervalSeconds: String(defaults.enemySpawnIntervalSeconds),
+      soundEnabled: String(defaults.soundEnabled),
     })
     setErrors({})
     setStatus('Defaults restored.')
@@ -109,8 +111,8 @@ function OptionsPanel() {
   return (
     <Card id="options-title" title="Options (Zustand + localStorage)">
       <form onSubmit={onSubmit} noValidate className="flex flex-col gap-3">
-        {(Object.keys(OPTION_LIMITS) as OptionKey[]).map((key) => {
-          const limits = OPTION_LIMITS[key]
+        {(Object.keys(OPTION_LIMITS) as OptionKey[]).filter(k => k !== 'soundEnabled').map((key) => {
+          const limits = OPTION_LIMITS[key] as any
           const errorId = `${key}-error`
           return (
             <div key={key}>

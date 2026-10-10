@@ -24,9 +24,9 @@ const RANKING_SIZE: Record<Dataset, number> = { standard: 34, many: 120, empty: 
 const HISTORY_SIZE: Record<Dataset, number> = { standard: 0, many: 47, empty: 0 }
 
 const HISTORY_CONFIGS: readonly MatchConfig[] = [
-  { sessionTimeSeconds: 90, enemySpawnIntervalSeconds: 2.5 },
-  { sessionTimeSeconds: 60, enemySpawnIntervalSeconds: 2 },
-  { sessionTimeSeconds: 120, enemySpawnIntervalSeconds: 3 },
+  { sessionTimeSeconds: 90, enemySpawnIntervalSeconds: 2.5, soundEnabled: true },
+  { sessionTimeSeconds: 60, enemySpawnIntervalSeconds: 2, soundEnabled: true },
+  { sessionTimeSeconds: 120, enemySpawnIntervalSeconds: 3, soundEnabled: true },
 ]
 
 function buildOutcome(rand: () => number, config: MatchConfig) {

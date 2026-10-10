@@ -35,7 +35,7 @@ export const OptionsMenu: React.FC = () => {
         {error && <p className="text-red-400 font-bold bg-black/50 px-4 py-2 rounded border border-red-900">{error}</p>}
         {saved && <p className="text-green-400 font-bold bg-black/50 px-4 py-2 rounded border border-green-900">Options Saved Successfully!</p>}
         
-        <div className="flex flex-col items-center gap-4 bg-slate-800/50 p-6 rounded-lg border border-slate-700 w-full max-w-md shadow-inner backdrop-blur-sm">
+        <div className="flex flex-col items-center gap-4 bg-black/40 p-6 rounded-lg border border-[#5d4037] w-full max-w-md shadow-inner">
           <label className="font-bold text-lagoon-400 uppercase tracking-wider text-2xl">Session Time</label>
           <div className="flex items-center gap-6 mt-2">
             <button onClick={() => alterTime(-30)} className="w-14 h-14 bg-gray-800 border-4 border-gray-600 rounded-full text-4xl font-display text-white hover:bg-gray-700 active:translate-y-1 transition-transform flex items-center justify-center pb-2 shadow-lg">-</button>
@@ -44,12 +44,21 @@ export const OptionsMenu: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex flex-col items-center gap-4 bg-slate-800/50 p-6 rounded-lg border border-slate-700 w-full max-w-md shadow-inner backdrop-blur-sm">
+        <div className="flex flex-col items-center gap-4 bg-black/40 p-6 rounded-lg border border-[#5d4037] w-full max-w-md shadow-inner">
           <label className="font-bold text-lagoon-400 uppercase tracking-wider text-2xl">Enemy Spawn</label>
           <div className="flex items-center gap-6 mt-2">
             <button onClick={() => alterSpawn(-0.5)} className="w-14 h-14 bg-gray-800 border-4 border-gray-600 rounded-full text-4xl font-display text-white hover:bg-gray-700 active:translate-y-1 transition-transform flex items-center justify-center pb-2 shadow-lg">-</button>
             <span className="text-5xl font-display text-doubloon w-32 text-center drop-shadow-md">{form.enemySpawnIntervalSeconds}s</span>
             <button onClick={() => alterSpawn(0.5)} className="w-14 h-14 bg-gray-800 border-4 border-gray-600 rounded-full text-4xl font-display text-white hover:bg-gray-700 active:translate-y-1 transition-transform flex items-center justify-center pb-2 shadow-lg">+</button>
+          </div>
+        </div>
+
+        <div className="flex flex-col items-center gap-4 bg-black/40 p-6 rounded-lg border border-[#5d4037] w-full max-w-md shadow-inner">
+          <label className="font-bold text-lagoon-400 uppercase tracking-wider text-2xl">Sound Effects</label>
+          <div className="flex items-center gap-6 mt-2">
+            <button onClick={() => setForm(f => ({ ...f, soundEnabled: !f.soundEnabled }))} className="px-6 py-2 bg-gray-800 border-4 border-gray-600 rounded-lg text-3xl font-display text-white hover:bg-gray-700 active:translate-y-1 transition-transform shadow-lg w-32">
+              {form.soundEnabled ? 'ON' : 'OFF'}
+            </button>
           </div>
         </div>
 

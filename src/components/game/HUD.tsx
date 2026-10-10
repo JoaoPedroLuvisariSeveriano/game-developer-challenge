@@ -19,7 +19,7 @@ export const HUD: React.FC = () => {
           <div className="w-12 h-12 z-20 -mr-4 flex items-center justify-center bg-[#8b0000] rounded-full border-2 border-[#ffcccb] shadow-[0_0_10px_rgba(255,0,0,0.8)] text-white text-2xl font-bold">
             ❤
           </div>
-          <div className="relative flex items-center justify-start w-[220px] h-[32px] bg-slate-900/80 backdrop-blur-sm rounded-r-full border-2 border-slate-700 overflow-hidden shadow-[inset_0_4px_4px_rgba(0,0,0,0.8)]">
+          <div className="relative flex items-center justify-start w-[220px] h-[32px] bg-black/80 rounded-r-full border-2 border-[#5d4037] overflow-hidden shadow-[inset_0_4px_4px_rgba(0,0,0,0.8)]">
             
             {/* Health Fill */}
             <div 
@@ -37,7 +37,8 @@ export const HUD: React.FC = () => {
         {/* Top Right: Status */}
         <div className="flex flex-col gap-3 mr-2">
           <div 
-            className="relative flex items-center bg-slate-900/60 backdrop-blur-md border border-amber-500/30 rounded-l-full px-6 py-2 shadow-[0_0_15px_rgba(0,0,0,0.5)]"
+            className="relative flex items-center bg-black/60 rounded-l-full px-6 py-2 shadow-[0_0_15px_rgba(0,0,0,0.8)] backdrop-blur-sm"
+            style={{ borderImage: "url('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/wood (3).png') 10 stretch", borderStyle: "solid", borderWidth: "4px" }}
           >
             <div className="absolute -left-6 top-1/2 -translate-y-1/2 w-10 h-10 bg-[#d4af37] rounded-full flex items-center justify-center border-2 border-white shadow-[0_0_10px_rgba(212,175,55,0.8)] text-xl font-bold text-black">
               ★
@@ -46,7 +47,8 @@ export const HUD: React.FC = () => {
           </div>
           
           <div 
-            className="relative flex items-center bg-slate-900/60 backdrop-blur-md border border-amber-500/30 rounded-l-full px-6 py-2 shadow-[0_0_15px_rgba(0,0,0,0.5)]"
+            className="relative flex items-center bg-black/60 rounded-l-full px-6 py-2 shadow-[0_0_15px_rgba(0,0,0,0.8)] backdrop-blur-sm"
+            style={{ borderImage: "url('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/wood (3).png') 10 stretch", borderStyle: "solid", borderWidth: "4px" }}
           >
             <div className="absolute -left-6 top-1/2 -translate-y-1/2 w-10 h-10 bg-[#00a8ff] rounded-full flex items-center justify-center border-2 border-white shadow-[0_0_10px_rgba(0,168,255,0.8)] text-xl font-bold text-black">
               ⏱

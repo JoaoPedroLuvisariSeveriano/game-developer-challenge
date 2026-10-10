@@ -43,19 +43,24 @@ export const GameOver: React.FC = () => {
 
   if (step === 1) {
     return (
-      <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-50 backdrop-blur-sm p-4">
+      <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-50 backdrop-blur-sm p-4">
         <div 
-          className="relative flex flex-col items-center p-8 md:p-12 text-center max-w-md w-full bg-slate-900/60 backdrop-blur-md border border-amber-500/30 shadow-[0_0_40px_rgba(0,0,0,0.5)] rounded-2xl"
+          className="relative flex flex-col items-center p-8 md:p-12 text-center max-w-md w-full"
+          style={{
+            borderImage: "url('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/wood (1).png') 20 fill",
+            borderStyle: "solid",
+            borderWidth: "40px"
+          }}
         >
           
-          <h2 className="relative z-10 text-4xl md:text-5xl font-display text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 via-amber-400 to-amber-600 drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] font-black tracking-widest uppercase mb-6">
+          <h2 className="relative z-10 text-4xl md:text-5xl font-display text-red-500 mb-6 drop-shadow-[0_2px_2px_rgba(0,0,0,1)] tracking-widest uppercase">
             YOUR SHIP SANK!
           </h2>
           <p className="relative z-10 text-3xl font-display text-doubloon mb-10 tracking-widest drop-shadow-md">
             SCORE: {score}
           </p>
 
-          <div className="relative z-10 w-full flex justify-center mt-4 pt-6 border-t border-slate-700/50">
+          <div className="relative z-10 w-full flex justify-center mt-4 pt-6 border-t-2 border-[#5d4037]">
             <AtlasButton onClick={() => setStep(2)} baseName="button_primary">
               SEE RESULTS
             </AtlasButton>
@@ -77,11 +82,11 @@ export const GameOver: React.FC = () => {
     <WoodenModal title={title}>
       <div className="flex flex-col items-center justify-center flex-1 w-full max-w-lg mx-auto">
         
-        <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-8 w-full flex flex-col items-center shadow-inner mb-6 backdrop-blur-sm">
+        <div className="bg-black/40 border border-[#5d4037] rounded-xl p-8 w-full flex flex-col items-center shadow-inner mb-6">
           <h3 className="text-2xl font-bold text-lagoon-400 uppercase tracking-widest mb-2 drop-shadow-md">Points Earned</h3>
-          <p className="text-7xl font-display text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 via-amber-400 to-amber-600 drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] font-black mb-6">{score}</p>
+          <p className="text-7xl font-display text-doubloon drop-shadow-[0_4px_4px_rgba(0,0,0,1)] mb-6">{score}</p>
           
-          <div className="w-full h-px bg-slate-700/50 mb-6 shadow-sm"></div>
+          <div className="w-full h-px bg-[#5d4037] mb-6 shadow-sm"></div>
           
           <div className="flex justify-between w-full text-xl font-sans font-bold text-foam mb-3">
             <span className="text-gray-400">Survival Time</span>

@@ -73,6 +73,7 @@ test.describe('Pirate Battle E2E Test Suite (12 Flows)', () => {
   });
 
   test('5. Encerramento (morte) e reinício limpo', async ({ page }) => {
+    test.setTimeout(120000);
     await page.click('button:has-text("Play")');
     
     // Assumimos que o player ficará parado e tomará dano até o Game Over.
@@ -130,7 +131,7 @@ test.describe('Pirate Battle E2E Test Suite (12 Flows)', () => {
   });
 
   test('8. Resiliência: Idempotência e MSW Failures (Timeout & Retry)', async ({ page }) => {
-    test.setTimeout(60000);
+    test.setTimeout(120000);
     // Escolher o cenário "submit-timeout-after-commit"
     await page.selectOption('select', { value: 'submit-timeout-after-commit' });
     

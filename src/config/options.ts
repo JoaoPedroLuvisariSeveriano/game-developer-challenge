@@ -10,6 +10,7 @@
 export interface GameOptions {
   sessionTimeSeconds: number
   enemySpawnIntervalSeconds: number
+  soundEnabled: boolean
 }
 
 export type OptionKey = keyof GameOptions
@@ -17,11 +18,13 @@ export type OptionKey = keyof GameOptions
 export const OPTION_LIMITS = {
   sessionTimeSeconds: { min: 60, max: 180, step: 5, label: 'Game session time', unit: 's' },
   enemySpawnIntervalSeconds: { min: 0.5, max: 10, step: 0.5, label: 'Enemy spawn time', unit: 's' },
+  soundEnabled: { label: 'Sound Effects' },
 } as const satisfies Record<OptionKey, unknown>
 
 export const DEFAULT_OPTIONS: Readonly<GameOptions> = Object.freeze({
   sessionTimeSeconds: 90,
   enemySpawnIntervalSeconds: 2.5,
+  soundEnabled: true,
 })
 
 export type OptionErrors = Partial<Record<OptionKey, string>>
@@ -58,6 +61,8 @@ export function validateOptions(input: Partial<Record<OptionKey, unknown>>): Opt
     errors.enemySpawnIntervalSeconds = `${spawnLimits.label} must be between ${spawnLimits.min} and ${spawnLimits.max} seconds.`
   }
 
+  const soundEnabled = input.soundEnabled !== undefined ? Boolean(input.soundEnabled) : true
+
   if (Object.keys(errors).length > 0) return { ok: false, errors }
 
   return {
@@ -65,6 +70,7 @@ export function validateOptions(input: Partial<Record<OptionKey, unknown>>): Opt
     value: {
       sessionTimeSeconds: session,
       enemySpawnIntervalSeconds: Math.round(spawn * 100) / 100,
+      soundEnabled,
     },
   }
 }
