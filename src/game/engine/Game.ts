@@ -187,15 +187,25 @@ export class Game {
     };
 
     const resolveIslandHit = (entity: { x: number, y: number }, r: number, island: any) => {
-      const dx = entity.x - island.x;
-      const dy = entity.y - island.y;
-      const dist = Math.sqrt(dx * dx + dy * dy) || 1; // previne div zero
+      const halfW = island.width / 2;
+      const halfH = island.height / 2;
       
-      if (dist < r + island.radius) {
-        const dirX = dx / dist;
-        const dirY = dy / dist;
-        entity.x = island.x + (dirX * (r + island.radius));
-        entity.y = island.y + (dirY * (r + island.radius));
+      const testX = Math.max(island.x - halfW, Math.min(entity.x, island.x + halfW));
+      const testY = Math.max(island.y - halfH, Math.min(entity.y, island.y + halfH));
+      
+      const dx = entity.x - testX;
+      const dy = entity.y - testY;
+      const distSq = dx * dx + dy * dy;
+      
+      if (distSq < r * r) {
+        const dist = Math.sqrt(distSq);
+        if (dist === 0) {
+          entity.y -= r; // Empurrão arbitrário se o centro coincidir perfeitamente
+        } else {
+          const overlap = r - dist;
+          entity.x += (dx / dist) * overlap;
+          entity.y += (dy / dist) * overlap;
+        }
       }
     };
 
