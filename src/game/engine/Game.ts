@@ -22,7 +22,7 @@ export class Game {
   private lastHp = -1;
   private lastScore = -1;
   private lastTimeInt = -1;
-  public islands: { sprite: Sprite, x: number, y: number, radius: number, expiresAt?: number, isRect?: boolean, width?: number, height?: number }[] = [];
+  public islands: { sprite: Sprite, x: number, y: number, radius: number, expiresAt?: number, isRect?: boolean, width?: number, height?: number, isDead?: boolean }[] = [];
   
   public score = 0;
   public timeRemaining = 0;
@@ -178,14 +178,14 @@ export class Game {
           return;
         }
 
-        // Cleanup expired islands (shipwrecks)
+        // Mark expired islands (shipwrecks)
         const now = Date.now();
         for (let i = this.islands.length - 1; i >= 0; i--) {
           const island = this.islands[i];
           if (!island) continue;
           if (island.expiresAt && now >= island.expiresAt) {
             island.sprite.destroy();
-            this.islands.splice(i, 1);
+            island.isDead = true;
           }
         }
 
@@ -194,6 +194,9 @@ export class Game {
         this.enemyManager.update(dt, this.player.x, this.player.y, this.islands);
         this.feel.update(dt);
         this.checkCollisions();
+        
+        // Sweep islands
+        this.islands = this.islands.filter(island => !island.isDead);
       }
 
       if (this.ocean) {

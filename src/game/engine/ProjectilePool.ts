@@ -56,8 +56,10 @@ export class ProjectilePool {
       if (eff.alpha <= 0) {
         this.container.removeChild(eff);
         eff.destroy({ children: true, texture: false });
-        this.effects.splice(i, 1);
+        (eff as any).isDead = true;
       }
     }
+    
+    this.effects = this.effects.filter(eff => !(eff as any).isDead);
   }
 }
