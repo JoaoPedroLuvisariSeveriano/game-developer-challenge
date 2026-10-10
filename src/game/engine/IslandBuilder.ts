@@ -16,14 +16,14 @@ export class IslandBuilder {
       // Central circle
       g.drawCircle(0, 0, baseRadius * 0.85);
       
-      // Círculos satélites nas bordas
-      const numCircles = 5 + Math.floor(Math.random() * 3); // de 5 a 7
+      // Círculos satélites nas bordas (Amortecidos para formato mais natural)
+      const numCircles = 3 + Math.floor(Math.random() * 2); // de 3 a 4
       for (let i = 0; i < numCircles; i++) {
         const angle = (i / numCircles) * Math.PI * 2 + (Math.random() * 0.5);
-        const subRadius = baseRadius * 0.3 + (Math.random() * (baseRadius * 0.2)); 
+        const subRadius = baseRadius * 0.15 + (Math.random() * (baseRadius * 0.10)); // 0.15 a 0.25
         g.drawCircle(
-          Math.cos(angle) * (baseRadius * 0.7),
-          Math.sin(angle) * (baseRadius * 0.7),
+          Math.cos(angle) * (baseRadius * 0.4),
+          Math.sin(angle) * (baseRadius * 0.4),
           subRadius
         );
       }
@@ -36,6 +36,10 @@ export class IslandBuilder {
 
     // Relva (30% menor)
     drawMetaballs(graphics, radius * 0.7, 0x4CAF50);
+
+    // Irregularidade de Escala (Ovais)
+    graphics.scale.x = 0.85 + Math.random() * 0.3; // 0.85 a 1.15
+    graphics.scale.y = 0.85 + Math.random() * 0.3;
 
     container.addChild(graphics);
 
