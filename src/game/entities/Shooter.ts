@@ -25,13 +25,11 @@ export class Shooter extends Enemy {
     const dist = Math.sqrt(dx * dx + dy * dy);
     const angleToPlayer = Math.atan2(dy, dx);
     
-    // Simplification: Seek & Shoot
-    if (dist > this.safeDistance) {
-      const vx = Math.cos(angleToPlayer) * this.speed * dt;
-      const vy = Math.sin(angleToPlayer) * this.speed * dt;
-      this.x += vx;
-      this.y += vy;
-    }
+    // Relentless pursuit: Seek & Shoot
+    const vx = Math.cos(angleToPlayer) * this.speed * dt;
+    const vy = Math.sin(angleToPlayer) * this.speed * dt;
+    this.x += vx;
+    this.y += vy;
     
     // Rotate to face player (sprite faces up, so add PI/2)
     this.container.rotation = angleToPlayer + Math.PI / 2;

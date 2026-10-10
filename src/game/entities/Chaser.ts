@@ -18,15 +18,12 @@ export class Chaser extends Enemy {
     // Chase logic
     const dx = playerX - this.x;
     const dy = playerY - this.y;
-    const dist = Math.sqrt(dx * dx + dy * dy);
+    const angleToPlayer = Math.atan2(dy, dx);
+    this.x += Math.cos(angleToPlayer) * this.speed * dt;
+    this.y += Math.sin(angleToPlayer) * this.speed * dt;
     
-    if (dist > 0) {
-      this.x += (dx / dist) * this.speed * dt;
-      this.y += (dy / dist) * this.speed * dt;
-      
-      // Look at player
-      this.container.rotation = Math.atan2(dy, dx) + Math.PI / 2;
-    }
+    // Look at player
+    this.container.rotation = angleToPlayer + Math.PI / 2;
 
     this.container.x = this.x;
     this.container.y = this.y;
