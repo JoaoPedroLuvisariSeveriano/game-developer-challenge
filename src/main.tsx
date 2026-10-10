@@ -8,8 +8,8 @@ import './index.css'
 
 async function bootstrap(): Promise<void> {
   try {
-    // MSW disabled to prevent interception of static assets
-    // await startMocking()
+    // MSW enabled for API interception
+    await startMocking()
   } catch (error) {
     console.warn('[mocks] Could not start the mock API; ranking and history will be unavailable.', error)
   }
