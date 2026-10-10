@@ -9,37 +9,42 @@ export class IslandBuilder {
 
     const graphics = new Graphics();
     
-    // 2. Metaballs (Círculos sobrepostos para bordas suaves)
-    const drawMetaballs = (g: Graphics, baseRadius: number, color: number) => {
+    // 2. Polígono Suave e Ondulado
+    const drawWavyPolygon = (g: Graphics, baseRadius: number, color: number) => {
       g.beginFill(color);
+      const steps = 40;
+      const wavePhase1 = Math.random() * Math.PI * 2;
+      const wavePhase2 = Math.random() * Math.PI * 2;
       
-      // Central circle
-      g.drawCircle(0, 0, baseRadius * 0.85);
-      
-      // Círculos satélites nas bordas (Amortecidos para formato mais natural)
-      const numCircles = 3 + Math.floor(Math.random() * 2); // de 3 a 4
-      for (let i = 0; i < numCircles; i++) {
-        const angle = (i / numCircles) * Math.PI * 2 + (Math.random() * 0.5);
-        const subRadius = baseRadius * 0.15 + (Math.random() * (baseRadius * 0.10)); // 0.15 a 0.25
-        g.drawCircle(
-          Math.cos(angle) * (baseRadius * 0.4),
-          Math.sin(angle) * (baseRadius * 0.4),
-          subRadius
-        );
+      for (let i = 0; i <= steps; i++) {
+        const angle = (i / steps) * Math.PI * 2;
+        // Ondulação contínua com sin e cos
+        const r = baseRadius + Math.sin(angle * 3 + wavePhase1) * 12 + Math.cos(angle * 5 + wavePhase2) * 6;
+        
+        const px = Math.cos(angle) * r;
+        const py = Math.sin(angle) * r;
+        
+        if (i === 0) {
+          g.moveTo(px, py);
+        } else {
+          g.lineTo(px, py);
+        }
       }
-      
       g.endFill();
     };
 
     // Areia
-    drawMetaballs(graphics, radius, 0xE6C280);
+    drawWavyPolygon(graphics, radius, 0xE6C280);
 
     // Relva (30% menor)
-    drawMetaballs(graphics, radius * 0.7, 0x4CAF50);
+    drawWavyPolygon(graphics, radius * 0.7, 0x4CAF50);
 
-    // Irregularidade de Escala (Ovais)
-    graphics.scale.x = 0.85 + Math.random() * 0.3; // 0.85 a 1.15
-    graphics.scale.y = 0.85 + Math.random() * 0.3;
+    // Formato Forçosamente Oval
+    if (Math.random() > 0.5) {
+      graphics.scale.set(1.4, 0.8);
+    } else {
+      graphics.scale.set(0.9, 1.3);
+    }
 
     container.addChild(graphics);
 
