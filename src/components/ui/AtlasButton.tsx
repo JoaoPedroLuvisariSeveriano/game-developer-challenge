@@ -35,17 +35,15 @@ export const AtlasButton: React.FC<Props> = ({
     props.onMouseEnter?.(e);
   };
 
-  const handleMouseDown = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
     if (!disabled) {
       setState('pressed');
+      if (sound) AudioEngine.play(sound);
     }
-    props.onMouseDown?.(e);
+    props.onPointerDown?.(e);
   };
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (!disabled) {
-      if (sound) AudioEngine.play(sound);
-    }
     props.onClick?.(e);
   };
 
@@ -55,8 +53,8 @@ export const AtlasButton: React.FC<Props> = ({
       style={bgStyle}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={(e) => { if (!disabled) setState('normal'); props.onMouseLeave?.(e); }}
-      onMouseDown={handleMouseDown}
-      onMouseUp={(e) => { if (!disabled) setState('hover'); props.onMouseUp?.(e); }}
+      onPointerDown={handlePointerDown}
+      onPointerUp={(e) => { if (!disabled) setState('hover'); props.onPointerUp?.(e); }}
       onClick={handleClick}
       onFocus={(e) => { if (!disabled) setState('hover'); props.onFocus?.(e); }}
       onBlur={(e) => { if (!disabled) setState('normal'); props.onBlur?.(e); }}

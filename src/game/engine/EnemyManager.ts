@@ -63,7 +63,9 @@ export class EnemyManager {
       this.spawnTimer = 180; // roughly 3 seconds
     }
 
-    for (const e of this.enemies) {
+    for (let i = this.enemies.length - 1; i >= 0; i--) {
+      const e = this.enemies[i];
+      if (!e) continue;
       if (e.active) {
         e.update(dt, playerX, playerY);
       }

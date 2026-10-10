@@ -37,7 +37,9 @@ export class ProjectilePool {
   }
 
   update(dt: number) {
-    for (const p of this.projectiles) {
+    for (let i = this.projectiles.length - 1; i >= 0; i--) {
+      const p = this.projectiles[i];
+      if (!p) continue;
       if (p.active) {
         p.update(dt);
       }

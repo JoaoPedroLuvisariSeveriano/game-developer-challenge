@@ -14,7 +14,7 @@ export default function App() {
   const status = useMatchStore(s => s.status);
   const matchId = useMatchStore(s => s.matchId);
 
-  const { soundEnabled } = useOptionsStore(s => s.options);
+  useOptionsStore(s => s.options);
 
   useEffect(() => {
     const handleInteraction = () => {

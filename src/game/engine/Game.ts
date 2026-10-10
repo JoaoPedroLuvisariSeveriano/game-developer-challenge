@@ -177,31 +177,29 @@ export class Game {
           this.endGame('time_up');
           return;
         }
+
+        // Cleanup expired islands (shipwrecks)
+        const now = Date.now();
+        for (let i = this.islands.length - 1; i >= 0; i--) {
+          const island = this.islands[i];
+          if (!island) continue;
+          if (island.expiresAt && now >= island.expiresAt) {
+            island.sprite.destroy();
+            this.islands.splice(i, 1);
+          }
+        }
+
+        this.player.update(dt);
+        this.pool.update(dt);
+        this.enemyManager.update(dt, this.player.x, this.player.y, this.islands);
+        this.feel.update(dt);
+        this.checkCollisions();
       }
 
       if (this.ocean) {
         this.ocean.tilePosition.x -= 0.5 * dt;
         this.ocean.tilePosition.y += 0.2 * dt;
       }
-
-      // Cleanup expired islands (shipwrecks)
-      const now = Date.now();
-      for (let i = this.islands.length - 1; i >= 0; i--) {
-        const island = this.islands[i];
-        if (!island) continue;
-        if (island.expiresAt && now >= island.expiresAt) {
-          island.sprite.destroy();
-          this.islands.splice(i, 1);
-        }
-      }
-
-      this.player.update(dt);
-      this.pool.update(dt);
-      this.enemyManager.update(dt, this.player.x, this.player.y, this.islands);
-
-      this.feel.update(dt);
-      
-      this.checkCollisions();
 
       // Sync HUD efficiently
       const currentHp = this.player.hp;
@@ -254,6 +252,7 @@ export class Game {
 
     for (let i = this.pool.projectiles.length - 1; i >= 0; i--) {
       const p = this.pool.projectiles[i];
+      if (!p) continue;
       if (!p.active) continue;
       
       // Check Projectile vs Islands
@@ -274,6 +273,7 @@ export class Game {
       if (p.owner === 'player') {
         for (let k = this.enemyManager.enemies.length - 1; k >= 0; k--) {
           const e = this.enemyManager.enemies[k];
+          if (!e) continue;
           if (e.active && checkCollision(p.x, p.y, 4, e.x, e.y, e.radius)) {
             this.pool.spawnEffect(p.x, p.y, '/assets/kenney_pirate-pack/PNG/Retina/Effects/explosion1.png');
             AudioEngine.play('explosion');
@@ -319,6 +319,7 @@ export class Game {
 
     for (let i = this.enemyManager.enemies.length - 1; i >= 0; i--) {
       const e = this.enemyManager.enemies[i];
+      if (!e) continue;
       if (!e.active) continue;
 
       // Enemy vs Islands

@@ -14,6 +14,7 @@ export async function startMocking(): Promise<void> {
 
   await worker.start({
     // Assets, HMR, fonts... pass straight through; only `/api/*` is mocked.
+    // @ts-ignore - MSW 3 removed this from types but user requested bypass
     onUnhandledRequest: 'bypass',
     quiet: !import.meta.env.DEV,
     serviceWorker: { url: `${env.baseUrl}mockServiceWorker.js` },
