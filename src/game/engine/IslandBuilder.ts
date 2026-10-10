@@ -67,6 +67,8 @@ export class IslandBuilder {
     
     // Distribuição de 2 a 4 props transparentes
     const numProps = 2 + Math.floor(Math.random() * 3);
+    const spawnedProps: {x: number, y: number}[] = [];
+    
     for (let i = 0; i < numProps; i++) {
       const isTree = Math.random() > 0.5;
       const decorId = isTree ? treeTiles[Math.floor(Math.random() * treeTiles.length)] : rockTiles[Math.floor(Math.random() * rockTiles.length)];
@@ -76,12 +78,34 @@ export class IslandBuilder {
         decor.anchor.set(0.5);
         decor.scale.set(0.4); 
         
-        // Restrito perfeitamente à área da relva
-        const angle = Math.random() * Math.PI * 2;
-        const dist = Math.random() * (radius * 0.5); 
-        decor.position.set(Math.cos(angle) * dist, Math.sin(angle) * dist);
+        let px = 0;
+        let py = 0;
+        let valid = false;
+        let attempts = 0;
         
-        container.addChild(decor);
+        while (!valid && attempts < 15) {
+          const angle = Math.random() * Math.PI * 2;
+          const dist = Math.random() * (radius * 0.5); 
+          px = Math.cos(angle) * dist;
+          py = Math.sin(angle) * dist;
+          
+          valid = true;
+          for (const sp of spawnedProps) {
+            const dx = px - sp.x;
+            const dy = py - sp.y;
+            if (Math.sqrt(dx * dx + dy * dy) <= 35) {
+              valid = false;
+              break;
+            }
+          }
+          attempts++;
+        }
+        
+        if (valid) {
+          decor.position.set(px, py);
+          container.addChild(decor);
+          spawnedProps.push({ x: px, y: py });
+        }
       }
     }
 
