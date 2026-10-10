@@ -1,6 +1,7 @@
 import { Container, Graphics, Sprite, Texture, Assets } from 'pixi.js';
 import type { Game } from './Game';
 import type { ProjectilePool } from './ProjectilePool';
+import { AudioEngine } from './AudioEngine';
 
 export class Player {
   public container: Container;
@@ -115,6 +116,7 @@ export class Player {
       // Frontal shot
       this.pool.spawn(this.x, this.y, this.rotation, 10, 'player');
       this.fireCooldownFront = 20;
+      AudioEngine.play('shoot');
     }
 
     if (this.keys['KeyQ'] && this.fireCooldownSide <= 0) {
@@ -126,6 +128,7 @@ export class Player {
         this.pool.spawn(px, py, this.rotation - Math.PI / 2, 10, 'player');
       }
       this.fireCooldownSide = 40;
+      AudioEngine.play('shoot');
     }
 
     if (this.keys['KeyE'] && this.fireCooldownSide <= 0) {
@@ -137,6 +140,7 @@ export class Player {
         this.pool.spawn(px, py, this.rotation + Math.PI / 2, 10, 'player');
       }
       this.fireCooldownSide = 40;
+      AudioEngine.play('shoot');
     }
 
     // Map bounds (simulated limits)

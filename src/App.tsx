@@ -19,6 +19,8 @@ export default function App() {
   useEffect(() => {
     const handleInteraction = () => {
       AudioEngine.init();
+      AudioEngine.unlock();
+      AudioEngine.play('bgm');
       AudioEngine.play('ambient');
     };
     
@@ -30,14 +32,6 @@ export default function App() {
       window.removeEventListener('keydown', handleInteraction);
     };
   }, []);
-
-  useEffect(() => {
-    if (soundEnabled) {
-      AudioEngine.play('ambient');
-    } else {
-      AudioEngine.stop('ambient');
-    }
-  }, [soundEnabled]);
 
   const isPlaying = status === 'playing' || status === 'paused' || status === 'gameover';
 

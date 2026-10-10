@@ -43,11 +43,11 @@ export const GameOver: React.FC = () => {
 
   if (step === 1) {
     return (
-      <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-50 backdrop-blur-sm p-4">
+      <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-50 p-4">
         <div 
-          className="relative flex flex-col items-center p-8 md:p-12 text-center max-w-md w-full"
+          className="relative flex flex-col items-center p-8 md:p-12 text-center max-w-md w-full bg-[#1c2838]"
           style={{
-            borderImage: "url('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/wood (1).png') 20 fill",
+            borderImage: "url('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/wood (1).png') 20",
             borderStyle: "solid",
             borderWidth: "40px"
           }}
@@ -82,7 +82,7 @@ export const GameOver: React.FC = () => {
     <WoodenModal title={title}>
       <div className="flex flex-col items-center justify-center flex-1 w-full max-w-lg mx-auto">
         
-        <div className="bg-black/40 border border-[#5d4037] rounded-xl p-8 w-full flex flex-col items-center shadow-inner mb-6">
+        <div className="bg-slate-900 border border-[#5d4037] rounded-xl p-8 w-full flex flex-col items-center shadow-inner mb-6">
           <h3 className="text-2xl font-bold text-lagoon-400 uppercase tracking-widest mb-2 drop-shadow-md">Points Earned</h3>
           <p className="text-7xl font-display text-doubloon drop-shadow-[0_4px_4px_rgba(0,0,0,1)] mb-6">{score}</p>
           

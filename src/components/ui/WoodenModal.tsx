@@ -13,9 +13,9 @@ export const WoodenModal: React.FC<Props> = ({ title, children }) => {
   return (
     <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-50 p-4 md:p-8">
       <div 
-        className="relative w-full max-w-4xl max-h-full flex flex-col p-6 md:p-10 overflow-hidden"
+        className="relative w-full max-w-4xl max-h-full flex flex-col p-6 md:p-10 overflow-hidden bg-[#1c2838]"
         style={{
-          borderImage: "url('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/wood (1).png') 20 fill",
+          borderImage: "url('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/wood (1).png') 20",
           borderStyle: "solid",
           borderWidth: "40px"
         }}

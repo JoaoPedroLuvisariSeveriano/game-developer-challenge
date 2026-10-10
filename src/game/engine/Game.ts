@@ -265,6 +265,7 @@ export class Game {
               this.score += 1;
               this.feel.shake(15, 150);
               this.pool.spawnEffect(e.x, e.y, '/assets/kenney_pirate-pack/PNG/Retina/Effects/explosion3.png');
+              AudioEngine.play('explosion');
               e.wreck();
               this.islands.push({ sprite: e.container as any, x: e.x, y: e.y, radius: e.radius, expiresAt: Date.now() + 10000 });
             }
@@ -282,6 +283,7 @@ export class Game {
           this.feel.shake(10, 100);
           if (this.player.hp <= 0) {
             this.pool.spawnEffect(this.player.x, this.player.y, '/assets/kenney_pirate-pack/PNG/Retina/Effects/explosion3.png');
+            AudioEngine.play('explosion');
             this.endGame('player_destroyed');
           }
         }

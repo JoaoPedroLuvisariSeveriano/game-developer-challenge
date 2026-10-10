@@ -48,7 +48,7 @@ export const CaptainsLog: React.FC<Props> = ({ defaultTab = 'ranking' }) => {
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 bg-black/60 border border-[#5d4037] rounded-xl overflow-hidden flex flex-col p-2 shadow-xl backdrop-blur-sm">
+        <div className="flex-1 bg-slate-900 border border-[#5d4037] rounded-xl overflow-hidden flex flex-col p-2 shadow-xl">
           
           {query.isFetching ? (
             <div className="flex-1 flex flex-col items-center justify-center space-y-4">
@@ -74,7 +74,7 @@ export const CaptainsLog: React.FC<Props> = ({ defaultTab = 'ranking' }) => {
             <div className="overflow-x-auto w-full h-full">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="text-doubloon text-sm uppercase tracking-widest font-display bg-black/40 border-b border-[#5d4037]">
+                  <tr className="text-doubloon text-sm uppercase tracking-widest font-display bg-slate-800 border-b border-[#5d4037]">
                     <th className="p-4 w-24">Posição</th>
                     <th className="p-4">{tab === 'ranking' ? 'Capitão' : 'Data'}</th>
                     <th className="p-4 text-center">Pontuação</th>
