@@ -116,7 +116,7 @@ export class Player {
       // Frontal shot
       this.pool.spawn(this.x, this.y, this.rotation, 10, 'player');
       this.fireCooldownFront = 20;
-      AudioEngine.play('shoot');
+      AudioEngine.play('shoot', 0.8 + Math.random() * 0.4);
     }
 
     if (this.keys['KeyQ'] && this.fireCooldownSide <= 0) {
@@ -128,7 +128,7 @@ export class Player {
         this.pool.spawn(px, py, this.rotation - Math.PI / 2, 10, 'player');
       }
       this.fireCooldownSide = 40;
-      AudioEngine.play('shoot');
+      AudioEngine.play('shoot', 0.8 + Math.random() * 0.4);
     }
 
     if (this.keys['KeyE'] && this.fireCooldownSide <= 0) {
@@ -140,7 +140,7 @@ export class Player {
         this.pool.spawn(px, py, this.rotation + Math.PI / 2, 10, 'player');
       }
       this.fireCooldownSide = 40;
-      AudioEngine.play('shoot');
+      AudioEngine.play('shoot', 0.8 + Math.random() * 0.4);
     }
 
     // Map bounds (simulated limits)

@@ -18,12 +18,14 @@ class AudioEngineClass {
       });
     };
 
-    this.sounds.click = load('/assets/sounds/click.wav');
-    this.sounds.hover = load('/assets/sounds/hover.wav', false, 0.5);
-    this.sounds.shoot = load('/assets/sounds/shoot.wav'); 
-    this.sounds.cannon = load('/assets/sounds/cannon.wav');
-    this.sounds.explosion = load('/assets/sounds/explosion.wav');
-    this.sounds.damage = load('/assets/sounds/damage.wav');
+    this.sounds.click = load('/assets/sounds/switch2.ogg', false, 0.3);
+    this.sounds.hover = load('/assets/sounds/switch2.ogg', false, 0.3);
+    this.sounds.confirm = load('/assets/sounds/confirmation_001.ogg', false, 0.3);
+    this.sounds.shoot = load('/assets/sounds/impactWood_heavy_003.ogg'); 
+    this.sounds.cannon = load('/assets/sounds/impactWood_heavy_003.ogg');
+    this.sounds.explosion = load('/assets/sounds/impactWood_heavy_003.ogg');
+    this.sounds.damage = load('/assets/sounds/scratch_001.ogg');
+    this.sounds.jingle = load('/assets/sounds/jingles_STEEL00.ogg');
     this.sounds.bgm = load('/assets/sounds/bgm.wav', true, 0.3);
     this.sounds.ambient = load('/assets/sounds/ambient.wav', true, 0.3);
 
@@ -36,13 +38,16 @@ class AudioEngineClass {
     Howler.mute(!isEnabled);
   }
 
-  play(name: string) {
+  play(name: string, rate?: number) {
     const sound = this.sounds[name];
     if (sound) {
       if (sound.loop() && sound.playing()) {
         return;
       }
-      sound.play();
+      const id = sound.play();
+      if (rate !== undefined) {
+        sound.rate(rate, id);
+      }
     }
   }
 

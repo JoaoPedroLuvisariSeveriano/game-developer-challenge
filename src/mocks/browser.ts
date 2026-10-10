@@ -14,7 +14,7 @@ export async function startMocking(): Promise<void> {
 
   await worker.start({
     // Assets, HMR, fonts... pass straight through; only `/api/*` is mocked.
-    onUnhandledFrame: 'bypass',
+    onUnhandledRequest: 'bypass',
     quiet: !import.meta.env.DEV,
     serviceWorker: { url: `${env.baseUrl}mockServiceWorker.js` },
   })

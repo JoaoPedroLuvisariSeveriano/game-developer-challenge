@@ -3,10 +3,12 @@ import { AudioEngine } from '../../game/engine/AudioEngine';
 
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   baseName?: string;
+  sound?: string;
 }
 
 export const AtlasButton: React.FC<Props> = ({ 
-  baseName, 
+  baseName,
+  sound = 'click', 
   children, 
   className = '', 
   disabled, 
@@ -42,7 +44,7 @@ export const AtlasButton: React.FC<Props> = ({
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!disabled) {
-      AudioEngine.play('click');
+      if (sound) AudioEngine.play(sound);
     }
     props.onClick?.(e);
   };

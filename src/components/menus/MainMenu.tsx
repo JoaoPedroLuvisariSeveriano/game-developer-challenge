@@ -20,7 +20,7 @@ export const MainMenu: React.FC = () => {
         
         <div className="flex flex-col gap-6 mt-4">
           <div className="flex flex-wrap gap-6">
-            <AtlasButton onClick={() => {
+            <AtlasButton sound="confirm" onClick={() => {
               AudioEngine.unlock();
               useMatchStore.getState().resetMatch();
               setStatus('playing');

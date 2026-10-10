@@ -38,3 +38,7 @@ Execute os seguintes comandos para exigir os *checks* do compilador TypeScript e
 ```bash
 npm run build && npm run preview
 ```
+
+## 📜 Assets & Licenses
+
+Os ficheiros de áudio foram substituídos por pacotes de Domínio Público (CC0) do estúdio Kenney (UI Audio, Impact Sounds e Jingles) devido à inacessibilidade do repositório original de assets no momento da entrega.
