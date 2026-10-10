@@ -65,7 +65,14 @@ export class EnemyManager {
 
     for (let i = this.enemies.length - 1; i >= 0; i--) {
       const e = this.enemies[i];
-      if (!e || !e.active) continue;
+      if (!e) continue;
+      
+      if (!e.active || (e as any).isDead) {
+        if (e.sprite) e.sprite.visible = false;
+        if (e.container) e.container.visible = false;
+        continue;
+      }
+      
       e.update(dt, playerX, playerY);
     }
   }
