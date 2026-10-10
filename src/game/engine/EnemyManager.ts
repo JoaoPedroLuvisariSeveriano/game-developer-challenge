@@ -33,7 +33,7 @@ export class EnemyManager {
       this.enemies.push(e);
       this.container.addChild(e.container);
     } else {
-      e = inactive[Math.floor(Math.random() * inactive.length)];
+      e = inactive[Math.floor(Math.random() * inactive.length)]!;
     }
     
     if (!e) return;
