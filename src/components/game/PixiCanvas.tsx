@@ -38,6 +38,7 @@ export const PixiCanvas: React.FC = () => {
       isMounted = false;
       // O PixiJS remove o canvas sozinho via { removeView: true } no destroy
       engine.destroy(); 
+      try { Assets.reset(); } catch(e) {}
     };
   }, []);
 

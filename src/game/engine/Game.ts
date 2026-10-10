@@ -344,7 +344,7 @@ export class Game {
         this.player.destroy();
       }
       if (this.app && this.app.renderer) {
-        this.app.destroy({ removeView: true }, { children: true });
+        this.app.destroy({ removeView: true }, { children: true, texture: true, baseTexture: true });
       }
     } catch (e) {
       console.warn('Destroy safely bypassed:', e);
