@@ -26,25 +26,10 @@ export class Shooter extends Enemy {
     if (!this.active) return;
     dt = dt || 1;
     
-    let dx = playerX - this.x;
-    let dy = playerY - this.y;
-    if (isNaN(dx)) dx = 0;
-    if (isNaN(dy)) dy = 0;
-    
-    let dist = Math.sqrt(dx * dx + dy * dy);
-    if (dist < 1 || isNaN(dist)) dist = 1;
-    const angleToPlayer = Math.atan2(dy, dx);
-    
-    // Relentless pursuit: Seek & Shoot
-    const vx = Math.cos(angleToPlayer) * this.speed * dt;
-    const vy = Math.sin(angleToPlayer) * this.speed * dt;
-    this.x += vx;
-    this.y += vy;
-    
-    // Rotate to face player (sprite faces up, so add PI/2)
-    this.container.rotation = angleToPlayer + Math.PI / 2;
-    this.container.x = this.x;
-    this.container.y = this.y;
+    const dx = playerX - this.x;
+    const dy = playerY - this.y;
+    const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+    const angleToPlayer = Math.atan2(playerY - this.y, playerX - this.x);
 
     this.fireCooldown -= dt;
     if (this.fireCooldown <= 0 && dist < 450) {
@@ -56,5 +41,12 @@ export class Shooter extends Enemy {
       this.pool.spawn(spawnX, spawnY, angleToPlayer + Math.PI / 2, 7, 'enemy');
       this.fireCooldown = 120; // 2 seconds cooldown
     }
+
+    // Movimento Incondicional - Força Bruta
+    this.container.rotation = angleToPlayer + Math.PI / 2;
+    this.x += Math.cos(angleToPlayer) * this.speed * dt;
+    this.y += Math.sin(angleToPlayer) * this.speed * dt;
+    this.container.x = this.x;
+    this.container.y = this.y;
   }
 }

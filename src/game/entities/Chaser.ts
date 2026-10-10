@@ -16,22 +16,11 @@ export class Chaser extends Enemy {
     if (!this.active) return;
     dt = dt || 1;
     
-    // Chase logic
-    let dx = playerX - this.x;
-    let dy = playerY - this.y;
-    if (isNaN(dx)) dx = 0;
-    if (isNaN(dy)) dy = 0;
-    
-    let dist = Math.sqrt(dx * dx + dy * dy);
-    if (dist < 1 || isNaN(dist)) dist = 1;
-    
-    const angleToPlayer = Math.atan2(dy, dx);
-    this.x += (dx / dist) * this.speed * dt;
-    this.y += (dy / dist) * this.speed * dt;
-    
-    // Look at player
+    // Movimento Incondicional - Força Bruta
+    const angleToPlayer = Math.atan2(playerY - this.y, playerX - this.x);
     this.container.rotation = angleToPlayer + Math.PI / 2;
-
+    this.x += Math.cos(angleToPlayer) * this.speed * dt;
+    this.y += Math.sin(angleToPlayer) * this.speed * dt;
     this.container.x = this.x;
     this.container.y = this.y;
   }
