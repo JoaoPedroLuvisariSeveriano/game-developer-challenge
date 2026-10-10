@@ -5,61 +5,54 @@ export class IslandBuilder {
     const container = new Container();
     const radius = 85; // Exact radius used for physics collision
 
-    // Draw vector terrain
     const graphics = new Graphics();
     
-    // Sand base (Matches collision radius perfectly)
-    graphics.beginFill(0xE6C280);
-    graphics.drawCircle(0, 0, radius);
-    graphics.endFill();
+    const drawOrganicCircle = (g: Graphics, baseRadius: number, color: number) => {
+      g.beginFill(color);
+      const points = [];
+      const steps = 14; 
+      for (let i = 0; i < steps; i++) {
+        const angle = (i / steps) * Math.PI * 2;
+        // Variação de -7.5 a +7.5 no raio
+        const r = baseRadius + (Math.random() * 15 - 7.5);
+        points.push({ x: Math.cos(angle) * r, y: Math.sin(angle) * r });
+      }
+      
+      if (points.length > 0) {
+        g.moveTo(points[0].x, points[0].y);
+        for (let i = 1; i < points.length; i++) {
+          g.lineTo(points[i].x, points[i].y);
+        }
+        g.closePath();
+      }
+      g.endFill();
+    };
 
-    // Grass top (Slightly smaller)
-    graphics.beginFill(0x4CAF50);
-    graphics.drawCircle(0, 0, radius * 0.7);
-    graphics.endFill();
+    // Areia
+    drawOrganicCircle(graphics, radius, 0xE6C280);
+
+    // Relva
+    drawOrganicCircle(graphics, radius * 0.75, 0x4CAF50);
 
     container.addChild(graphics);
 
-    const createDecor = (id: string | number) => {
-      const path = `/assets/kenney_pirate-pack/PNG/Retina/Tiles/tile_${id}.png`;
-      const tex = Assets.get(path) || Texture.WHITE;
-      const sprite = new Sprite(tex);
-      if (tex === Texture.WHITE) {
-        sprite.width = 64;
-        sprite.height = 64;
-      }
-      return sprite;
-    };
-
-    // Add Decorations
-    const treeTiles = [70, 71, 72];
-    const rockTiles = [49, 50, 51];
-    const wreckTiles = [81, 82, 83];
-    
-    const placeDecors = (tiles: number[], num: number) => {
-      for (let i = 0; i < num; i++) {
-        const decorId = tiles[Math.floor(Math.random() * tiles.length)];
-        const decor = createDecor(decorId);
-        if (decor) {
-          decor.anchor.set(0.5);
-          decor.scale.set(0.4); // Scale down giant props
-          
-          // Confine to grass area safely
-          const angle = Math.random() * Math.PI * 2;
-          const dist = Math.random() * (radius * 0.6); // Keeping it inside grass
-          decor.position.set(Math.cos(angle) * dist, Math.sin(angle) * dist);
-          
-          container.addChild(decor);
-        }
-      }
-    };
-
-    // Place props
-    placeDecors(treeTiles, Math.floor(Math.random() * 3) + 1);
-    placeDecors(rockTiles, Math.floor(Math.random() * 2) + 1);
-    
+    // Substituímos os tiles quadrados de terreno por navios destruídos (100% transparentes)
     if (Math.random() > 0.5) {
-      placeDecors(wreckTiles, 1);
+      const path = `/assets/kenney_pirate-pack/PNG/Retina/Ships/ship (24).png`;
+      const tex = Assets.get(path);
+      if (tex) {
+        const wreck = new Sprite(tex);
+        wreck.anchor.set(0.5);
+        wreck.scale.set(0.6); // Escala adequada para a ilha
+        wreck.rotation = Math.random() * Math.PI * 2;
+        
+        // Colocado perto da costa (entre a relva e a areia)
+        const angle = Math.random() * Math.PI * 2;
+        const dist = Math.random() * (radius * 0.6); 
+        wreck.position.set(Math.cos(angle) * dist, Math.sin(angle) * dist);
+        
+        container.addChild(wreck);
+      }
     }
 
     return { container, radius, isRect: false, width: 192, height: 192 };
