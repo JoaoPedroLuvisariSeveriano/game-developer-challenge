@@ -44,17 +44,9 @@ export class EnemyManager {
       valid = true;
       for (const island of islands) {
         if (!island) continue;
-        const halfW = island.width / 2;
-        const halfH = island.height / 2;
-        
-        const testX = Math.max(island.x - halfW, Math.min(sx, island.x + halfW));
-        const testY = Math.max(island.y - halfH, Math.min(sy, island.y + halfH));
-        
-        const dx = sx - testX;
-        const dy = sy - testY;
-        const distSq = dx * dx + dy * dy;
-        
-        if (distSq < (20 + 50) * (20 + 50)) { // ship radius + margin
+        const dx = sx - island.x;
+        const dy = sy - island.y;
+        if (Math.sqrt(dx * dx + dy * dy) < 20 + island.radius + 50) {
           valid = false;
           break;
         }
