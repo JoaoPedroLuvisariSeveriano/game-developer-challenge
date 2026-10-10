@@ -40,6 +40,7 @@ export abstract class Enemy {
     this.active = true;
     const tex = Assets.get(this.normalTexture);
     if (tex) this.sprite.texture = tex;
+    this.sprite.tint = 0xffffff;
     this.container.x = x;
     this.container.y = y;
     this.container.visible = true;

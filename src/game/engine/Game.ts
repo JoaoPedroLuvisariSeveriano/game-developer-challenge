@@ -18,6 +18,10 @@ export class Game {
   public pool!: ProjectilePool;
   public enemyManager!: EnemyManager;
   public feel!: GameFeel;
+  
+  private lastHp = -1;
+  private lastScore = -1;
+  private lastTimeInt = -1;
   public islands: { sprite: Sprite, x: number, y: number, radius: number, expiresAt?: number, isRect?: boolean, width?: number, height?: number }[] = [];
   
   public score = 0;
@@ -163,12 +167,16 @@ export class Game {
 
       const dt = ticker.deltaTime;
       
+      const status = useMatchStore.getState().status;
+      
       // time in seconds. Assuming 1 deltaTime ~ 1/60th sec
-      this.timeRemaining -= (dt / 60);
-      if (this.timeRemaining <= 0) {
-        this.timeRemaining = 0;
-        this.endGame('time_up');
-        return;
+      if (status === 'playing') {
+        this.timeRemaining -= (dt / 60);
+        if (this.timeRemaining <= 0) {
+          this.timeRemaining = 0;
+          this.endGame('time_up');
+          return;
+        }
       }
 
       if (this.ocean) {
@@ -195,8 +203,17 @@ export class Game {
       
       this.checkCollisions();
 
-      // Sync HUD
-      useMatchStore.getState().setMatchData(this.player.hp, this.score, this.timeRemaining);
+      // Sync HUD efficiently
+      const currentHp = this.player.hp;
+      const currentScore = this.score;
+      const currentTimeInt = Math.ceil(this.timeRemaining);
+      
+      if (this.lastHp !== currentHp || this.lastScore !== currentScore || this.lastTimeInt !== currentTimeInt) {
+        useMatchStore.getState().setMatchData(currentHp, currentScore, this.timeRemaining);
+        this.lastHp = currentHp;
+        this.lastScore = currentScore;
+        this.lastTimeInt = currentTimeInt;
+      }
     } catch (e) {
       console.error("GameLoop Crash:", e);
     }
@@ -235,12 +252,14 @@ export class Game {
       }
     };
 
-    for (const p of this.pool.projectiles) {
+    for (let i = this.pool.projectiles.length - 1; i >= 0; i--) {
+      const p = this.pool.projectiles[i];
       if (!p.active) continue;
       
       // Check Projectile vs Islands
       let hitIsland = false;
-      for (const island of this.islands) {
+      for (let j = this.islands.length - 1; j >= 0; j--) {
+        const island = this.islands[j];
         if (!island) continue;
         if (checkIslandHit(p.x, p.y, 4, island)) {
           this.pool.spawnEffect(p.x, p.y, '/assets/kenney_pirate-pack/PNG/Retina/Effects/explosion2.png');
@@ -253,7 +272,8 @@ export class Game {
       if (hitIsland) continue;
       
       if (p.owner === 'player') {
-        for (const e of this.enemyManager.enemies) {
+        for (let k = this.enemyManager.enemies.length - 1; k >= 0; k--) {
+          const e = this.enemyManager.enemies[k];
           if (e.active && checkCollision(p.x, p.y, 4, e.x, e.y, e.radius)) {
             this.pool.spawnEffect(p.x, p.y, '/assets/kenney_pirate-pack/PNG/Retina/Effects/explosion1.png');
             AudioEngine.play('explosion');
@@ -291,16 +311,19 @@ export class Game {
     }
 
     // Player vs Islands
-    for (const island of this.islands) {
+    for (let i = this.islands.length - 1; i >= 0; i--) {
+      const island = this.islands[i];
       if (!island) continue;
       resolveIslandHit(this.player, 20, island);
     }
 
-    for (const e of this.enemyManager.enemies) {
+    for (let i = this.enemyManager.enemies.length - 1; i >= 0; i--) {
+      const e = this.enemyManager.enemies[i];
       if (!e.active) continue;
 
       // Enemy vs Islands
-      for (const island of this.islands) {
+      for (let j = this.islands.length - 1; j >= 0; j--) {
+        const island = this.islands[j];
         if (!island) continue;
         resolveIslandHit(e, e.radius, island);
       }

@@ -3,6 +3,7 @@ import { useMatchStore } from '../../state/matchStore';
 import { mockControl } from '../../mocks/control';
 import { SCENARIOS } from '../../mocks/scenarios';
 import { AtlasButton } from '../ui/AtlasButton';
+import { AudioEngine } from '../../game/engine/AudioEngine';
 
 export const MainMenu: React.FC = () => {
   const setStatus = useMatchStore((s) => s.setStatus);
@@ -20,6 +21,7 @@ export const MainMenu: React.FC = () => {
         <div className="flex flex-col gap-6 mt-4">
           <div className="flex flex-wrap gap-6">
             <AtlasButton onClick={() => {
+              AudioEngine.unlock();
               useMatchStore.getState().resetMatch();
               setStatus('playing');
             }} baseName="button_primary">
