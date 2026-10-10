@@ -244,16 +244,21 @@ export class Game {
       }
     };
 
-    const resolveIslandHit = (entity: { x: number, y: number }, r: number, island: any) => {
-      const dx = entity.x - island.x;
-      const dy = entity.y - island.y;
-      const dist = Math.sqrt(dx * dx + dy * dy) || 1; // previne div zero
+    const resolveIslandHit = (entity: { x: number, y: number }, r: number, island: any, ejectionMultiplier: number = 1) => {
+      let dx = entity.x - island.x;
+      let dy = entity.y - island.y;
+      if (dx === 0 && dy === 0) {
+        dx = 1; // Zero-vector prevention
+        dy = 1;
+      }
+      const dist = Math.sqrt(dx * dx + dy * dy);
       
       if (dist < r + island.radius) {
         const dirX = dx / dist;
         const dirY = dy / dist;
-        entity.x = island.x + (dirX * (r + island.radius));
-        entity.y = island.y + (dirY * (r + island.radius));
+        // Escape velocity multiplication
+        entity.x = island.x + (dirX * (r + island.radius) * ejectionMultiplier);
+        entity.y = island.y + (dirY * (r + island.radius) * ejectionMultiplier);
       }
     };
 
@@ -328,12 +333,12 @@ export class Game {
       const e = this.enemyManager.enemies[i];
       if (!e || !e.active || (e as any).isDead) continue;
 
-      // Enemy vs Islands
-      for (let j = this.islands.length - 1; j >= 0; j--) {
-        const island = this.islands[j];
-        if (!island || island.isDead) continue;
-        resolveIslandHit(e, e.radius, island);
-      }
+      // Enemy vs Islands (NUCLEAR BYPASS: Colisão desativada para fluidez arcade)
+      // for (let j = this.islands.length - 1; j >= 0; j--) {
+      //   const island = this.islands[j];
+      //   if (!island || island.isDead) continue;
+      //   resolveIslandHit(e, e.radius, island, 3); // Multiplicador de ejeção = 3 se fosse ativo
+      // }
 
       if (e instanceof Chaser) {
         if (!e.active || (e as any).isDead) continue; // Absolute guard
