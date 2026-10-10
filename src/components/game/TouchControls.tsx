@@ -2,14 +2,20 @@ import React from 'react';
 
 
 export const TouchControls: React.FC = () => {
-  const triggerKey = (code: string) => {
+  const triggerKeyDown = (code: string) => {
     window.dispatchEvent(new KeyboardEvent('keydown', { code }));
-    setTimeout(() => window.dispatchEvent(new KeyboardEvent('keyup', { code })), 100);
+  };
+
+  const triggerKeyUp = (code: string) => {
+    window.dispatchEvent(new KeyboardEvent('keyup', { code }));
   };
 
   const RoundBtn = ({ code, icon, size = 'w-16 h-16' }: { code: string, icon: string, size?: string }) => (
     <button 
-      onPointerDown={() => triggerKey(code)} 
+      onPointerDown={() => triggerKeyDown(code)}
+      onPointerUp={() => triggerKeyUp(code)}
+      onPointerLeave={() => triggerKeyUp(code)}
+      onPointerCancel={() => triggerKeyUp(code)}
       className={`relative rounded-full focus:outline-none select-none active:scale-95 transition-transform flex items-center justify-center ${size} pointer-events-auto bg-black/80 border-2 border-[#5d4037] shadow-[0_4px_10px_rgba(0,0,0,0.8)] text-white text-2xl hover:bg-black/90`}
     >
       <span className="relative z-10 drop-shadow-md">{icon}</span>
@@ -33,7 +39,10 @@ export const TouchControls: React.FC = () => {
           <RoundBtn code="KeyE" icon="▶🔥" />
         </div>
         <button 
-          onPointerDown={() => triggerKey('Space')} 
+          onPointerDown={() => triggerKeyDown('Space')} 
+          onPointerUp={() => triggerKeyUp('Space')}
+          onPointerLeave={() => triggerKeyUp('Space')}
+          onPointerCancel={() => triggerKeyUp('Space')}
           className="relative rounded-full focus:outline-none select-none active:scale-95 transition-transform flex items-center justify-center w-24 h-24 pointer-events-auto mt-2 bg-gradient-to-t from-red-800 to-red-600 border-4 border-[#d4af37] shadow-[0_4px_15px_rgba(0,0,0,1)] text-white text-4xl"
         >
           <span className="relative z-10 drop-shadow-md">💣</span>

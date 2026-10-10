@@ -127,10 +127,17 @@ export class Game {
     this.app.ticker.add(this.update.bind(this));
 
     window.addEventListener('blur', this.onBlur);
+    document.addEventListener('visibilitychange', this.onVisibilityChange);
     window.addEventListener('keydown', this.onKeyDown);
     
     this.app.stage.addChild(this.world);
   }
+
+  private onVisibilityChange = () => {
+    if (document.hidden && useMatchStore.getState().status === 'playing') {
+      this.pause();
+    }
+  };
 
   private onBlur = () => {
     if (useMatchStore.getState().status === 'playing') {
@@ -333,12 +340,12 @@ export class Game {
       const e = this.enemyManager.enemies[i];
       if (!e || !e.active || (e as any).isDead) continue;
 
-      // Enemy vs Islands (NUCLEAR BYPASS: Colisão desativada para fluidez arcade)
-      // for (let j = this.islands.length - 1; j >= 0; j--) {
-      //   const island = this.islands[j];
-      //   if (!island || island.isDead) continue;
-      //   resolveIslandHit(e, e.radius, island, 3); // Multiplicador de ejeção = 3 se fosse ativo
-      // }
+      // Enemy vs Islands (REATIVADO com Escape Velocity)
+      for (let j = this.islands.length - 1; j >= 0; j--) {
+        const island = this.islands[j];
+        if (!island || island.isDead) continue;
+        resolveIslandHit(e, e.radius, island, 3); // Multiplicador de ejeção = 3
+      }
 
       if (e instanceof Chaser) {
         if (!e.active || (e as any).isDead) continue; // Absolute guard

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useOptionsStore } from '../../state/optionsStore';
 import { WoodenModal } from '../ui/WoodenModal';
 import { AtlasButton } from '../ui/AtlasButton';
+import { MswConfigPanel } from './MswConfigPanel';
 
 export const OptionsMenu: React.FC = () => {
   const { options, saveOptions } = useOptionsStore();
@@ -67,6 +68,8 @@ export const OptionsMenu: React.FC = () => {
             Save Options
           </AtlasButton>
         </div>
+        
+        <MswConfigPanel />
       </div>
     </WoodenModal>
   );

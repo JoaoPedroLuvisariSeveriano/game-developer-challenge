@@ -1,30 +1,45 @@
-# Architecture Overview
+# Pirate Battle - Architecture Document
 
-This document outlines the core technical decisions, patterns, and structure of the Pirate Battle engine.
+This document outlines the core architectural decisions, patterns, and systems implemented in **Pirate Battle**. The game is designed to be highly performant, structurally sound, and scalable for future features.
 
-## React/PixiJS Integration
+## 1. Separation of Concerns: React vs. PixiJS
 
-The application enforces a strict separation of concerns between the declarative UI (React) and the imperative, continuous rendering engine (PixiJS). 
-- **Decoupled Lifecycles**: PixiJS is initialized within a `useEffect` hook in a dedicated canvas component. We use React's `key` prop tied to a `matchId` to guarantee a full teardown and rebuild of the PixiJS application upon every new match. This prevents state contamination between rounds and safely sidesteps React's concurrent rendering artifacts.
-- **State Segregation**: HUD and Menu states are managed via React Context/Zustand and do not block the game loop. The game engine emits events or updates shared refs that React polls at low frequency, ensuring the high-frequency 60/144hz simulation loop never triggers React reconciliations.
+The project employs a strict boundary between the UI layer and the Game Engine:
 
-## Simulation Loop & Collisions
+- **React (UI Layer)**: Handles everything outside the game arena. This includes Menus (Main Menu, Options, Game Over, Pause), HUD elements (HP bars, score, virtual joysticks), forms, network data fetching (TanStack Query), and application state (`zustand`). React is declarative and reactive.
+- **PixiJS (Game Engine)**: Handles rendering of the game arena, entities, and the synchronous game loop (`ticker`). It is strictly imperative.
 
-- **Time-Based Logic**: The simulation loop uses a delta-time (`dt`) based approach. This decouples movement and physics from the display framerate, ensuring consistent game speed whether running on a 60Hz or 144Hz monitor.
-- **Euclidean Vector Math**: Movement, steering, and aiming rely on pure trigonometric vector mathematics.
-- **Circular Physics**: We abandoned AABB (Axis-Aligned Bounding Box) in favor of strictly circular collision boundaries (`distance < radiusA + radiusB`). This guarantees O(1) mathematical complexity for hit tests, ensuring stable performance even with dozens of projectiles and procedural islands in the viewport.
+**Communication Bridge**: The two systems communicate via an event-driven architecture and a global state store (`matchStore` and `optionsStore`). The PixiJS engine reads configuration from the store at initialization and dispatches state changes (like taking damage or game over) back to React. The React UI never directly mutates PixiJS instances, ensuring no race conditions or synchronization ghosts occur.
 
-## Resource Management
+## 2. Time-Based Simulation (Delta Time)
 
-- **Object Pooling**: Projectiles (cannonballs) and particle effects are extremely short-lived entities that usually cause massive Garbage Collection (GC) spikes. To mitigate this, we implemented an Object Pool for projectiles. Entities are deactivated, hidden, and reset upon expiration rather than destroyed and re-instantiated. 
-- **Strict Teardown**: Upon unmount (e.g., when a match ends or React Strict Mode triggers), the engine performs a recursive teardown of all active textures, baseTextures, tickers, and DOM event listeners. This eliminates GPU memory leaks and orphaned loops.
+To ensure the game plays identically on a 60Hz monitor or a 144Hz monitor, the game engine uses a strict **Delta Time (dt)** approach:
 
-## Local Persistence
+- Every frame, the PixiJS `ticker` calculates the time elapsed since the last frame.
+- All movement vectors, cooldowns, and physics resolutions are multiplied by this `dt` factor.
+- Example: `this.x += Math.cos(angle) * this.speed * dt;`
+- This ensures that ships move at exactly the same speed per second regardless of frame drops or refresh rates.
 
-- **Gameplay Options**: User configurations (such as session time and enemy spawn intervals) are managed via Zustand stores and persisted locally using `localStorage` bindings. This allows players to retain their preferred game settings across sessions without backend dependencies for trivial configurations.
+## 3. Object Pooling & Memory Management (Mark & Sweep)
 
-## Ranking & History Integration
+Instantiating and destroying objects (like Projectiles and Enemies) during gameplay causes severe Garbage Collection (GC) spikes, leading to stuttering. To solve this, Pirate Battle implements an advanced **Object Pooling** system:
 
-- **Mock Service Worker (MSW)**: The application uses MSW to intercept API calls at the network level. This allows for rigorous frontend testing of loading states, pagination, and network failures without relying on a live backend server.
-- **TanStack Query**: Data fetching is fully delegated to TanStack Query. It manages the caching layer, background refetching, and deduping of requests for both the Ranking and Match History tables. 
-- **Idempotent Submissions**: Match results are submitted with an idempotency key (the unique `matchId`). This ensures that network retries or component re-renders do not result in duplicate records on the server.
+- **Pre-allocation**: Pools are populated with inactive entities at the start of the match.
+- **Dynamic Expansion**: If the engine requests an entity and the pool is empty, the pool dynamically expands, creating new instances on-the-fly. This prevents "Starvation" and prevents returning an object that is already active (which was the root cause of the "Frozen Clones" bug).
+- **Mark & Sweep**: When an entity "dies", its `isDead` flag is set to true and it is visually hidden. At the end of the frame, the `EnemyManager` sweeps the array, resetting mathematical properties, forces, and visibility, and returning them to the `inactive` array.
+- **Hard Reset**: Upon being re-spawned, every entity undergoes a complete reset (`hp`, `speed`, `x`, `y`, `active = true`, `visible = true`). This prevents "vector cancellation" or ghost collisions from previous lifetimes.
+
+## 4. Network Persistence & Offline Sync (TanStack Query + MSW)
+
+The data layer uses TanStack Query to fetch and mutate match history and rankings, fully integrated with MSW for robust mocking.
+
+- **Idempotency**: Every match generated by the client is assigned a unique `matchId` (UUID). This acts as an idempotency key.
+- **Offline Fallback**: If the `submitMatch` mutation fails (e.g., HTTP 500, network loss, or timeout), the `onMutate` hook intercepts the payload and saves it into a LocalStorage queue (`pirate_offline_matches`).
+- **Background Sync**: A `useOfflineSync` hook listens to application mount and `window.online` events. It attempts to automatically flush the offline queue. 
+- **Zero Duplication**: Because the `matchId` is preserved, if the server actually received the match during a timeout, the subsequent retry will yield a `duplicate: true` (HTTP 200) response, successfully clearing the local queue without double-counting the score on the leaderboard.
+
+## 5. Known Limitations & Balancing Decisions
+
+- **Hitbox Geometry**: The game uses simple radius-based circular hitboxes (Circle-Circle collision) instead of Polygon intersections. This is a deliberate performance optimization that makes collision detection $O(1)$ per pair, allowing hundreds of projectiles on screen. The trade-off is minor visual clipping on the edges of islands or rectangular ships.
+- **Frustum Culling**: We deliberately disabled Viewport Culling for enemy physics updates. While rendering is culled by PixiJS, mathematical updates are forced to run for all active enemies regardless of distance. This ensures enemies don't get "stuck" outside the screen (Agro Loss), but it slightly increases CPU load on extremely long matches.
+- **No Pathfinding (A*)**: Enemies use direct Seek steering (`Math.atan2`). To prevent them from getting stuck on islands (deadlock), an "Escape Velocity" multiplier was added to the island collision resolution, causing them to "bounce" and slide around islands rather than computing expensive node-based paths.

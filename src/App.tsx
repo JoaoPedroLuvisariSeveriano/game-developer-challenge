@@ -9,12 +9,14 @@ import { useMatchStore } from './state/matchStore';
 import { AudioEngine } from './game/engine/AudioEngine';
 import { useEffect } from 'react';
 import { useOptionsStore } from './state/optionsStore';
+import { useOfflineSync } from './api/hooks';
 
 export default function App() {
   const status = useMatchStore(s => s.status);
   const matchId = useMatchStore(s => s.matchId);
 
   useOptionsStore(s => s.options);
+  useOfflineSync();
 
   useEffect(() => {
     const handleInteraction = () => {

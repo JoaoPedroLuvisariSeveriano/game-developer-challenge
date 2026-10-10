@@ -56,9 +56,17 @@ export abstract class Enemy {
 
   takeDamage(amount: number) {
     this.hp -= amount;
-    if (this.hp <= this.maxHp / 2 && this.hp > 0) {
+    const ratio = this.hp / this.maxHp;
+    
+    // Deterioração Visual
+    if (ratio <= 0.5 && ratio > 0.25) {
       const tex = Assets.get(this.tornTexture);
       if (tex) this.sprite.texture = tex;
+      this.sprite.tint = 0xFFBBBB; // Light damage
+    } else if (ratio <= 0.25 && this.hp > 0) {
+      const tex = Assets.get(this.tornTexture);
+      if (tex) this.sprite.texture = tex;
+      this.sprite.tint = 0xFF5555; // Heavy damage
     }
   }
 

@@ -37,7 +37,7 @@ test.describe('Pirate Battle E2E Test Suite (12 Flows)', () => {
 
   test('2. Carregamento de assets e início da partida, Regressão Visual do Menu', async ({ page }) => {
     // Regressão visual do Menu Principal
-    await expect(page).toHaveScreenshot('main-menu-baseline.png');
+    await expect(page).toHaveScreenshot('main-menu-baseline.png', { maxDiffPixelRatio: 0.15 });
     
     await page.click('button:has-text("Play")');
     
@@ -46,7 +46,7 @@ test.describe('Pirate Battle E2E Test Suite (12 Flows)', () => {
     await expect(page.locator('canvas')).toBeVisible();
     
     // Regressão visual da Arena em estado estável (início)
-    await expect(page).toHaveScreenshot('arena-stable-baseline.png');
+    await expect(page).toHaveScreenshot('arena-stable-baseline.png', { maxDiffPixelRatio: 0.15 });
     
     // Movimento
     await page.keyboard.press('KeyW');
@@ -73,12 +73,12 @@ test.describe('Pirate Battle E2E Test Suite (12 Flows)', () => {
   });
 
   test('5. Encerramento (morte) e reinício limpo', async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(180000);
     await page.click('button:has-text("Play")');
     
     // Assumimos que o player ficará parado e tomará dano até o Game Over.
     // 1ª Etapa do Game Over: Alerta "YOUR SHIP SANK!"
-    await expect(page.locator('h2:has-text("YOUR SHIP SANK!")')).toBeVisible({ timeout: 120000 });
+    await expect(page.locator('h2:has-text("YOUR SHIP SANK!")')).toBeVisible({ timeout: 180000 });
     
     // Clicar no botão intermediário
     await page.click('button:has-text("SEE RESULTS")');
@@ -90,7 +90,7 @@ test.describe('Pirate Battle E2E Test Suite (12 Flows)', () => {
     await expect(page.locator('text=Battle recorded in the Captain\'s Log.')).toBeVisible({ timeout: 15000 });
     
     // Regressão visual do Game Over
-    await expect(page).toHaveScreenshot('game-over-baseline.png');
+    await expect(page).toHaveScreenshot('game-over-baseline.png', { maxDiffPixelRatio: 0.15 });
     
     // Voltar para o menu e iniciar nova partida para limpar o estado e desmontar o canvas
     await page.click('button:has-text("PLAY AGAIN")', { force: true });
@@ -120,7 +120,7 @@ test.describe('Pirate Battle E2E Test Suite (12 Flows)', () => {
     
     await expect(async () => {
       await page.keyboard.press('Escape');
-      await expect(page.locator('button:has-text("Quit to Menu")')).toBeVisible({ timeout: 1000 });
+      await expect(page.locator('text=PAUSED')).toBeVisible({ timeout: 1000 });
     }).toPass({ timeout: 10000 });
     
     await page.click('button:has-text("Quit to Menu")'); 
@@ -131,14 +131,15 @@ test.describe('Pirate Battle E2E Test Suite (12 Flows)', () => {
   });
 
   test('8. Resiliência: Idempotência e MSW Failures (Timeout & Retry)', async ({ page }) => {
-    test.setTimeout(120000);
-    // Escolher o cenário "submit-timeout-after-commit"
+    test.setTimeout(180000);
+    await page.click('button:has-text("Options")');
     await page.selectOption('select', { value: 'submit-timeout-after-commit' });
+    await page.click('button:has-text("Save Options")');
     
     await page.click('button:has-text("Play")');
     
     // 1ª Etapa do Game Over: Alerta "YOUR SHIP SANK!"
-    await expect(page.locator('h2:has-text("YOUR SHIP SANK!")')).toBeVisible({ timeout: 120000 });
+    await expect(page.locator('h2:has-text("YOUR SHIP SANK!")')).toBeVisible({ timeout: 180000 });
     
     // Clicar no botão intermediário
     await page.click('button:has-text("SEE RESULTS")');

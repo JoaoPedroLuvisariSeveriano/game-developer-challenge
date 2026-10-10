@@ -63,15 +63,23 @@ export class Player {
   takeDamage(amount: number) {
     this.hp -= amount;
     
-    // Torn sails at <= 50%
-    if (this.hp <= this.maxHp / 2 && this.hp > 0) {
+    const ratio = this.hp / this.maxHp;
+    
+    // Deterioração Visual
+    if (ratio <= 0.5 && ratio > 0.25) {
       const tex = Assets.get('/assets/kenney_pirate-pack/PNG/Retina/Ships/ship (12).png');
       if (tex) this.sprite.texture = tex;
+      this.sprite.tint = 0xFFBBBB; // Light damage
+    } else if (ratio <= 0.25 && this.hp > 0) {
+      const tex = Assets.get('/assets/kenney_pirate-pack/PNG/Retina/Ships/ship (12).png');
+      if (tex) this.sprite.texture = tex;
+      this.sprite.tint = 0xFF5555; // Heavy damage (smoked/red)
     }
 
     if (this.hp <= 0) {
       const tex = Assets.get('/assets/kenney_pirate-pack/PNG/Retina/Ships/ship (24).png');
       if (tex) this.sprite.texture = tex;
+      this.sprite.tint = 0x555555; // Wrecked
       console.log('Game Over');
     }
   }
