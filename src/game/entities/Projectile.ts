@@ -1,4 +1,4 @@
-import { Sprite, Container, Texture, Assets } from 'pixi.js';
+import { Sprite, Texture, Assets } from 'pixi.js';
 
 export class Projectile {
   public sprite: Sprite;
@@ -25,7 +25,7 @@ export class Projectile {
     this.sprite.visible = false;
   }
 
-  spawn(x: number, y: number, rotation: number, speed: number, owner: 'player' | 'enemy', color = 0xffa500) {
+  spawn(x: number, y: number, rotation: number, speed: number, owner: 'player' | 'enemy') {
     this.x = x;
     this.y = y;
     this.vx = Math.cos(rotation - Math.PI / 2) * speed;

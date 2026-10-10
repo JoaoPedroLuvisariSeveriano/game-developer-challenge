@@ -5,13 +5,9 @@ export class GameFeel {
   private game: Game;
   private shakeTimer = 0;
   private shakeMagnitude = 0;
-  private baseWorldX = 0;
-  private baseWorldY = 0;
 
   constructor(game: Game) {
     this.game = game;
-    this.baseWorldX = game.world.x;
-    this.baseWorldY = game.world.y;
   }
 
   public shake(magnitude = 10, durationMs = 200) {

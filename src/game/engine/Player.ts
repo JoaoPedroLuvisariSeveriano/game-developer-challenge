@@ -113,7 +113,7 @@ export class Player {
 
     if (this.keys['Space'] && this.fireCooldownFront <= 0) {
       // Frontal shot
-      this.pool.spawn(this.x, this.y, this.rotation, 10, 'player', 0x00ff00);
+      this.pool.spawn(this.x, this.y, this.rotation, 10, 'player');
       this.fireCooldownFront = 20;
     }
 
@@ -123,7 +123,7 @@ export class Player {
         const offset = i * 15;
         const px = this.x + Math.cos(this.rotation) * offset;
         const py = this.y + Math.sin(this.rotation) * offset;
-        this.pool.spawn(px, py, this.rotation - Math.PI / 2, 10, 'player', 0x00ff00);
+        this.pool.spawn(px, py, this.rotation - Math.PI / 2, 10, 'player');
       }
       this.fireCooldownSide = 40;
     }
@@ -134,7 +134,7 @@ export class Player {
         const offset = i * 15;
         const px = this.x + Math.cos(this.rotation) * offset;
         const py = this.y + Math.sin(this.rotation) * offset;
-        this.pool.spawn(px, py, this.rotation + Math.PI / 2, 10, 'player', 0x00ff00);
+        this.pool.spawn(px, py, this.rotation + Math.PI / 2, 10, 'player');
       }
       this.fireCooldownSide = 40;
     }

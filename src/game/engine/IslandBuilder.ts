@@ -30,11 +30,14 @@ export class IslandBuilder {
     }
 
     const drawPolygon = (g: Graphics, points: {x: number, y: number}[], color: number) => {
-      if (points.length === 0) return;
+      if (!points || points.length === 0) return;
+      const first = points[0];
+      if (!first) return;
       g.beginFill(color);
-      g.moveTo(points[0].x, points[0].y);
+      g.moveTo(first.x, first.y);
       for (let i = 1; i < points.length; i++) {
-        g.lineTo(points[i].x, points[i].y);
+        const p = points[i];
+        if (p) g.lineTo(p.x, p.y);
       }
       g.endFill();
     };
@@ -72,7 +75,7 @@ export class IslandBuilder {
     for (let i = 0; i < numProps; i++) {
       const isTree = Math.random() > 0.5;
       const decorId = isTree ? treeTiles[Math.floor(Math.random() * treeTiles.length)] : rockTiles[Math.floor(Math.random() * rockTiles.length)];
-      const decor = createDecor(decorId);
+      const decor = createDecor(decorId ?? 49);
       
       if (decor) {
         decor.anchor.set(0.5);

@@ -15,10 +15,10 @@ export class ProjectilePool {
     }
   }
 
-  spawn(x: number, y: number, rotation: number, speed: number, owner: 'player' | 'enemy', color?: number) {
+  spawn(x: number, y: number, rotation: number, speed: number, owner: 'player' | 'enemy') {
     const p = this.projectiles.find(proj => !proj.active);
     if (p) {
-      p.spawn(x, y, rotation, speed, owner, color);
+      p.spawn(x, y, rotation, speed, owner);
       this.spawnEffect(x, y, '/assets/kenney_pirate-pack/PNG/Retina/Effects/fire1.png');
     }
     // If pool is exhausted, we just don't shoot (or we could dynamically expand)
@@ -44,12 +44,14 @@ export class ProjectilePool {
     // update effects
     for (let i = this.effects.length - 1; i >= 0; i--) {
       const eff = this.effects[i];
+      if (!eff) continue;
+      
       eff.alpha -= 0.05 * dt;
       eff.scale.x += 0.02 * dt;
       eff.scale.y += 0.02 * dt;
       if (eff.alpha <= 0) {
         this.container.removeChild(eff);
-        eff.destroy({ children: true, texture: false, baseTexture: false });
+        eff.destroy({ children: true, texture: false });
         this.effects.splice(i, 1);
       }
     }

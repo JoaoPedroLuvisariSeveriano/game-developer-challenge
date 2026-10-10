@@ -14,8 +14,6 @@ export const AtlasButton: React.FC<Props> = ({
 }) => {
   const [state, setState] = useState<'normal' | 'hover' | 'pressed'>('normal');
   
-  const suffix = disabled ? 'disabled' : state;
-  const spriteName = `${baseName}_${suffix}`;
   
   const bgStyle = {
     backgroundImage: `url('/assets/kenney_pirate-pack/PNG/Retina/Ship parts/wood (2).png')`,

@@ -65,9 +65,9 @@ export class Shooter extends Enemy {
         // pool.spawn velocity uses angle - PI/2 internally because sprites face up.
         // So we feed it angleToPlayer + PI/2.
         const baseAngle = angleToPlayer + Math.PI / 2;
-        this.pool.spawn(this.x, this.y, baseAngle - 0.15, 7, 'enemy', 0xff0000);
-        this.pool.spawn(this.x, this.y, baseAngle, 7, 'enemy', 0xff0000);
-        this.pool.spawn(this.x, this.y, baseAngle + 0.15, 7, 'enemy', 0xff0000);
+        this.pool.spawn(this.x, this.y, baseAngle - 0.15, 7, 'enemy');
+        this.pool.spawn(this.x, this.y, baseAngle, 7, 'enemy');
+        this.pool.spawn(this.x, this.y, baseAngle + 0.15, 7, 'enemy');
         this.fireCooldown = 150; // Throttle: 2.5 seconds cooldown
       }
     }
