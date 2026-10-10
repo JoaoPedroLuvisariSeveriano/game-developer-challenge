@@ -88,8 +88,10 @@ export class Game {
     window.addEventListener('keydown', this.onKeyDown);
     
     // Final Anchoring
-    this.app.stage.addChild(this.backgroundLayer);
-    this.app.stage.addChild(this.world);
+    if (this.app && this.app.stage) {
+      this.app.stage.addChild(this.backgroundLayer);
+      this.app.stage.addChild(this.world);
+    }
   }
 
   private onBlur = () => {

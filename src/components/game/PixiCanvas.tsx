@@ -10,40 +10,35 @@ export const PixiCanvas: React.FC = () => {
 
   useEffect(() => {
     let isMounted = true;
-    const game = new Game();
-    gameRef.current = game;
     
+    // 1. Cria a ÚNICA instância da engine para este ciclo de vida
+    const engine = new Game();
+    gameRef.current = engine; // Atualiza a ref para o HUD consumir
+
     const bootGame = async () => {
       try {
-        if (!containerRef.current || !gameRef.current) return;
-        
-        // 1. PURGA DA CACHE VETERANA: Limpa texturas do contexto WebGL morto
-        try { Assets.reset(); } catch (e) { console.warn('Cache clear skip', e); }
-        
-        // 2. BOOT DO NOVO MOTOR: Cria novo WebGL Context e anexa ao DOM
-        await gameRef.current.startEngine(containerRef.current);
-        
-        // 3. REIDRATAÇÃO: Força o download/decode das texturas para a GPU atual
+        if (containerRef.current) containerRef.current.innerHTML = '';
+        try { Assets.reset(); } catch(e) {}
+
+        await engine.startEngine(containerRef.current as HTMLDivElement);
         await AssetLoader.loadAll();
-        
-        // 4. LIBERTAÇÃO DA UI E LÓGICA
+
         if (isMounted) {
+          engine.initGameLogic();
           setIsLoading(false);
-          gameRef.current.initGameLogic();
         }
-      } catch (e) {
-        console.error('Boot Crash:', e);
+      } catch (error) {
+        console.error('Fatal Boot Error:', error);
       }
     };
-    
+
     bootGame();
-    
+
     return () => {
       isMounted = false;
-      if (gameRef.current) {
-        gameRef.current.destroy();
-        gameRef.current = null;
-      }
+      // 2. Destrói EXATAMENTE a engine que foi criada aqui
+      engine.destroy(); 
+      if (containerRef.current) containerRef.current.innerHTML = '';
     };
   }, []);
 
