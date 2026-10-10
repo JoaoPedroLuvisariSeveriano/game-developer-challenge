@@ -11,24 +11,24 @@ export const PixiCanvas: React.FC = () => {
   useEffect(() => {
     let isMounted = true;
     
-    // 1. Cria a ÚNICA instância da engine para este ciclo de vida
     const engine = new Game();
-    gameRef.current = engine; // Atualiza a ref para o HUD consumir
+    gameRef.current = engine;
 
     const bootGame = async () => {
       try {
-        if (containerRef.current) containerRef.current.innerHTML = '';
+        // Purga a cache sem quebrar a DOM
         try { Assets.reset(); } catch(e) {}
 
         await engine.startEngine(containerRef.current as HTMLDivElement);
         await AssetLoader.loadAll();
 
-        if (isMounted) {
-          engine.initGameLogic();
-          setIsLoading(false);
-        }
+        // DEFESA CRÍTICA: Se o React destruiu esta instância enquanto os assets carregavam, ABORTE.
+        if (engine.isDestroyed || !isMounted) return;
+
+        engine.initGameLogic();
+        setIsLoading(false);
       } catch (error) {
-        console.error('Fatal Boot Error:', error);
+        console.error('Boot Error:', error);
       }
     };
 
@@ -36,9 +36,8 @@ export const PixiCanvas: React.FC = () => {
 
     return () => {
       isMounted = false;
-      // 2. Destrói EXATAMENTE a engine que foi criada aqui
+      // O PixiJS remove o canvas sozinho via { removeView: true } no destroy
       engine.destroy(); 
-      if (containerRef.current) containerRef.current.innerHTML = '';
     };
   }, []);
 

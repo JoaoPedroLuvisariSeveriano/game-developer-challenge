@@ -23,6 +23,7 @@ export class Game {
   public timeRemaining = 0;
   
   private isPaused = false;
+  public isDestroyed = false;
 
   constructor() {
     this.app = new Application();
@@ -88,10 +89,8 @@ export class Game {
     window.addEventListener('keydown', this.onKeyDown);
     
     // Final Anchoring
-    if (this.app && this.app.stage) {
-      this.app.stage.addChild(this.backgroundLayer);
-      this.app.stage.addChild(this.world);
-    }
+    this.app.stage.addChild(this.backgroundLayer);
+    this.app.stage.addChild(this.world);
   }
 
   private onBlur = () => {
@@ -331,6 +330,7 @@ export class Game {
   }
 
   public destroy() {
+    this.isDestroyed = true;
     try {
       window.removeEventListener('blur', this.onBlur);
       window.removeEventListener('keydown', this.onKeyDown);
