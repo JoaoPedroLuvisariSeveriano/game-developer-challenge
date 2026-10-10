@@ -143,8 +143,11 @@ export class Player {
     const padding = 32;
     const minX = padding;
     const minY = padding;
-    const maxX = this.game.WORLD_WIDTH - padding;
-    const maxY = this.game.WORLD_HEIGHT - padding;
+    const maxX = (this.game && this.game.WORLD_WIDTH ? this.game.WORLD_WIDTH : 3000) - padding;
+    const maxY = (this.game && this.game.WORLD_HEIGHT ? this.game.WORLD_HEIGHT : 3000) - padding;
+
+    if (isNaN(nextX)) nextX = minX;
+    if (isNaN(nextY)) nextY = minY;
 
     if (nextX < minX) nextX = minX;
     if (nextX > maxX) nextX = maxX;

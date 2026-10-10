@@ -43,16 +43,28 @@ export class IslandBuilder {
         if (!tileId || isNaN(tileId) || tileId === 0) continue;
 
         const tileIdStr = tileId < 10 ? `0${tileId}` : `${tileId}`;
-        const tile = createDecor(tileIdStr);
-        if (!tile) continue; // Safe fallback
-
-        tile.anchor.set(0); 
         
-        const xPos = col * tileSize;
-        const yPos = row * tileSize;
-        if (!isNaN(xPos) && !isNaN(yPos)) {
-          tile.position.set(xPos, yPos);
-          container.addChild(tile);
+        try {
+          const path = `/assets/kenney_pirate-pack/PNG/Retina/Tiles/tile_${tileIdStr}.png`;
+          const tex = Assets.get(path) || Texture.WHITE;
+          const tile = new Sprite(tex);
+          
+          if (tex === Texture.WHITE) {
+            tile.width = 64;
+            tile.height = 64; // Fallback forçado
+          }
+          
+          tile.anchor.set(0); 
+          
+          const xPos = col * tileSize;
+          const yPos = row * tileSize;
+          
+          if (!isNaN(xPos) && !isNaN(yPos)) {
+            tile.position.set(xPos, yPos);
+            container.addChild(tile);
+          }
+        } catch (e) {
+          console.warn("Tile ignorado", e);
         }
       }
     }

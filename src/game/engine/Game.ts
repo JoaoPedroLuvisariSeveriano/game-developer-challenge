@@ -159,17 +159,20 @@ export class Game {
       this.pool.update(dt);
       this.enemyManager.update(dt, this.player.x, this.player.y);
 
-      if (!this.player || isNaN(this.player.x) || isNaN(this.player.y)) return;
-      
-      // Center camera on player
-      this.world.pivot.x = this.player.x;
-      this.world.pivot.y = this.player.y;
-      this.world.position.set(this.app.screen.width / 2, this.app.screen.height / 2);
-      
-      // Background layer should also move if we want parallax or simply align it
-      this.backgroundLayer.pivot.x = this.player.x;
-      this.backgroundLayer.pivot.y = this.player.y;
-      this.backgroundLayer.position.set(this.app.screen.width / 2, this.app.screen.height / 2);
+      if (this.player) {
+        const safeX = this.player.x || 0;
+        const safeY = this.player.y || 0;
+        
+        if (!isNaN(safeX) && !isNaN(safeY)) {
+          this.world.pivot.x = safeX;
+          this.world.pivot.y = safeY;
+          this.backgroundLayer.pivot.x = safeX;
+          this.backgroundLayer.pivot.y = safeY;
+        }
+        
+        this.world.position.set(this.app.screen.width / 2, this.app.screen.height / 2);
+        this.backgroundLayer.position.set(this.app.screen.width / 2, this.app.screen.height / 2);
+      }
       
       // Apply camera shake/feel AFTER the camera is centered
       this.feel.update(dt);
