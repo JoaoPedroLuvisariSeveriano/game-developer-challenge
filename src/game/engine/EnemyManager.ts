@@ -24,10 +24,18 @@ export class EnemyManager {
   }
 
   spawnEnemy(playerX: number, playerY: number, islands: any[]) {
+    let e: Enemy;
     const inactive = this.enemies.filter(e => !e.active);
-    if (inactive.length === 0) return;
     
-    const e = inactive[Math.floor(Math.random() * inactive.length)];
+    if (inactive.length === 0) {
+      // Pool is exhausted, dynamically expand it to prevent starvation/clones
+      e = Math.random() > 0.5 ? new Chaser() : new Shooter(this.pool);
+      this.enemies.push(e);
+      this.container.addChild(e.container);
+    } else {
+      e = inactive[Math.floor(Math.random() * inactive.length)];
+    }
+    
     if (!e) return;
     
     let valid = false;
