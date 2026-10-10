@@ -2,11 +2,13 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Game } from '../../game/engine/Game';
 import { AssetLoader } from '../../game/Loader';
 import { Assets } from 'pixi.js';
+import { useMatchStore } from '../../state/matchStore';
 
 export const PixiCanvas: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const gameRef = useRef<Game | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const status = useMatchStore(s => s.status);
 
   useEffect(() => {
     let isMounted = true;
@@ -28,7 +30,7 @@ export const PixiCanvas: React.FC = () => {
         await AssetLoader.loadAll();
 
         if (isMounted && !engine.isDestroyed) {
-          engine.initGameLogic();
+          engine.initIdle();
           setIsLoading(false);
         }
       } catch (error) {
@@ -43,6 +45,12 @@ export const PixiCanvas: React.FC = () => {
       engine.destroy();
     };
   }, []);
+
+  useEffect(() => {
+    if (!isLoading && status === 'playing' && gameRef.current && !gameRef.current.isCombatStarted) {
+      gameRef.current.startCombat();
+    }
+  }, [status, isLoading]);
 
   return (
     <div ref={containerRef} className="absolute inset-0 w-full h-full overflow-hidden bg-[#87CEEB] z-0">

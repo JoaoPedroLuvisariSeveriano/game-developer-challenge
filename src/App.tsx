@@ -17,17 +17,16 @@ export default function App() {
   const { soundEnabled } = useOptionsStore(s => s.options);
 
   useEffect(() => {
-    AudioEngine.init();
-    
     const handleInteraction = () => {
+      AudioEngine.init();
       AudioEngine.play('ambient');
     };
     
-    window.addEventListener('click', handleInteraction, { once: true });
+    window.addEventListener('pointerdown', handleInteraction, { once: true });
     window.addEventListener('keydown', handleInteraction, { once: true });
     
     return () => {
-      window.removeEventListener('click', handleInteraction);
+      window.removeEventListener('pointerdown', handleInteraction);
       window.removeEventListener('keydown', handleInteraction);
     };
   }, []);

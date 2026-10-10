@@ -32,16 +32,11 @@ export class Game {
     this.backgroundLayer = new Container();
   }
 
-  async initGameLogic() {
-    console.log('--- MARCO 8: Game.initLogic() iniciado ---');
-    const config = snapshotOptions();
-    this.timeRemaining = config.sessionTimeSeconds;
-    this.score = 0;
+  private idleTicker: ((ticker: Ticker) => void) | null = null;
+  public isCombatStarted = false;
 
-
-
-    // Ocean Tiling Background
-    console.log('--- MARCO 9: A ler textura do oceano ---');
+  async initIdle() {
+    console.log('--- MARCO 8: Game.initIdle() iniciado ---');
     const oceanTexture = Assets.get('/assets/kenney_pirate-pack/PNG/Retina/Tiles/tile_73.png');
     
     this.ocean = new TilingSprite({
@@ -51,8 +46,6 @@ export class Game {
     });
     this.app.stage.addChildAt(this.ocean, 0);
 
-    // Random Islands / Rocks
-    // Create 5 islands
     for (let i = 0; i < 5; i++) {
       const { container: island, radius } = IslandBuilder.build();
       const scale = 1.2 + Math.random() * 0.5;
@@ -68,7 +61,6 @@ export class Game {
         y = Math.random() * this.app.screen.height;
         valid = true;
         
-        // Validação Matemática Geométrica
         for (const existing of this.islands) {
           const dx = x - existing.x;
           const dy = y - existing.y;
@@ -90,31 +82,49 @@ export class Game {
       }
     }
 
+    this.app.stage.addChild(this.backgroundLayer);
+
+    this.idleTicker = (ticker: Ticker) => {
+      if (this.ocean) {
+        this.ocean.tilePosition.x -= 0.5 * ticker.deltaTime;
+        this.ocean.tilePosition.y += 0.2 * ticker.deltaTime;
+      }
+    };
+    this.app.ticker.add(this.idleTicker);
+  }
+
+  async startCombat() {
+    if (this.isCombatStarted) return;
+    this.isCombatStarted = true;
+
+    if (this.idleTicker) {
+      this.app.ticker.remove(this.idleTicker);
+      this.idleTicker = null;
+    }
+
+    console.log('--- MARCO 9: Game.startCombat() iniciado ---');
+    const config = snapshotOptions();
+    this.timeRemaining = config.sessionTimeSeconds;
+    this.score = 0;
+
     this.feel = new GameFeel(this);
 
     this.pool = new ProjectilePool(200);
     this.world.addChild(this.pool.container);
 
     this.enemyManager = new EnemyManager(this.pool);
-    // Use config to set spawn intervals inside EnemyManager if needed
-    // Assuming EnemyManager handles its own spawn logic, we can pass config.enemySpawnIntervalSeconds
-    
     this.world.addChild(this.enemyManager.container);
 
     this.player = new Player(this, this.pool);
     this.world.addChild(this.player.container);
 
-    // Initial Sync
     useMatchStore.getState().setMatchData(this.player.hp, this.score, this.timeRemaining);
 
     this.app.ticker.add(this.update.bind(this));
 
-    // Handle focus loss for auto-pause
     window.addEventListener('blur', this.onBlur);
     window.addEventListener('keydown', this.onKeyDown);
     
-    // Final Anchoring
-    this.app.stage.addChild(this.backgroundLayer);
     this.app.stage.addChild(this.world);
   }
 
