@@ -25,6 +25,9 @@ export class Game {
   private isPaused = false;
   public isDestroyed = false;
 
+  public readonly WORLD_WIDTH = 3000;
+  public readonly WORLD_HEIGHT = 3000;
+
   constructor() {
     this.app = new Application();
     this.world = new Container();
@@ -54,8 +57,8 @@ export class Game {
     // Create 5 islands
     for (let i = 0; i < 5; i++) {
       const { container: island, radius } = IslandBuilder.build();
-      const x = Math.random() * window.innerWidth;
-      const y = Math.random() * window.innerHeight;
+      const x = Math.random() * this.WORLD_WIDTH;
+      const y = Math.random() * this.WORLD_HEIGHT;
       island.position.set(x, y);
       const scale = 1.2 + Math.random() * 0.5;
       island.scale.set(scale);

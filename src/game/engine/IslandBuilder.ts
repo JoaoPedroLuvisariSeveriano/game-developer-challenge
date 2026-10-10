@@ -11,15 +11,15 @@ export class IslandBuilder {
       // Sand Island Map 3x3
       grid = [
         [1, 2, 3],
-        [17, Math.random() > 0.5 ? 18 : 20, 19],
+        [17, 18, 19],
         [33, 34, 35]
       ];
     } else {
       // Tropical Island Map 3x3
       grid = [
-        [6, Math.random() > 0.5 ? 23 : 24, 9],
-        [Math.random() > 0.5 ? 23 : 39, Math.random() > 0.5 ? 24 : 40, Math.random() > 0.5 ? 24 : 40],
-        [36, Math.random() > 0.5 ? 39 : 40, 37]
+        [5, 6, 7],
+        [21, 22, 23],
+        [37, 38, 39]
       ];
     }
     
